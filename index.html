@@ -370,7 +370,7 @@ const HARD=id=>id==='split'||id==='sl';
 const FREE=id=>kind(id)==='bar'||kind(id)==='db';
 const SLUG={'0':'legpress','1':'chestpress','2':'latpulldown','3':'seatedrow','4s':'seatedcurl','4l':'lyingcurl','5':'monsterglute','6':'shoulderpress','7':'reardelt','8':'legextension','9':'vsquat','10':'chestfly','11':'armpulldown','12':'squat','13':'smithpullup',slp:'seatedlegpress',abd:'abduction',add:'adduction',lsp:'plateshoulder',lip:'plateincline',lfp:'platebench',bb:'benchpress',ibb:'inclinebench',db:'dumbbellbench',idb:'dumbbellincline',curl:'armcurl',wpd:'widepulldown',lrow:'lateralrow',drow:'dumbbellrow',dsp:'dumbbellshoulder',split:'splitsquat',sl:'onelegrdl',fp:'facepull'};
 const kind=id=>TYPE[id]||'stack';
-const SWAP={'0':['slp','9','12','8'],'9':['0','slp','12'],'12':['0','slp','9'],'8':['0','slp'],slp:['0','9','12'],'1':['lfp','10','db','6'],'10':['1','lfp','6'],'6':['lsp','1','7'],lsp:['6','1'],'7':['fp','6','lsp'],'2':['wpd','11','3'],wpd:['2','11','lrow'],'3':['lrow','2','11'],lrow:['3','wpd','2'],'11':['2','wpd','3'],curl:[],drow:['3','lrow','2'],dsp:['6','lsp'],fp:['7','6'],split:['9','0','slp'],sl:['4l','4s','5'],'4s':['4l','8'],'4l':['4s','8'],'5':['abd','8','4s'],abd:['5','add'],add:['abd','5'],lfp:['1','lip','db','10'],lip:['lfp','idb','1'],bb:['db','lfp','1'],ibb:['idb','lip'],db:['lfp','1','bb'],idb:['lip','ibb','1']};
+const SWAP={'0':['slp','9','12','8'],'9':['0','slp','12'],'12':['0','slp','9'],'8':['0','slp'],slp:['0','9','12'],'1':['lfp','10','db','6'],'10':['1','lfp','6'],'6':['lsp','1','7'],lsp:['6','1'],'7':['fp','6','lsp'],'2':['wpd','11','3'],wpd:['2','11','lrow'],'3':['lrow','2','11'],lrow:['3','wpd','2'],'11':['2','wpd','3'],curl:[],'13':['2','wpd','11'],drow:['3','lrow','2'],dsp:['6','lsp'],fp:['7','6'],split:['9','0','slp'],sl:['4l','4s','5'],'4s':['4l','8'],'4l':['4s','8'],'5':['abd','8','4s'],abd:['5','add'],add:['abd','5'],lfp:['1','lip','db','10'],lip:['lfp','idb','1'],bb:['db','lfp','1'],ibb:['idb','lip'],db:['lfp','1','bb'],idb:['lip','ibb','1']};
 const stepOf=id=>kind(id)==='body'?0:kind(id)==='db'?2:5;
 const UNIT=id=>({stack:'핀을 한 칸',plate:'원판을 한 단계',bar:'원판을 한 단계',db:'덤벨을 한 단계'})[kind(id)]||'한 칸';
 const KG_HINT={plate:'원판 기구는 끼운 원판 무게를 매번 같은 방식(예: 한쪽 기준)으로 적으면 돼요.',bar:'바(보통 20kg)와 양쪽 원판을 합친 무게를 적어요.',db:'덤벨 한 개의 무게를 적어요.'};
@@ -805,7 +805,7 @@ install(){
   const inapp=/KAKAOTALK|NAVER|Instagram|FBAN|FBAV|Line\//i.test(ua), samsung=/SamsungBrowser/i.test(ua), crios=/CriOS/i.test(ua);
   const dev=view.dev||(ios?'ios':android?(samsung?'samsung':'android'):'ios');
   const steps={
-    ios:[['아래쪽 공유 버튼 누르기','화면 아래(크롬은 주소창 오른쪽)의 네모에 위 화살표가 있는 공유 버튼을 눌러요.'],['홈 화면에 추가','메뉴를 아래로 내려 <b>홈 화면에 추가</b>를 눌러요.'],['추가 누르기','이름이 "회원루틴프로그램"인지 보고 오른쪽 위 <b>추가</b>를 눌러요.']],
+    ios:[['아래쪽 공유 버튼 누르기','화면 아래(크롬은 주소창 오른쪽)의 네모에 위 화살표가 있는 공유 버튼을 눌러요.'],['홈 화면에 추가','메뉴를 아래로 내려 <b>홈 화면에 추가</b>를 눌러요.'],['추가 누르기','이름이 "'+(ON_CLAUDE?'회원루틴프로그램':'어메이징석계')+'"인지 보고 오른쪽 위 <b>추가</b>를 눌러요.']],
     android:[['오른쪽 위 ⋮ 누르기','크롬 주소창 오른쪽의 점 3개 메뉴를 눌러요.'],['홈 화면에 추가','<b>홈 화면에 추가</b> 또는 <b>앱 설치</b>를 눌러요.'],['추가 누르기','<b>추가</b>를 누르면 홈 화면에 아이콘이 생겨요.']],
     samsung:[['아래 ≡ 메뉴 누르기','삼성 인터넷 화면 아래 오른쪽의 줄 3개 메뉴를 눌러요.'],['페이지 추가','<b>페이지 추가</b> → <b>홈 화면</b>을 눌러요.'],['추가 누르기','<b>추가</b>를 누르면 아이콘이 생겨요.']]
   };
@@ -816,7 +816,7 @@ install(){
   <div class="big-steps">${steps[dev].map(([t,d],i)=>`<div class="bstep"><span class="n">${i+1}</span><div><h3>${t}</h3><p class="small">${d}</p></div></div>`).join('')}</div>
   ${dev==='ios'&&crios?'<p class="note small">아이폰 크롬에서 메뉴가 안 보이면 사파리로 열어서 해주세요.</p>':''}
   ${ON_CLAUDE?`<p class="note small"><b>화면 맨 위 "claude.ai" 띠는요</b>이 프로그램이 Claude로 만들어져서 나오는 기본 안내예요. 로그인하지 않아도 모든 기능을 쓸 수 있어요. <button class="icon-btn" data-go="faq" style="padding:0;min-height:0">자세히</button></p>`:''}
-  <p class="note small"><b>꼭 알아두세요</b>운동 기록은 처음 연 브라우저에 저장돼요. 홈 화면 아이콘으로 열면 같은 곳에 이어서 저장되니, 앞으로는 아이콘으로 열어주세요.</p>
+  <p class="note small"><b>꼭 알아두세요</b>${dev==='ios'&&!ON_CLAUDE?'아이폰은 홈 화면 아이콘으로 열면 사파리와 <b>기록이 따로 저장</b>돼요. 추가한 뒤로는 아이콘으로만 열어주세요. 사파리에 쌓인 기록이 있다면 <b>내 정보 → 백업 내보내기</b> 후, 아이콘으로 연 앱에서 <b>가져오기</b>를 하면 그대로 옮겨져요.':'운동 기록은 처음 연 브라우저에 저장돼요. 홈 화면 아이콘으로 열면 같은 곳에 이어서 저장되니, 앞으로는 아이콘으로 열어주세요.'}</p>
   <button class="btn btn-main" data-act="installed">추가했어요</button>
   <button class="btn-quiet" data-go="home">나중에 할게요</button>
   </div>`;
@@ -1299,7 +1299,7 @@ function importText(txt){{try{
   }catch(e){toast('이 프로그램에서 저장한 기록 파일인지 확인해주세요.')}}
 }
 
-if(/selftest/.test(location.search))window.__t={plan,minutes,suggestion,progress,setData:d=>{data=d},getData:()=>data};
+if(/selftest/.test(location.search))window.__t={plan,minutes,suggestion,progress,setData:d=>{data=d},getData:()=>data,EX,SLUG,SWAP,FOCUS,POSE_KIND,ST,GROUPS,D,go:(n,o={})=>{view={name:n,...o};render()},screens:()=>Object.keys(SCREENS)};
 function fromHash(){if(location.hash==='#posetest'){view={name:'pose',id:'12',from:'guides'};setTimeout(()=>document.querySelector('[data-act="pose-sample"]')?.click(),800);return true}const m=/^#m-([a-z]+)$/.exec(location.hash||'');if(!m)return false;const id=Object.keys(SLUG).find(k=>SLUG[k]===m[1]);if(!id||!EX[id])return false;view={name:'guide',id,from:'guides',qr:true};return true}
 window.addEventListener('hashchange',()=>{if(fromHash()){render();window.scrollTo(0,0)}});
 function boot(h){try{if(h&&h.view){view=h.view;onboard=h.onboard||null;today=h.today||today}}catch(e){}fromHash();render()}
