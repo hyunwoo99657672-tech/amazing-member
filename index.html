@@ -1065,13 +1065,13 @@ function judge(kind,frames,W,H,v,cv){
   if(kind==='legpress'){
     if(minMain!=null){if(minMain<60)res.warn.push(`너무 깊게 내려와요 (무릎 ${Math.round(minMain)}°). 엉덩이가 들리기 전에 멈춰요.`);else if(minMain>115)res.warn.push(`움직이는 범위가 짧아요 (무릎 ${Math.round(minMain)}°). 조금 더 내려와도 돼요.`);else res.good.push(`내려오는 깊이가 좋아요 (무릎 ${Math.round(minMain)}°)`)}
   }
-  if(kind==='squat'||kind==='legpress'||kind==='legext'){
-    if(maxMain>177)res.warn.push('무릎을 끝에서 완전히 잠가요. 살짝 여유를 남겨요.');else if(rp.count)res.good.push('무릎을 끝에서 잠그지 않았어요');
+  if(kind==='legpress'||kind==='legext'){
+    if(maxMain>179)res.warn.push('끝에서 무릎을 쭉 펴서 잠갔어요. 다 펴기 직전에 멈추고 살짝 여유를 남겨요.');else if(rp.count)res.good.push('무릎을 끝에서 잠그지 않았어요');
   }
-  if(kind==='legext'&&rp.count){if(maxMain<150)res.warn.push('무릎을 거의 다 펴지 않아요. 편한 범위에서 조금 더 펴봐요.');else res.good.push('무릎을 충분히 폈어요')}
+  if(kind==='legext'&&rp.count){if(maxMain<150)res.warn.push('무릎을 끝까지 거의 안 폈어요. 편한 범위에서 조금 더 펴봐요.');else res.good.push('무릎을 충분히 폈어요')}
   if(kind==='ohp'||kind==='bench'){
     if(minMain!=null){if(minMain>105)res.warn.push(`내리는 범위가 짧아요 (팔꿈치 ${Math.round(minMain)}°). 어깨가 편한 곳까지 조금 더 내려요.`);else if(minMain<55&&kind==='bench')res.warn.push(`너무 깊게 내려와요 (팔꿈치 ${Math.round(minMain)}°). 어깨 앞쪽이 편한 곳까지만.`);else res.good.push(`내리는 깊이가 좋아요 (팔꿈치 ${Math.round(minMain)}°)`)}
-    if(maxMain>177)res.warn.push('팔꿈치를 끝에서 튕겨 잠가요. 살짝 여유를 남겨요.');else if(rp.count)res.good.push('팔꿈치를 잠그지 않았어요');
+    if(maxMain>177)res.warn.push('끝에서 팔꿈치를 튕기듯 쭉 펴서 잠갔어요. 다 펴기 직전에 멈춰요.');else if(rp.count)res.good.push('팔꿈치를 잠그지 않았어요');
   }
   if(kind==='pull'||kind==='row'||kind==='armpull'){
     const tv=tor.filter(x=>x!=null);if(tv.length){const sw=Math.max(...tv)-Math.min(...tv);if(sw>18)res.warn.push(`몸이 앞뒤로 ${Math.round(sw)}° 흔들려요. 반동 없이 팔과 등으로만 당겨요.`);else res.good.push('몸통이 흔들리지 않았어요')}
@@ -1083,7 +1083,7 @@ function judge(kind,frames,W,H,v,cv){
     if(fr.length>ok.length*.6){
       const diff=fr.map(f=>Math.abs(f.lm[15].y-f.lm[16].y)*H/(Math.abs(f.lm[11].y-f.lm[23].y)*H||1));const md=diff.sort((a,b)=>a-b)[Math.floor(diff.length*.8)];
       if(kind!=='squat'){if(md>.18)res.warn.push('양손 높이가 달라요. 양쪽을 같은 속도로 움직여요.');else res.good.push('양팔이 균형 있게 움직였어요')}
-      if(kind==='squat'){const kv=rp.lows.map(i=>frames[i]).filter(f=>f.lm).map(f=>Math.abs(f.lm[25].x-f.lm[26].x)/(Math.abs(f.lm[27].x-f.lm[28].x)||1));if(kv.length){const m=Math.min(...kv);if(m<.8)res.warn.push('앉을 때 무릎이 안쪽으로 모여요. 무릎을 발끝 방향으로 밀어요.');else res.good.push('무릎이 발끝 방향을 잘 따라갔어요')}}
+      if(kind==='squat'){const kv=rp.lows.map(i=>frames[i]).filter(f=>f.lm).map(f=>Math.abs(f.lm[25].x-f.lm[26].x)/(Math.abs(f.lm[27].x-f.lm[28].x)||1));if(kv.length){const m=Math.min(...kv);if(m<.8)res.warn.push('앉을 때 무릎이 안쪽으로 모였어요. 무릎을 발끝 방향으로 밀어요.');else res.good.push('무릎이 발끝 방향을 잘 따라갔어요')}}
     }
   }
   if(t!=null&&t>.2&&t<6){if(t<.8)res.warn.push(`내려오는 속도가 빨라요 (약 ${t.toFixed(1)}초). 2초 정도로 천천히 내려와요.`);else res.good.push(`내려오는 속도가 좋아요 (약 ${t.toFixed(1)}초)`)}
