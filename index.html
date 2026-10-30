@@ -338,6 +338,7 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 .pain-card .muted{color:#6b5551}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pain-card{background:#3a2220;border-color:#5a312b}:root:not([data-theme="light"]) .pain-l li,:root:not([data-theme="light"]) .ok-l{background:rgba(0,0,0,.25)}:root:not([data-theme="light"]) .pain-l b{color:#ffb4a6}:root:not([data-theme="light"]) .pain-l span{color:#f1dcd8}:root:not([data-theme="light"]) .ok-l{color:#dfe9e1}:root:not([data-theme="light"]) .ok-l b{color:#74c48d}:root:not([data-theme="light"]) .pain-card .muted{color:#d0b5b0}}
 :root[data-theme="dark"] .pain-card{background:#3a2220;border-color:#5a312b}:root[data-theme="dark"] .pain-l li,:root[data-theme="dark"] .ok-l{background:rgba(0,0,0,.25)}:root[data-theme="dark"] .pain-l b{color:#ffb4a6}:root[data-theme="dark"] .pain-l span{color:#f1dcd8}:root[data-theme="dark"] .ok-l{color:#dfe9e1}
+.voice-l{display:grid;gap:6px}.seg-l{display:grid;gap:6px}
 </style>
 </head><body>
 
@@ -919,6 +920,10 @@ settings(){
   <div class="field"><label>주 몇 회</label><div class="choices two">${sel('days',{2:'주 2회',3:'주 3회'})}</div></div>
   <div class="field"><label>영상 모델</label><div class="choices two">${sel('sex',{male:'남성',female:'여성'})}</div></div>
   <div class="field"><label>통증·부상</label><div class="choices two">${sel('care',{false:'없어요',true:'있어요'})}</div></div>
+  ${'speechSynthesis' in window?`<div class="card stack"><b>음성 안내 목소리</b><p class="small muted">휴대폰에 들어 있는 한국어 목소리 중에서 골라요. 휴대폰마다 고를 수 있는 목소리가 달라요.</p>${(()=>{const vs=koVoices();return vs.length?`<div class="voice-l">${vs.map(v=>`<button class="lock-i" data-act="voice-pick" data-v="${esc(v.voiceURI)}" aria-pressed="${data.voiceName===v.voiceURI}"><span class="bx" aria-hidden="true"></span>${esc(v.name.replace(/Microsoft |Google |Samsung |\(.*?\)/g,'').trim()||v.name)}</button>`).join('')}</div>`:'<p class="small">이 휴대폰에서 고를 수 있는 한국어 목소리를 찾고 있어요. 잠시 뒤 다시 열어 주세요.</p>'})()}
+    <div class="seg-l"><span class="small"><b>말 빠르기</b></span><div class="filters">${[[.8,'느리게'],[1,'보통'],[1.2,'빠르게']].map(([r,l])=>`<button data-act="voice-rate" data-r="${r}" aria-pressed="${(data.voiceRate||1)===r}">${l}</button>`).join('')}</div></div>
+    <div class="seg-l"><span class="small"><b>목소리 높이</b></span><div class="filters">${[[.85,'낮게'],[1,'보통'],[1.15,'높게']].map(([r,l])=>`<button data-act="voice-pitch" data-r="${r}" aria-pressed="${(data.voicePitch||1)===r}">${l}</button>`).join('')}</div></div>
+    <button class="btn btn-soft" data-act="voice-test">🔊 미리 들어보기</button></div>`:''}
   <div class="card stack"><b>쉬는 시간 끝 알림</b><p class="small muted">쉬는 시간이 끝나면 "삐" 소리와 진동으로 알려드려요. 안 들리면 무음 모드와 소리 크기를 확인해 주세요.</p><button class="btn btn-soft" data-act="beep-test">🔔 알림음 들어보기</button></div>
   <button class="btn btn-main" data-act="save-settings">저장하기</button>
   <details class="more"><summary>처음부터 다시 시작</summary><div class="in"><p class="small">이름·목적·모든 운동 기록이 이 휴대폰에서 지워져요.</p><button class="btn btn-danger" data-act="reset">모두 지우기</button></div></details>
@@ -1153,9 +1158,12 @@ function startRest(){
 }
 let actx=null;
 function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;g.gain.value=.12;o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+.35)}catch(e){}}
-function say(t){if(!data.voice)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';u.rate=.95;speechSynthesis.speak(u)}catch(e){}}
+function koVoices(){try{return speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang))}catch(e){return []}}
+function mkUtt(t,base){const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';const vs=koVoices();const pick=vs.find(v=>v.voiceURI===data.voiceName)||null;if(pick)u.voice=pick;u.rate=base*(data.voiceRate||1);u.pitch=data.voicePitch||1;return u}
+try{speechSynthesis&&speechSynthesis.addEventListener&&speechSynthesis.addEventListener('voiceschanged',()=>{if(view.name==='settings')render()})}catch(e){}
+function say(t){if(!data.voice)return;try{speechSynthesis.cancel();speechSynthesis.speak(mkUtt(t,.95))}catch(e){}}
 function sayExercise(){const s=data.active;if(!s||s.phase!=='ex')return;const e=s.queue[s.index],x=EX[e.id];say(e.done.length?`${e.done.length+1}세트 시작해요. ${e.repMin}에서 ${e.repMax}회.`:`${s.index+1}번째 기구, ${x.name}. ${e.target}세트, 한 세트에 ${e.repMin}에서 ${e.repMax}회예요. ${x.quick[0]}`)}
-function speak(id){const x=EX[id];try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`${x.name}. ${x.quick.join(' ')} ${x.motion.map(m=>m[1]).join(' ')}`);u.lang='ko-KR';u.rate=.9;speechSynthesis.speak(u)}catch(e){toast('이 기기에서는 음성 안내를 쓸 수 없어요.')}}
+function speak(id){const x=EX[id];try{speechSynthesis.cancel();speechSynthesis.speak(mkUtt(`${x.name}. ${x.quick.join(' ')} ${x.motion.map(m=>m[1]).join(' ')}`,.9))}catch(e){toast('이 기기에서는 음성 안내를 쓸 수 없어요.')}}
 function playBox(box,src,poster){
   if(!box)return;const err=box.nextElementSibling;
   box.classList.add('has-img');
@@ -1263,6 +1271,10 @@ document.addEventListener('click',async ev=>{
     case 'cheer':{const v=$('#cheer-v');if(v){v.muted=false;v.currentTime=0;v.play().catch(()=>{});b.hidden=true}return}
     case 'beep-test':{try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}beep();try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}toast('삐! 이 소리로 알려드려요. 안 들리면 무음 모드를 확인해 주세요.');return}
     case 'lock':{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));const c=b.closest('.lock-card');if(c&&[...c.querySelectorAll('.lock-i')].every(x=>x.getAttribute('aria-pressed')==='true'))toast('준비 끝! 안전하게 시작해요.');return}
+    case 'voice-pick':{data.voiceName=d.v;save();render();try{speechSynthesis.cancel();speechSynthesis.speak(mkUtt('안녕하세요. 오늘도 같이 운동해요.',.95))}catch(e){}return}
+    case 'voice-rate':{data.voiceRate=+d.r;save();render();return}
+    case 'voice-pitch':{data.voicePitch=+d.r;save();render();return}
+    case 'voice-test':{try{speechSynthesis.cancel();speechSynthesis.speak(mkUtt('1번째 기구, 파워 레그프레스. 3세트, 한 세트에 10에서 12회예요. 발바닥 전체로 밀어요.',.95))}catch(e){toast('이 기기에서는 음성 안내를 쓸 수 없어요.')}return}
     case 'inapp-hide': inappHidden=true; return render();
     case 'pose-sample':{const x=EX[view.id];const src=x.video||x.ai[0];toast('예시 영상을 불러오고 있어요…');try{const r=await fetch(src);const bl=await r.blob();runPose(new File([bl],'sample.mp4',{type:'video/mp4'}))}catch(e){toast('예시 영상을 불러오지 못했어요.')}return}
     case 'card-save': return saveCard();
