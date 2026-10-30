@@ -324,6 +324,7 @@ textarea.copy{width:100%;min-height:120px;font:13px/1.4 ui-monospace,monospace;b
 @media (max-width:360px){.brand small{display:none}.back{padding:8px 12px;white-space:nowrap}.plan-item{gap:8px}.how{padding:6px 10px;font-size:13px}.set-box{padding:14px}.stepper button{width:38px;height:38px}h1{font-size:30px}.hero-btn{font-size:23px}.grid{gap:10px}.plan-item{grid-template-columns:52px 1fr auto}.thumb{width:52px;height:52px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .vary-l{list-style:none;margin:0;padding:0;display:grid;gap:10px}.vary-l li{display:grid;gap:2px;padding:10px 12px;border-radius:12px;background:var(--soft,rgba(127,127,127,.08))}.vary-l b{font-size:.95rem}.vary-l span{font-size:.9rem;opacity:.85}
+.move-card{display:grid;gap:10px;padding:18px;border-radius:20px;background:linear-gradient(135deg,#f8e08c,#d6a848 55%,#a8741e);color:#17120a}.move-card b{font-size:1.1rem}.move-card p{margin:0}.move-card .muted{color:#3a2c12}.move-card .btn-main{background:#17120a;color:#f8e08c;text-decoration:none;text-align:center}.move-card .btn-soft{background:rgba(255,255,255,.55);color:#17120a}
 </style>
 </head><body>
 
@@ -556,6 +557,7 @@ home(){
   const greet=p?`${esc(p.name)} 회원님,<br>오늘도 같이 해요.`:'PT 없이도<br>충분히 할 수 있어요.';
   return top()+`<div class="stack-lg">
   ${inappBanner()}
+  ${moveBanner()}
   <div class="hello"><p class="kicker">${p?(n?`지금까지 ${n}번 운동했어요`:'첫 운동을 기다리고 있어요'):'처음 오셨나요?'}</p><h1>${greet}</h1></div>
   ${s&&Date.now()-s.started>8*3600000?`<div class="note"><b>${fmtDay(new Date(s.started).toISOString())}에 하던 운동이 남아 있어요</b>이어서 하거나, 한 만큼 저장하고 오늘 운동을 새로 시작할 수 있어요.<div class="duo" style="margin-top:10px"><button class="btn btn-soft" data-act="resume">이어하기</button><button class="btn btn-soft" data-act="abandon">저장하고 새로</button></div></div>`:''}
   <button class="btn btn-main hero-btn" data-act="${s?'resume':'start'}">${s?'하던 운동 이어하기':'오늘 운동 시작'}<small>${s?'멈춘 곳부터 다시 안내해요':p?'오늘 할 운동을 바로 짜드려요':'1분이면 내 운동이 나와요'}</small><span class="arrow" aria-hidden="true">→</span></button>
@@ -905,6 +907,8 @@ const ON_CLAUDE=!/(^|\.)github\.io$/.test(location.hostname);
 const INAPP=/KAKAOTALK|NAVER\(inapp|NAVER|Instagram|FBAN|FBAV|Line\/|DaumApps/i.test(navigator.userAgent||'');
 const APPNAME=/KAKAOTALK/i.test(navigator.userAgent||'')?'카카오톡':/NAVER/i.test(navigator.userAgent||'')?'네이버 앱':'다른 앱';
 let inappHidden=false;
+const NEW_URL='https://hyunwoo99657672-tech.github.io/amazing-member/';
+function moveBanner(){if(!ON_CLAUDE)return '';return `<div class="move-card"><b>🏠 새 주소로 이사했어요</b><p>이제 새 주소에서 더 빠르고 앱처럼 쓸 수 있어요. 홈 화면에 <b>금색 아이콘</b>으로 추가돼요.</p><a class="btn btn-main" href="${NEW_URL}" target="_blank" rel="noopener">새 주소로 가기 →</a><div class="duo"><button class="btn btn-soft" data-act="copy-new">주소 복사</button><button class="btn btn-soft" data-act="move-help">기록 옮기는 법</button></div><p class="small muted">여기서 쌓은 기록은 새 주소로 자동으로 넘어가지 않아요. <b>기록 옮기는 법</b>을 눌러 파일로 저장한 뒤, 새 주소의 <b>내 기록 → 기록 옮기기 → 저장한 파일 가져오기</b>를 눌러요.</p></div>`}
 function inappBanner(){if(!INAPP||inappHidden)return '';return `<div class="note warn small"><b>지금 ${APPNAME} 안에서 열었어요</b>여기서 쓴 기록은 크롬·사파리와 따로 저장돼요. 화면 구석 <strong>⋮</strong> 또는 <strong>⋯</strong> 메뉴에서 <strong>다른 브라우저로 열기</strong>를 눌러 계속 같은 곳에서 써주세요.<div class="duo" style="margin-top:10px"><button class="btn btn-soft" data-go="install" style="min-height:48px;font-size:16px">방법 보기</button><button class="btn btn-soft" data-act="inapp-hide" style="min-height:48px;font-size:16px">그냥 쓸게요</button></div></div>`}
 function challengeCard(){const g=monthGoal(),c=monthCount(),m=new Date().getMonth()+1,done=c>=g;const left=new Date(new Date().getFullYear(),m,0).getDate()-new Date().getDate();
   return `<button class="chal" data-go="records" data-tab="badges"><div class="chal-h"><b>🎯 ${m}월 챌린지 · ${g}번 오기</b><span class="tnum">${c}/${g}</span></div><div class="bar"><i style="width:${Math.min(100,c/g*100)}%"></i></div><span class="small muted">${done?'달성 완료! 이번 달 배지를 받았어요 🎉':`앞으로 ${g-c}번 · 이번 달 ${left}일 남았어요`} · 배지 ${earned().length}/${BADGES.length}</span></button>`}
@@ -1224,6 +1228,8 @@ document.addEventListener('click',async ev=>{
     case 'save-settings':{const p=data.profile;const n=$('#set-name').value.trim();if(n)p.name=n.slice(0,12);Object.assign(p,draft);if(p.goals)p.goal=p.goals[0];draft={};save();toast('저장했어요.');return go('home')}
     case 'reset': try{localStorage.removeItem(KEY)}catch(e){} data={logs:[],equip:{}}; toast('모두 지웠어요.'); return go('home');
     case 'export': return exportLogs();
+    case 'copy-new':{try{await navigator.clipboard.writeText(NEW_URL);toast('새 주소를 복사했어요. 카톡 나와의 채팅에 붙여넣어 보관하세요.')}catch(e){toast(NEW_URL)}return}
+    case 'move-help':{view={name:'records'};render();setTimeout(()=>{const d=document.getElementById('backup');if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})}},50);return}
     case 'inapp-hide': inappHidden=true; return render();
     case 'pose-sample':{const x=EX[view.id];const src=x.video||x.ai[0];toast('예시 영상을 불러오고 있어요…');try{const r=await fetch(src);const bl=await r.blob();runPose(new File([bl],'sample.mp4',{type:'video/mp4'}))}catch(e){toast('예시 영상을 불러오지 못했어요.')}return}
     case 'card-save': return saveCard();
