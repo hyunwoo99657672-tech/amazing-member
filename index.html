@@ -325,6 +325,7 @@ textarea.copy{width:100%;min-height:120px;font:13px/1.4 ui-monospace,monospace;b
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .vary-l{list-style:none;margin:0;padding:0;display:grid;gap:10px}.vary-l li{display:grid;gap:2px;padding:10px 12px;border-radius:12px;background:var(--soft,rgba(127,127,127,.08))}.vary-l b{font-size:.95rem}.vary-l span{font-size:.9rem;opacity:.85}
 .move-card{display:grid;gap:10px;padding:18px;border-radius:20px;background:linear-gradient(135deg,#f8e08c,#d6a848 55%,#a8741e);color:#17120a}.move-card b{font-size:1.1rem}.move-card p{margin:0}.move-card .muted{color:#3a2c12}.move-card .btn-main{background:#17120a;color:#f8e08c;text-decoration:none;text-align:center}.move-card .btn-soft{background:rgba(255,255,255,.55);color:#17120a}
+.cheer{position:relative;display:grid;justify-items:center;gap:8px}.cheer video{width:min(100%,300px);aspect-ratio:9/16;max-height:52vh;object-fit:cover;border-radius:22px;background:#211d19;box-shadow:0 10px 30px rgba(0,0,0,.18)}.cheer-btn{position:absolute;top:calc(50% - 40px);padding:12px 18px;border-radius:999px;border:0;background:rgba(0,0,0,.65);color:#fff;font-weight:800;font-size:16px;min-height:44px}.cheer-cap{margin:0;font-size:.9rem;color:var(--muted)}
 </style>
 </head><body>
 
@@ -537,8 +538,12 @@ function render(){
   r.innerHTML=fn();
   if(view.name==='workout'&&data.active?.phase==='rest') startRest();
   if(view.name==='stretch') startStretch();
+  if(view.name==='done') startCheer();
   
 }
+function startCheer(){const v=$('#cheer-v'),b=$('#cheer-b');if(!v)return;v.volume=.9;v.muted=false;
+  const p=v.play();if(p&&p.catch)p.catch(()=>{v.muted=true;v.play().catch(()=>{});if(b){b.hidden=false}});
+  v.onended=()=>{if(b){b.hidden=false;b.textContent='↻ 응원 다시 보기'}};}
 let stState=null;
 function startStretch(){
   const vid=$('#st-vid');if(!vid)return;const v=ST[view.i||0];const loops=v.both?2:1;let loop=0,last=0,doneT=null;stState={paused:false};
@@ -680,6 +685,7 @@ done(){
   const lines=['혼자서도 충분히 해내고 있어요.','PT 없이도 이만큼 했어요. 다음에도 화면만 따라오세요.','꾸준함이 제일 큰 실력이에요.'];
   return top()+`<div class="stack-lg">
   <div class="done-hero"><div class="medal tnum" aria-hidden="true">${n}</div><p class="step-label">${n}번째 운동 완료${l.focus&&FOCUS[l.focus]?` · ${FOCUS[l.focus].ic} ${FOCUS[l.focus].t}`:''}</p><h1>오늘도 해냈어요!</h1><p class="muted">${lines[n%lines.length]}</p></div>
+  <div class="cheer"><video id="cheer-v" src="assets/4d8eebefd964503a3bb17054.mp4" poster="assets/4d8eebefd964503a3bb17054.poster.jpg" playsinline preload="auto" aria-label="석계점 매니저의 축하 영상"></video><button class="cheer-btn" id="cheer-b" data-act="cheer" hidden>🔊 소리 켜고 보기</button><p class="cheer-cap">석계점 매니저가 보내는 응원이에요 👏</p></div>
   ${view.newBadges?.length?`<div class="newbadge"><p class="step-label">새 배지를 받았어요!</p><div class="badges">${view.newBadges.map(id=>{const b=BADGES.find(x=>x.id===id);return `<div class="badge on pop"><span class="bi">${b.ic}</span><b>${b.t}</b><span>${b.d}</span></div>`}).join('')}</div></div>`:''}
   ${challengeCard()}
   <div class="plan-meta"><div><b class="tnum">${sets}세트</b><span>기구 운동</span></div><div><b class="tnum">${l.items.filter(i=>!i.cardio).length}개</b><span>기구</span></div><div><b class="tnum">${l.minutes}분</b><span>운동 시간</span></div></div>
@@ -1230,6 +1236,7 @@ document.addEventListener('click',async ev=>{
     case 'export': return exportLogs();
     case 'copy-new':{try{await navigator.clipboard.writeText(NEW_URL);toast('새 주소를 복사했어요. 카톡 나와의 채팅에 붙여넣어 보관하세요.')}catch(e){toast(NEW_URL)}return}
     case 'move-help':{view={name:'records'};render();setTimeout(()=>{const d=document.getElementById('backup');if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})}},50);return}
+    case 'cheer':{const v=$('#cheer-v');if(v){v.muted=false;v.currentTime=0;v.play().catch(()=>{});b.hidden=true}return}
     case 'inapp-hide': inappHidden=true; return render();
     case 'pose-sample':{const x=EX[view.id];const src=x.video||x.ai[0];toast('예시 영상을 불러오고 있어요…');try{const r=await fetch(src);const bl=await r.blob();runPose(new File([bl],'sample.mp4',{type:'video/mp4'}))}catch(e){toast('예시 영상을 불러오지 못했어요.')}return}
     case 'card-save': return saveCard();
