@@ -920,7 +920,7 @@ settings(){
   <div class="field"><label>주 몇 회</label><div class="choices two">${sel('days',{2:'주 2회',3:'주 3회'})}</div></div>
   <div class="field"><label>영상 모델</label><div class="choices two">${sel('sex',{male:'남성',female:'여성'})}</div></div>
   <div class="field"><label>통증·부상</label><div class="choices two">${sel('care',{false:'없어요',true:'있어요'})}</div></div>
-  <div class="card stack"><b>앱 열 때 응원 인사</b><p class="small muted">하루 한 번, 앱을 열고 처음 화면을 누르면 "회원님, 오늘도 화이팅입니다!" 인사가 나와요.</p><div class="filters"><button data-act="hello-set" data-on="1" aria-pressed="${data.hello!==false}">켜기</button><button data-act="hello-set" data-on="0" aria-pressed="${data.hello===false}">끄기</button><button data-act="hello-test">🔊 들어보기</button></div></div>
+  <div class="card stack"><b>앱 열 때 응원 인사</b><p class="small muted">하루 한 번, 앱을 열고 처음 화면을 누르면 "회원님, 오늘도 득근입니다. 득근득근." 인사가 나와요.</p><div class="filters"><button data-act="hello-set" data-on="1" aria-pressed="${data.hello!==false}">켜기</button><button data-act="hello-set" data-on="0" aria-pressed="${data.hello===false}">끄기</button><button data-act="hello-test">🔊 들어보기</button></div></div>
   ${'speechSynthesis' in window?`<div class="card stack"><b>음성 안내 목소리</b><p class="small muted">휴대폰에 들어 있는 한국어 목소리 중에서 골라요. 휴대폰마다 고를 수 있는 목소리가 달라요.</p>${(()=>{const vs=koVoices();return vs.length?`<div class="voice-l">${vs.map(v=>`<button class="lock-i" data-act="voice-pick" data-v="${esc(v.voiceURI)}" aria-pressed="${data.voiceName===v.voiceURI}"><span class="bx" aria-hidden="true"></span>${esc(v.name.replace(/Microsoft |Google |Samsung |\(.*?\)/g,'').trim()||v.name)}</button>`).join('')}</div>`:'<p class="small">이 휴대폰에서 고를 수 있는 한국어 목소리를 찾고 있어요. 잠시 뒤 다시 열어 주세요.</p>'})()}
     <div class="seg-l"><span class="small"><b>말 빠르기</b></span><div class="filters">${[[.8,'느리게'],[1,'보통'],[1.2,'빠르게']].map(([r,l])=>`<button data-act="voice-rate" data-r="${r}" aria-pressed="${(data.voiceRate||1)===r}">${l}</button>`).join('')}</div></div>
     <div class="seg-l"><span class="small"><b>목소리 높이</b></span><div class="filters">${[[.85,'낮게'],[1,'보통'],[1.15,'높게']].map(([r,l])=>`<button data-act="voice-pitch" data-r="${r}" aria-pressed="${(data.voicePitch||1)===r}">${l}</button>`).join('')}</div></div>
@@ -1359,7 +1359,7 @@ function importText(txt){{try{
 if(/selftest/.test(location.search))window.__t={plan,minutes,suggestion,progress,setData:d=>{data=d},getData:()=>data,EX,SLUG,SWAP,FOCUS,POSE_KIND,ST,GROUPS,D,go:(n,o={})=>{view={name:n,...o};render()},screens:()=>Object.keys(SCREENS)};
 function fromHash(){if(location.hash==='#posetest'){view={name:'pose',id:'12',from:'guides'};setTimeout(()=>document.querySelector('[data-act="pose-sample"]')?.click(),800);return true}const m=/^#m-([a-z]+)$/.exec(location.hash||'');if(!m)return false;const id=Object.keys(SLUG).find(k=>SLUG[k]===m[1]);if(!id||!EX[id])return false;view={name:'guide',id,from:'guides',qr:true};return true}
 window.addEventListener('hashchange',()=>{if(fromHash()){render();window.scrollTo(0,0)}});
-function helloText(){const n=data.profile?.name;return `${n?n+' ':''}회원님, 오늘도 화이팅입니다!`}
+function helloText(){const n=data.profile?.name;return `${n?n+' ':''}회원님, 오늘도 득근입니다. 득근득근.`}
 function playHello(force){if(!force&&(data.hello===false||!data.profile))return;const t=new Date().toLocaleDateString('en-CA');if(!force&&data.lastHello===t)return;
   const f=(D.voice||{}).hello;let ok=false;try{if(f){const a=new Audio(f);a.play().catch(()=>{});ok=true}}catch(e){}
   if(!ok){try{speechSynthesis.cancel();speechSynthesis.speak(mkUtt(helloText(),.95));ok=true}catch(e){}}
