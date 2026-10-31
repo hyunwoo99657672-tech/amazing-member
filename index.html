@@ -920,6 +920,7 @@ settings(){
   <div class="field"><label>주 몇 회</label><div class="choices two">${sel('days',{2:'주 2회',3:'주 3회'})}</div></div>
   <div class="field"><label>영상 모델</label><div class="choices two">${sel('sex',{male:'남성',female:'여성'})}</div></div>
   <div class="field"><label>통증·부상</label><div class="choices two">${sel('care',{false:'없어요',true:'있어요'})}</div></div>
+  <div class="card stack"><b>앱 열 때 응원 인사</b><p class="small muted">하루 한 번, 앱을 열고 처음 화면을 누르면 "회원님, 오늘도 화이팅입니다!" 인사가 나와요.</p><div class="filters"><button data-act="hello-set" data-on="1" aria-pressed="${data.hello!==false}">켜기</button><button data-act="hello-set" data-on="0" aria-pressed="${data.hello===false}">끄기</button><button data-act="hello-test">🔊 들어보기</button></div></div>
   ${'speechSynthesis' in window?`<div class="card stack"><b>음성 안내 목소리</b><p class="small muted">휴대폰에 들어 있는 한국어 목소리 중에서 골라요. 휴대폰마다 고를 수 있는 목소리가 달라요.</p>${(()=>{const vs=koVoices();return vs.length?`<div class="voice-l">${vs.map(v=>`<button class="lock-i" data-act="voice-pick" data-v="${esc(v.voiceURI)}" aria-pressed="${data.voiceName===v.voiceURI}"><span class="bx" aria-hidden="true"></span>${esc(v.name.replace(/Microsoft |Google |Samsung |\(.*?\)/g,'').trim()||v.name)}</button>`).join('')}</div>`:'<p class="small">이 휴대폰에서 고를 수 있는 한국어 목소리를 찾고 있어요. 잠시 뒤 다시 열어 주세요.</p>'})()}
     <div class="seg-l"><span class="small"><b>말 빠르기</b></span><div class="filters">${[[.8,'느리게'],[1,'보통'],[1.2,'빠르게']].map(([r,l])=>`<button data-act="voice-rate" data-r="${r}" aria-pressed="${(data.voiceRate||1)===r}">${l}</button>`).join('')}</div></div>
     <div class="seg-l"><span class="small"><b>목소리 높이</b></span><div class="filters">${[[.85,'낮게'],[1,'보통'],[1.15,'높게']].map(([r,l])=>`<button data-act="voice-pitch" data-r="${r}" aria-pressed="${(data.voicePitch||1)===r}">${l}</button>`).join('')}</div></div>
@@ -1153,7 +1154,7 @@ function startRest(){
   if(!s.restEnd) s.restEnd=Date.now()+e.rest*1000;
   const total=Math.max(1,(s.restEnd-(s.restStart||Date.now()))/1000);
   if(!s.restStart){s.restStart=Date.now();save()}
-  const tick=()=>{const left=Math.max(0,Math.round((s.restEnd-Date.now())/1000));const t=$('#rest-t'),fg=$('#ringfg');if(!t){clearInterval(restTimer);return}t.textContent=left>=60?`${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`:left;const full=(s.restEnd-s.restStart)/1000;fg.style.strokeDashoffset=String(326.7*(1-left/full));if(left===10&&!(s.said&1)){s.said|=1;say('10초 남았어요.')}if(left<=0&&!(s.said&2)){s.said|=2;const e2=s.queue[s.index];say(`쉬는 시간 끝. ${e2.done.length+1}세트 준비해요.`)}if(left<=0){clearInterval(restTimer);t.textContent='GO';try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}beep()}};
+  const tick=()=>{const left=Math.max(0,Math.round((s.restEnd-Date.now())/1000));const t=$('#rest-t'),fg=$('#ringfg');if(!t){clearInterval(restTimer);return}t.textContent=left>=60?`${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`:left;const full=(s.restEnd-s.restStart)/1000;fg.style.strokeDashoffset=String(326.7*(1-left/full));if(left===10&&!(s.said&1)){s.said|=1;say('10초 남았어요.','rest10')}if(left<=0&&!(s.said&2)){s.said|=2;const e2=s.queue[s.index];say(`쉬는 시간 끝. ${e2.done.length+1}세트 준비해요.`,'restend')}if(left<=0){clearInterval(restTimer);t.textContent='GO';try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}beep()}};
   clearInterval(restTimer);tick();restTimer=setInterval(tick,500);
 }
 let actx=null;
@@ -1161,8 +1162,11 @@ function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioConte
 function koVoices(){try{return speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang))}catch(e){return []}}
 function mkUtt(t,base){const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';const vs=koVoices();const pick=vs.find(v=>v.voiceURI===data.voiceName)||null;if(pick)u.voice=pick;u.rate=base*(data.voiceRate||1);u.pitch=data.voicePitch||1;return u}
 try{speechSynthesis&&speechSynthesis.addEventListener&&speechSynthesis.addEventListener('voiceschanged',()=>{if(view.name==='settings')render()})}catch(e){}
-function say(t){if(!data.voice)return;try{speechSynthesis.cancel();speechSynthesis.speak(mkUtt(t,.95))}catch(e){}}
-function sayExercise(){const s=data.active;if(!s||s.phase!=='ex')return;const e=s.queue[s.index],x=EX[e.id];say(e.done.length?`${e.done.length+1}세트 시작해요. ${e.repMin}에서 ${e.repMax}회.`:`${s.index+1}번째 기구, ${x.name}. ${e.target}세트, 한 세트에 ${e.repMin}에서 ${e.repMax}회예요. ${x.quick[0]}`)}
+let vo=null;
+function say(t,key){if(!data.voice)return;const f=key&&(D.voice||{})[key];try{speechSynthesis.cancel()}catch(e){}if(vo){try{vo.pause()}catch(e){}vo=null}
+  if(f){try{vo=new Audio(f);vo.play().catch(()=>{try{speechSynthesis.speak(mkUtt(t,.95))}catch(e){}});return}catch(e){}}
+  try{speechSynthesis.speak(mkUtt(t,.95))}catch(e){}}
+function sayExercise(){const s=data.active;if(!s||s.phase!=='ex')return;const e=s.queue[s.index],x=EX[e.id];e.done.length?say(`${e.done.length+1}세트 시작해요. ${e.repMin}에서 ${e.repMax}회.`,'nextset'):say(`${s.index+1}번째 기구, ${x.name}. ${e.target}세트, 한 세트에 ${e.repMin}에서 ${e.repMax}회예요. ${x.quick[0]}`,'m_'+e.id)}
 function speak(id){const x=EX[id];try{speechSynthesis.cancel();speechSynthesis.speak(mkUtt(`${x.name}. ${x.quick.join(' ')} ${x.motion.map(m=>m[1]).join(' ')}`,.9))}catch(e){toast('이 기기에서는 음성 안내를 쓸 수 없어요.')}}
 function playBox(box,src,poster){
   if(!box)return;const err=box.nextElementSibling;
@@ -1174,7 +1178,7 @@ function playBox(box,src,poster){
 
 /* ---------- workout actions ---------- */
 function beginWorkout(){data.active=plan(today.time,today.condition,today.focus);save();keepAwake(true);go('workout')}
-function nextExercise(){const s=data.active;s.index++;s.restEnd=null;s.restStart=null;view.kg=null;view.reps=null;if(s.index>=s.queue.length){s.phase='walk';say(`기구 운동 끝! 마무리로 ${s.walk}분만 걸어요.`)}else{s.phase='ex'}save();go('workout');if(s.phase==='ex')sayExercise()}
+function nextExercise(){const s=data.active;s.index++;s.restEnd=null;s.restStart=null;view.kg=null;view.reps=null;if(s.index>=s.queue.length){s.phase='walk';say(`기구 운동 끝! 마무리로 ${s.walk}분만 걸어요.`,'walk')}else{s.phase='ex'}save();go('workout');if(s.phase==='ex')sayExercise()}
 function finishWorkout(withWalk){
   const s=data.active;
   const items=[];
@@ -1184,7 +1188,7 @@ function finishWorkout(withWalk){
   const minutes=Math.min(Math.max(1,Math.round((Date.now()-s.started)/60000)),s.time+60);
   const log={date:new Date().toISOString(),goal:s.goal,focus:s.focus||null,minutes,items};
   data.active=null;
-  if(items.some(i=>!i.cardio)){const before=new Set(earned());data.logs.push(log);const nb=earned().filter(id=>!before.has(id));save();keepAwake(false);say('오늘 운동 끝! 정말 수고하셨어요.');go('done',{log,newBadges:nb})}
+  if(items.some(i=>!i.cardio)){const before=new Set(earned());data.logs.push(log);const nb=earned().filter(id=>!before.has(id));save();keepAwake(false);say('오늘 운동 끝! 정말 수고하셨어요.','finish');go('done',{log,newBadges:nb})}
   else{save();keepAwake(false);toast('다음에 다시 시작해요. 괜찮아요!');go('home')}
 }
 
@@ -1238,7 +1242,7 @@ document.addEventListener('click',async ev=>{
     case 'begin': return beginWorkout();
     case 'warm-done': return nextExercise();
     case 'set-done':{try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}const e=s.queue[s.index];const r=readInputs();e.done.push(r);view.kg=r.kg;view.reps=null;s.restEnd=null;s.restStart=null;
-      if(e.done.length>=e.target){s.phase='effort';say(`${EX[e.id].name} 끝! 어땠는지 골라주세요.`)}else{s.phase='rest';s.said=0;say(`잘했어요. ${e.rest}초 쉬어요.`)}save();return go('workout',{kg:r.kg})}
+      if(e.done.length>=e.target){s.phase='effort';say(`${EX[e.id].name} 끝! 어땠는지 골라주세요.`,'exdone')}else{s.phase='rest';s.said=0;say(`잘했어요. ${e.rest}초 쉬어요.`,'rest')}save();return go('workout',{kg:r.kg})}
     case 'rest-end': s.phase='ex';s.restEnd=null;s.restStart=null;save();go('workout',{kg:view.kg});return sayExercise();
     case 'form-down':{const e=s.queue[s.index],lastkg=e.done[e.done.length-1].kg,nk=Math.max(0,lastkg-stepOf(e.id));e.formDrop=true;view.kg=nk;save();toast(`좋은 판단이에요! 다음 세트는 ${nk}kg으로 해요.`);b.remove();return}
     case 'rest-add': s.restEnd=Math.max(s.restEnd,Date.now())+30000;save();return;
@@ -1259,7 +1263,7 @@ document.addEventListener('click',async ev=>{
     case 'memo':{const e=s.queue[s.index];const cur=data.equip[e.id]||'';const box=$('#setbox');if($('#memo-box'))return;box.insertAdjacentHTML('beforebegin',`<div class="card stack" id="memo-box"><label for="memo-in"><b>${esc(EX[e.id].name)} 내 설정 메모</b></label><input id="memo-in" class="text-in" maxlength="40" placeholder="예: 의자 4번, 등받이 2칸" value="${esc(cur)}"><button class="btn btn-soft" data-act="memo-save">메모 저장</button></div>`);$('#memo-in').focus();return}
     case 'memo-save':{const e=s.queue[s.index];data.equip[e.id]=$('#memo-in').value.trim();save();toast('다음에도 보여드릴게요.');return go('workout',{kg:view.kg})}
     case 'pain': stopMedia(); return showPain();
-    case 'voice': data.voice=!data.voice; save(); if(data.voice){say('음성 안내를 켰어요. 세트와 쉬는 시간을 소리로 알려드릴게요.')}else{try{speechSynthesis.cancel()}catch(e){}} toast(data.voice?'음성 안내를 켰어요.':'음성 안내를 껐어요.'); return go('workout',{kg:view.kg});
+    case 'voice': data.voice=!data.voice; save(); if(data.voice){say('음성 안내를 켰어요. 세트와 쉬는 시간을 소리로 알려드릴게요.','on')}else{try{speechSynthesis.cancel()}catch(e){}} toast(data.voice?'음성 안내를 켰어요.':'음성 안내를 껐어요.'); return go('workout',{kg:view.kg});
     case 'quit': return finishWorkout(false);
     case 'finish': return finishWorkout(true);
     case 'finish-skip': return finishWorkout(false);
@@ -1275,6 +1279,8 @@ document.addEventListener('click',async ev=>{
     case 'voice-rate':{data.voiceRate=+d.r;save();render();return}
     case 'voice-pitch':{data.voicePitch=+d.r;save();render();return}
     case 'voice-test':{try{speechSynthesis.cancel();speechSynthesis.speak(mkUtt('1번째 기구, 파워 레그프레스. 3세트, 한 세트에 10에서 12회예요. 발바닥 전체로 밀어요.',.95))}catch(e){toast('이 기기에서는 음성 안내를 쓸 수 없어요.')}return}
+    case 'hello-set':{data.hello=d.on==='1';save();render();return}
+    case 'hello-test':{playHello(true);return}
     case 'inapp-hide': inappHidden=true; return render();
     case 'pose-sample':{const x=EX[view.id];const src=x.video||x.ai[0];toast('예시 영상을 불러오고 있어요…');try{const r=await fetch(src);const bl=await r.blob();runPose(new File([bl],'sample.mp4',{type:'video/mp4'}))}catch(e){toast('예시 영상을 불러오지 못했어요.')}return}
     case 'card-save': return saveCard();
@@ -1353,7 +1359,13 @@ function importText(txt){{try{
 if(/selftest/.test(location.search))window.__t={plan,minutes,suggestion,progress,setData:d=>{data=d},getData:()=>data,EX,SLUG,SWAP,FOCUS,POSE_KIND,ST,GROUPS,D,go:(n,o={})=>{view={name:n,...o};render()},screens:()=>Object.keys(SCREENS)};
 function fromHash(){if(location.hash==='#posetest'){view={name:'pose',id:'12',from:'guides'};setTimeout(()=>document.querySelector('[data-act="pose-sample"]')?.click(),800);return true}const m=/^#m-([a-z]+)$/.exec(location.hash||'');if(!m)return false;const id=Object.keys(SLUG).find(k=>SLUG[k]===m[1]);if(!id||!EX[id])return false;view={name:'guide',id,from:'guides',qr:true};return true}
 window.addEventListener('hashchange',()=>{if(fromHash()){render();window.scrollTo(0,0)}});
-function boot(h){try{if(h&&h.view){view=h.view;onboard=h.onboard||null;today=h.today||today}}catch(e){}fromHash();render()}
+function helloText(){const n=data.profile?.name;return `${n?n+' ':''}회원님, 오늘도 화이팅입니다!`}
+function playHello(force){if(!force&&(data.hello===false||!data.profile))return;const t=new Date().toLocaleDateString('en-CA');if(!force&&data.lastHello===t)return;
+  const f=(D.voice||{}).hello;let ok=false;try{if(f){const a=new Audio(f);a.play().catch(()=>{});ok=true}}catch(e){}
+  if(!ok){try{speechSynthesis.cancel();speechSynthesis.speak(mkUtt(helloText(),.95));ok=true}catch(e){}}
+  if(!force){data.lastHello=t;save()}}
+function armHello(){const go=()=>{document.removeEventListener('pointerdown',go,true);document.removeEventListener('keydown',go,true);setTimeout(()=>playHello(false),60)};document.addEventListener('pointerdown',go,true);document.addEventListener('keydown',go,true)}
+function boot(h){try{if(h&&h.view){view=h.view;onboard=h.onboard||null;today=h.today||today}}catch(e){}fromHash();render();armHello()}
 try{window.claude?.hot?.snapshot?.(()=>({view,onboard,today}))}catch(e){}
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
 })();
