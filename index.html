@@ -339,6 +339,13 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pain-card{background:#3a2220;border-color:#5a312b}:root:not([data-theme="light"]) .pain-l li,:root:not([data-theme="light"]) .ok-l{background:rgba(0,0,0,.25)}:root:not([data-theme="light"]) .pain-l b{color:#ffb4a6}:root:not([data-theme="light"]) .pain-l span{color:#f1dcd8}:root:not([data-theme="light"]) .ok-l{color:#dfe9e1}:root:not([data-theme="light"]) .ok-l b{color:#74c48d}:root:not([data-theme="light"]) .pain-card .muted{color:#d0b5b0}}
 :root[data-theme="dark"] .pain-card{background:#3a2220;border-color:#5a312b}:root[data-theme="dark"] .pain-l li,:root[data-theme="dark"] .ok-l{background:rgba(0,0,0,.25)}:root[data-theme="dark"] .pain-l b{color:#ffb4a6}:root[data-theme="dark"] .pain-l span{color:#f1dcd8}:root[data-theme="dark"] .ok-l{color:#dfe9e1}
 .voice-l{display:grid;gap:6px}.seg-l{display:grid;gap:6px}
+.rb-card{display:grid;gap:10px;padding:18px;border-radius:20px;background:var(--warm-soft);border:1.5px solid var(--warm)}.rb-card b{font-size:1.1rem}.rb-card p{margin:0;font-size:.95rem;line-height:1.5}
+.inst-sheet{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:50;display:grid;gap:10px;padding:18px;border-radius:22px;background:var(--surface);border:1.5px solid #d6a848;box-shadow:0 18px 50px rgba(0,0,0,.28);max-width:520px;margin:0 auto;animation:instUp .35s ease-out}
+@keyframes instUp{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.inst-top{display:flex;gap:12px;align-items:center}.inst-top img{border-radius:14px;flex:none}.inst-top b{display:block;font-size:1.1rem}.inst-top span{font-size:.9rem;color:var(--muted);line-height:1.45}
+.inst-steps{margin:0;padding-left:22px;display:grid;gap:6px;font-size:.98rem;line-height:1.45}.inst-steps small{color:var(--muted)}.inst-steps .ico{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:6px;background:var(--accent-soft);font-size:.9rem}
+.inst-arrow{text-align:center;font-size:26px;color:#d6a848;animation:instBob 1.2s ease-in-out infinite}@keyframes instBob{50%{transform:translateY(6px)}}
+@media (prefers-reduced-motion:reduce){.inst-sheet,.inst-arrow{animation:none}}
 </style>
 </head><body>
 
@@ -575,7 +582,7 @@ home(){
   const pr=progress(), n=pr.n, days=pr.days, total=pr.total, weekDone=pr.thisWeek, week=pr.week;
   const greet=p?`${esc(p.name)} 회원님,<br>오늘도 같이 해요.`:'PT 없이도<br>충분히 할 수 있어요.';
   return top()+`<div class="stack-lg">
-  ${inappBanner()}
+  ${browserBanner()}${inappBanner()}${installSheet()}
   ${moveBanner()}
   <div class="hello"><p class="kicker">${p?(n?`지금까지 ${n}번 운동했어요`:'첫 운동을 기다리고 있어요'):'처음 오셨나요?'}</p><h1>${greet}</h1></div>
   ${s&&Date.now()-s.started>8*3600000?`<div class="note"><b>${fmtDay(new Date(s.started).toISOString())}에 하던 운동이 남아 있어요</b>이어서 하거나, 한 만큼 저장하고 오늘 운동을 새로 시작할 수 있어요.<div class="duo" style="margin-top:10px"><button class="btn btn-soft" data-act="resume">이어하기</button><button class="btn btn-soft" data-act="abandon">저장하고 새로</button></div></div>`:''}
@@ -936,11 +943,36 @@ settings(){
 function fmtDay(iso){const d=new Date(iso);if(isNaN(d))return '';const t=new Date();const same=(a,b)=>a.toDateString()===b.toDateString();const y=new Date(t);y.setDate(t.getDate()-1);if(same(d,t))return '오늘';if(same(d,y))return '어제';return `${d.getMonth()+1}월 ${d.getDate()}일 (${'일월화수목금토'[d.getDay()]})`}
 const ON_CLAUDE=!/(^|\.)github\.io$/.test(location.hostname);
 const INAPP=/KAKAOTALK|NAVER\(inapp|NAVER|Instagram|FBAN|FBAV|Line\/|DaumApps/i.test(navigator.userAgent||'');
+const UA=navigator.userAgent||'';
+const IS_IOS=/iPhone|iPad|iPod/.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const IS_AND=/Android/i.test(UA);
+const STANDALONE=(()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}})();
+const IS_SAFARI=IS_IOS&&/Safari\//.test(UA)&&!/CriOS|FxiOS|EdgiOS|OPiOS|KAKAOTALK|NAVER|Instagram|FBAN|FBAV|Line\/|DaumApps|Whale|GSA\//.test(UA);
+const IS_CHROME=IS_AND&&/Chrome\//.test(UA)&&!/SamsungBrowser|; wv\)|EdgA|OPR|Whale|KAKAOTALK|NAVER|Instagram|FBAN|FBAV|Line\/|DaumApps|YaBrowser|Firefox|Version\/\d/.test(UA);
+function openRightBrowser(force){
+  if(ON_CLAUDE||STANDALONE)return false;
+  let tried=null;try{tried=sessionStorage.getItem('rb')}catch(e){}
+  if(tried&&!force)return false;
+  const u=location.href.split('#')[0];
+  if(IS_AND&&!IS_CHROME){try{sessionStorage.setItem('rb','1')}catch(e){}location.href='intent://'+u.replace(/^https?:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;end';return true}
+  if(IS_IOS&&!IS_SAFARI){try{sessionStorage.setItem('rb','1')}catch(e){}location.href=/KAKAOTALK/.test(UA)?'kakaotalk://web/openExternal?url='+encodeURIComponent(u):'x-safari-'+u;return true}
+  return false}
+const BROWSER=IS_IOS?'사파리':'크롬';
 const APPNAME=/KAKAOTALK/i.test(navigator.userAgent||'')?'카카오톡':/NAVER/i.test(navigator.userAgent||'')?'네이버 앱':'다른 앱';
 let inappHidden=false;
 const NEW_URL='https://hyunwoo99657672-tech.github.io/amazing-member/';
 function moveBanner(){if(!ON_CLAUDE)return '';return `<div class="move-card"><b>🏠 새 주소로 이사했어요</b><p>이제 새 주소에서 더 빠르고 앱처럼 쓸 수 있어요. 홈 화면에 <b>금색 아이콘</b>으로 추가돼요.</p><a class="btn btn-main" href="${NEW_URL}" target="_blank" rel="noopener">새 주소로 가기 →</a><div class="duo"><button class="btn btn-soft" data-act="copy-new">주소 복사</button><button class="btn btn-soft" data-act="move-help">기록 옮기는 법</button></div><p class="small muted">여기서 쌓은 기록은 새 주소로 자동으로 넘어가지 않아요. <b>기록 옮기는 법</b>을 눌러 파일로 저장한 뒤, 새 주소의 <b>내 기록 → 기록 옮기기 → 저장한 파일 가져오기</b>를 눌러요.</p></div>`}
-function inappBanner(){if(!INAPP||inappHidden)return '';return `<div class="note warn small"><b>지금 ${APPNAME} 안에서 열었어요</b>여기서 쓴 기록은 크롬·사파리와 따로 저장돼요. 화면 구석 <strong>⋮</strong> 또는 <strong>⋯</strong> 메뉴에서 <strong>다른 브라우저로 열기</strong>를 눌러 계속 같은 곳에서 써주세요.<div class="duo" style="margin-top:10px"><button class="btn btn-soft" data-go="install" style="min-height:48px;font-size:16px">방법 보기</button><button class="btn btn-soft" data-act="inapp-hide" style="min-height:48px;font-size:16px">그냥 쓸게요</button></div></div>`}
+function wrongBrowser(){return !ON_CLAUDE&&!STANDALONE&&((IS_AND&&!IS_CHROME)||(IS_IOS&&!IS_SAFARI))}
+function browserBanner(){if(!wrongBrowser()||inappHidden)return '';return `<div class="rb-card"><b>${BROWSER}로 열어야 앱 설치가 돼요</b><p>지금 화면은 ${INAPP?APPNAME+' 안':'다른 브라우저'}이에요. 아래 버튼을 누르면 ${BROWSER}로 바로 열려요.</p><button class="btn btn-main" data-act="open-browser">${IS_IOS?'🧭':'🌐'} ${BROWSER}로 열기</button><button class="btn-quiet" data-act="inapp-hide">그냥 여기서 쓸게요</button></div>`}
+let bip=null;
+try{addEventListener('beforeinstallprompt',e=>{e.preventDefault();bip=e;if(view.name==='home')render()});addEventListener('appinstalled',()=>{data.installed=true;save();bip=null;toast('설치됐어요! 홈 화면의 금색 아이콘으로 열어주세요.');render()})}catch(e){}
+function installSheet(){if(ON_CLAUDE||STANDALONE||data.installed||!(IS_CHROME||IS_SAFARI)||view.name!=='home')return '';
+  let sn=0;try{sn=+localStorage.getItem('inst-snooze')||0}catch(e){}if(Date.now()<sn)return '';
+  const head=`<div class="inst-top"><img src="icons/icon-192.png" alt="" width="56" height="56"><div><b>어메이징석계 앱 설치</b><span>홈 화면에 금색 아이콘이 생기고, 주소창 없이 앱처럼 열려요. 무료예요.</span></div></div>`;
+  const body=IS_CHROME?`<button class="btn btn-main" data-act="pwa-install">📲 앱 설치하기</button>${bip?'':`<p class="small muted">설치 창이 안 뜨면: 오른쪽 위 <b>⋮</b> → <b>앱 설치</b> 또는 <b>홈 화면에 추가</b></p>`}`
+   :`<ol class="inst-steps"><li>화면 아래 <b>공유 버튼</b> <span class="ico">⬆︎</span> 누르기 <small>(안 보이면 <b>⋯</b> → 공유)</small></li><li><b>홈 화면에 추가</b> 누르기</li><li>오른쪽 위 <b>추가</b> 누르기</li></ol><div class="inst-arrow" aria-hidden="true">⬇︎</div>`;
+  return `<div class="inst-sheet" role="dialog" aria-label="앱 설치 안내">${head}${body}<button class="btn-quiet" data-act="inst-later">나중에 할게요</button></div>`}
+function inappBanner(){if(!INAPP||inappHidden||wrongBrowser())return '';return `<div class="note warn small"><b>지금 ${APPNAME} 안에서 열었어요</b>여기서 쓴 기록은 크롬·사파리와 따로 저장돼요. 화면 구석 <strong>⋮</strong> 또는 <strong>⋯</strong> 메뉴에서 <strong>다른 브라우저로 열기</strong>를 눌러 계속 같은 곳에서 써주세요.<div class="duo" style="margin-top:10px"><button class="btn btn-soft" data-go="install" style="min-height:48px;font-size:16px">방법 보기</button><button class="btn btn-soft" data-act="inapp-hide" style="min-height:48px;font-size:16px">그냥 쓸게요</button></div></div>`}
 function challengeCard(){const g=monthGoal(),c=monthCount(),m=new Date().getMonth()+1,done=c>=g;const left=new Date(new Date().getFullYear(),m,0).getDate()-new Date().getDate();
   return `<button class="chal" data-go="records" data-tab="badges"><div class="chal-h"><b>🎯 ${m}월 챌린지 · ${g}번 오기</b><span class="tnum">${c}/${g}</span></div><div class="bar"><i style="width:${Math.min(100,c/g*100)}%"></i></div><span class="small muted">${done?'달성 완료! 이번 달 배지를 받았어요 🎉':`앞으로 ${g-c}번 · ${left>0?`이번 달 ${left}일 남았어요`:'오늘이 이번 달 마지막 날이에요'}`} · 배지 ${earned().length}/${BADGES.length}</span></button>`}
 async function drawCard(){
@@ -1281,6 +1313,9 @@ document.addEventListener('click',async ev=>{
     case 'voice-test':{try{speechSynthesis.cancel();speechSynthesis.speak(mkUtt('1번째 기구, 파워 레그프레스. 3세트, 한 세트에 10에서 12회예요. 발바닥 전체로 밀어요.',.95))}catch(e){toast('이 기기에서는 음성 안내를 쓸 수 없어요.')}return}
     case 'hello-set':{data.hello=d.on==='1';save();render();return}
     case 'hello-test':{playHello(true);return}
+    case 'open-browser':{if(!openRightBrowser(true))toast(`${BROWSER}로 열 수 없어요. 메뉴(⋮ 또는 ⋯)에서 '다른 브라우저로 열기'를 눌러 주세요.`);return}
+    case 'pwa-install':{if(bip){bip.prompt();bip.userChoice.then(r=>{bip=null;if(r&&r.outcome==='accepted'){data.installed=true;save()}render()}).catch(()=>{})}else toast('오른쪽 위 ⋮ 메뉴에서 "앱 설치" 또는 "홈 화면에 추가"를 눌러 주세요.');return}
+    case 'inst-later':{try{localStorage.setItem('inst-snooze',String(Date.now()+3*864e5))}catch(e){}return render()}
     case 'inapp-hide': inappHidden=true; return render();
     case 'pose-sample':{const x=EX[view.id];const src=x.video||x.ai[0];toast('예시 영상을 불러오고 있어요…');try{const r=await fetch(src);const bl=await r.blob();runPose(new File([bl],'sample.mp4',{type:'video/mp4'}))}catch(e){toast('예시 영상을 불러오지 못했어요.')}return}
     case 'card-save': return saveCard();
@@ -1365,7 +1400,8 @@ function playHello(force){if(!force&&(data.hello===false||!data.profile))return;
   if(!ok){try{speechSynthesis.cancel();speechSynthesis.speak(mkUtt(helloText(),.95));ok=true}catch(e){}}
   if(!force){data.lastHello=t;save()}}
 function armHello(){const go=()=>{document.removeEventListener('pointerdown',go,true);document.removeEventListener('keydown',go,true);setTimeout(()=>playHello(false),60)};document.addEventListener('pointerdown',go,true);document.addEventListener('keydown',go,true)}
-function boot(h){try{if(h&&h.view){view=h.view;onboard=h.onboard||null;today=h.today||today}}catch(e){}fromHash();render();armHello()}
+function boot(h){if(openRightBrowser(false)){setTimeout(()=>boot2(h),1500);return}boot2(h)}
+function boot2(h){try{if(h&&h.view){view=h.view;onboard=h.onboard||null;today=h.today||today}}catch(e){}fromHash();render();armHello();try{if(!ON_CLAUDE&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
 try{window.claude?.hot?.snapshot?.(()=>({view,onboard,today}))}catch(e){}
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
 })();
