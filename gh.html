@@ -564,6 +564,7 @@ function render(){
   if(view.name==='onboard'&&!onboard)view={name:'home'};
   const fn=SCREENS[view.name]||SCREENS.home;
   document.documentElement.classList.toggle('big',!!data.big);
+  {const k=view.name==='guide'?'guide_'+(SLUG[view.id]||view.id):view.name;if(k!==window.__lastScr){window.__lastScr=k;if(window.__scrT)clearTimeout(window.__scrT);window.__scrT=setTimeout(()=>track('화면_'+k),400)}}
   clearInterval(window.__pc);if(view.name==='proof')window.__pc=setInterval(()=>{const c=$('#proof-clock');if(c)c.textContent=new Date().toLocaleString('ko-KR',{month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'})},1000);
   r.innerHTML=fn();
   if(view.name==='workout'&&data.active?.phase==='rest') startRest();
@@ -840,6 +841,7 @@ faq(){
   ${q('예전 기록이 안 보이고 "처음 오셨나요?"가 떠요','<p>기록은 <b>처음 연 브라우저(크롬, 사파리, 카카오톡 등)마다 따로</b> 저장돼요. 예를 들어 크롬에서 쓰던 기록은 카카오톡 안에서 열면 안 보여요.</p><p>원래 쓰던 브라우저로 다시 열면 기록이 그대로 있어요. 앞으로 헷갈리지 않게 <b>홈 화면에 추가</b>해서 아이콘으로만 열어주세요.</p>')}
   ${q('카카오톡으로 받은 링크는 어떻게 열어요?','<p>카톡에서 링크를 누른 뒤 화면 구석의 <b>⋮</b>(안드로이드) 또는 <b>⋯</b>(아이폰) 메뉴에서 <b>다른 브라우저로 열기</b> 또는 <b>Safari로 열기</b>를 눌러요. 그다음 홈 화면에 추가하면 돼요.</p>')}
   ${q('휴대폰을 바꾸면 기록은요?','<p>내 기록 → <b>휴대폰을 바꿀 때 · 기록 옮기기</b>에서 파일로 저장한 뒤, 새 휴대폰에서 가져오기를 하면 돼요.</p>')}
+  ${q('제 정보가 어디로 보내지나요?','<p>이름·운동 기록·영상은 <b>회원님 휴대폰에만</b> 저장되고 어디로도 보내지 않아요. 앱을 더 좋게 만들려고 <b>"어떤 화면을 몇 번 열었는지"</b> 같은 이름 없는 이용 숫자만 셉니다. 누가 썼는지는 알 수 없어요.</p>')}
   ${q('자세 확인 영상은 어디로 가나요?','<p>어디로도 보내지 않아요. 영상은 <b>회원님 휴대폰 안에서만</b> 분석되고 저장되지 않아요.</p>')}
   <button class="btn btn-main" data-go="install">홈 화면에 추가하는 방법</button>
   <p class="muted small" style="text-align:center">그 밖에 궁금한 건 6층 데스크 직원에게 물어보세요.</p>
@@ -1230,7 +1232,7 @@ function remICS(){const days=(data.remDays||[]).slice().sort();const BY=['MO','T
   const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
   return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AmazingSeokgye//Member//KO','CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:amazing-seokgye-'+Date.now()+'@member','DTSTAMP:'+stamp,'DTSTART;TZID=Asia/Seoul:'+f(start),'DTEND;TZID=Asia/Seoul:'+f(end),'RRULE:FREQ=WEEKLY;BYDAY='+days.map(d=>BY[d]).join(','),'SUMMARY:석계점 운동 가는 날 💪','DESCRIPTION:오늘도 득근! 앱 열기 '+NEW_URL,'LOCATION:어메이징휘트니스 석계점 (석계역 5번 출구)','BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:30분 뒤 운동 시간이에요','TRIGGER:-PT30M','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n')}
 // 이용 현황: 개인정보 없이 '무엇을 눌렀는지'만 셉니다. ANALYTICS_ID를 넣기 전에는 아무것도 보내지 않아요.
-const ANALYTICS_ID='';
+const ANALYTICS_ID='0be13412-799f-4037-af5f-5daf552ff738';
 function track(ev){try{if(!ANALYTICS_ID||ON_CLAUDE||!window.umami)return;window.umami.track(ev)}catch(e){}}
 function koVoices(){try{return speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang))}catch(e){return []}}
 function mkUtt(t,base){const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';const vs=koVoices();const pick=vs.find(v=>v.voiceURI===data.voiceName)||null;if(pick)u.voice=pick;u.rate=base*(data.voiceRate||1);u.pitch=data.voicePitch||1;return u}
@@ -1449,7 +1451,7 @@ function playHello(force){if(!force&&(data.hello===false||!data.profile))return;
   if(!force){data.lastHello=t;save()}}
 function armHello(){const go=()=>{document.removeEventListener('pointerdown',go,true);document.removeEventListener('keydown',go,true);setTimeout(()=>playHello(false),60)};document.addEventListener('pointerdown',go,true);document.addEventListener('keydown',go,true)}
 function boot(h){if(openRightBrowser(false)){setTimeout(()=>boot2(h),1500);return}boot2(h)}
-function boot2(h){try{if(h&&h.view){view=h.view;onboard=h.onboard||null;today=h.today||today}}catch(e){}fromHash();render();armHello();try{if(ANALYTICS_ID&&!ON_CLAUDE){const sc=document.createElement('script');sc.defer=true;sc.src='https://cloud.umami.is/script.js';sc.dataset.websiteId=ANALYTICS_ID;document.head.appendChild(sc)}}catch(e){}try{if(!ON_CLAUDE&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
+function boot2(h){try{if(h&&h.view){view=h.view;onboard=h.onboard||null;today=h.today||today}}catch(e){}fromHash();render();armHello();try{if(ANALYTICS_ID&&!ON_CLAUDE){const sc=document.createElement('script');sc.defer=true;sc.src='https://cloud.umami.is/script.js';sc.dataset.websiteId=ANALYTICS_ID;sc.dataset.domains='hyunwoo99657672-tech.github.io';sc.dataset.autoTrack='false';sc.onload=()=>{try{window.umami.track(p=>({...p,url:'/amazing-member/'+(view.name||'home'),title:view.name||'home'}))}catch(e){}};document.head.appendChild(sc)}}catch(e){}try{if(!ON_CLAUDE&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
 try{window.claude?.hot?.snapshot?.(()=>({view,onboard,today}))}catch(e){}
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
 })();
