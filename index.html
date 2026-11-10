@@ -362,6 +362,10 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 .tr-hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%}
 .tr-hero-0{display:grid;place-items:center;background:repeating-linear-gradient(135deg,#1c1a16 0 14px,#23201a 14px 28px);color:#8f8466;font-weight:800;text-align:center;line-height:1.5}
 .tr-hero-tx{position:relative;width:100%;padding:90px 20px 20px;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.82) 55%);color:#fff}.tr-hero-tx h1{margin:4px 0 6px;color:#fff;font-size:2.1rem}.tr-hero-tx p{margin:0;color:#e9dfc6}.tr-kick{color:#E8BE55!important;font-weight:800}
+.sync-card{padding:18px;border-radius:20px;border:1.5px solid #e6d3a3;background:linear-gradient(135deg,#fffaf0,#f6ead0)}.sync-card h2{margin:0}.sync-form label{display:grid;gap:6px}.inp{font:inherit;font-size:1.05rem;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:inherit;min-height:48px}.chk{display:flex!important;grid-template-columns:none;gap:10px;align-items:flex-start;line-height:1.5}.chk input{width:22px;height:22px;flex:none;margin-top:2px}
+.sync-on{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:16px;background:var(--surface);border:1.5px solid var(--line)}.sync-on div{display:grid;gap:2px}.sync-on span{color:var(--muted);font-size:.88rem}.sync-on .btn{width:auto;min-height:44px;padding:0 16px}
+.rank-card{padding:16px 18px;border-radius:20px;background:#17130c;color:#fff;display:grid;gap:10px}.rk-h{display:flex;justify-content:space-between;align-items:baseline}.rk-h b{color:#E8BE55}.rk-h span{color:#bdb5a1;font-size:.85rem}.rk-l{list-style:none;margin:0;padding:0;display:grid;gap:8px}.rk-l li{display:flex;align-items:center;gap:12px}.rk-l i{font-style:normal;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#2c2416;color:#E8BE55;font-weight:800;font-size:.85rem}.rk-l li:first-child i{background:#E8BE55;color:#17130c}.rk-l span{flex:1;font-weight:700}.rk-me{margin:0;padding-top:8px;border-top:1px solid #3a3020;color:#e9e2cf}.rk-me b{color:#E8BE55}.rank-card .btn{background:#2c2416;color:#E8BE55;border-color:#4a3d1f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sync-card{background:linear-gradient(135deg,#2a2416,#211c11);border-color:#4a3d1f}}:root[data-theme="dark"] .sync-card{background:linear-gradient(135deg,#2a2416,#211c11);border-color:#4a3d1f}
 .grow-card{display:flex;align-items:center;gap:14px;width:100%;padding:16px 18px;border-radius:20px;border:1.5px solid #e6d3a3;background:linear-gradient(135deg,#fffaf0,#f6ead0);text-align:left;color:inherit;font:inherit}.gc-ic{font-size:1.8rem}.gc-t{display:grid;gap:3px;flex:1}.gc-t small{color:#9a7420;font-weight:800;font-size:.8rem}.gc-t b{font-size:1.08rem}.gc-t em{font-style:normal;color:#b8862a}.gc-t span{color:var(--muted);font-size:.9rem}.grow-card .arrow{color:#b8862a;font-size:1.3rem}
 .pr-card{padding:16px 18px;border-radius:20px;background:#17130c;color:#fff}.pr-card .step-label{color:#E8BE55;margin:0 0 8px}.pr-card ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}.pr-card li{display:flex;justify-content:space-between;gap:10px;font-weight:700}.pr-card em{font-style:normal;color:#E8BE55;margin-left:6px}
 .next-l{list-style:none;margin:0;padding:0;display:grid;gap:10px}.next-l li{display:flex;justify-content:space-between;gap:10px;align-items:center}.next-l em{font-style:normal;font-weight:800}.next-l .up{color:#1f6b3d}.next-l .down{color:#a5512a}
@@ -632,7 +636,7 @@ home(){
   ${!p&&!s?`<button class="btn-quiet fit-link" data-act="start">내 목표에 맞춰 시작할래요 <span class="small muted">(질문 6개 · 1분)</span></button>`:''}
   ${p?`<div class="confidence"><span class="num tnum">${week}주</span><div><p><b>${pr.cycle>1?pr.cycle+'번째 ':''}4주 계획 ${week}주차 · ${WEEKS[week].t}</b></p><p class="small">이번 주 ${weekDone}/${days}회${streakWeeks()>1?` · ${streakWeeks()}주 연속 운동 중`:''}</p><div class="weekdots" aria-label="4주 계획 진행 ${pr.inCycle} / ${total}회">${Array.from({length:total},(_,i)=>`<i class="${i<pr.inCycle?'on':''}"></i>`).join('')}</div></div></div>`
   :''}
-  ${p?growCard()+challengeCard():''}
+  ${p?growCard()+challengeCard():''}${SYNC_URL?(setTimeout(loadRank,0),'<div id="rank-box"></div>'):''}
   ${/[?&]preview=trainer/.test(location.search)?trainerCard():''}
   <button class="start-card" data-go="programs"><span class="num" aria-hidden="true">🍑</span><span><b>부위별 집중 루틴</b><span>애플힙 · 넓은 등 · 어깨 · 가슴 · 허벅지</span></span></button>
   <div class="duo">
@@ -765,7 +769,8 @@ done(){
   <div class="plan-meta"><div><b class="tnum">${sets}세트</b><span>기구 운동</span></div><div><b class="tnum">${l.items.filter(i=>!i.cardio).length}개</b><span>기구</span></div><div><b class="tnum">${l.minutes}분</b><span>운동 시간</span></div></div>
   ${needs('log')?(()=>{const vol=l.items.filter(i=>!i.cardio).reduce((a,i)=>a+i.records.reduce((b,r)=>b+(r.kg||0)*(r.reps||0),0),0);return vol?`<p class="note small"><b>오늘 들어 올린 총량</b>${vol.toLocaleString()}kg (무게 × 횟수의 합)</p>`:''})():''}
   <div class="card"><ul class="done-list">${l.items.map(i=>`<li><span>${esc(i.name)}</span><span class="muted tnum">${i.cardio?i.minutes+'분':i.records.length+'세트'+(i.records.some(r=>r.kg!=null)?' · '+Math.max(...i.records.map(r=>r.kg||0))+'kg':'')}</span></li>`).join('')}</ul></div>
-  ${n%8===0&&(!data.lastExport||Date.now()-new Date(data.lastExport)>14*86400000)?`<div class="note"><b>기록이 ${n}번 쌓였어요!</b>휴대폰을 바꾸거나 브라우저 기록을 지우면 사라질 수 있어요. 가끔 파일로 보관해두세요.<button class="btn btn-soft" style="margin-top:10px" data-go="records" data-tab="days">기록 보관하러 가기</button></div>`:''}
+  ${SYNC_URL&&!syncOn()&&n>=1?`<div class="fit-card"><div><b>폰을 바꿔도 기록이 그대로!</b><span>이름과 전화번호 뒷자리만 넣으면 자동으로 보관하고, 석계점 랭킹에도 참여해요.</span></div><button class="btn btn-soft" data-go="records" data-tab="days">보관하기</button></div>`:''}
+  ${!SYNC_URL&&n%8===0&&(!data.lastExport||Date.now()-new Date(data.lastExport)>14*86400000)?`<div class="note"><b>기록이 ${n}번 쌓였어요!</b>휴대폰을 바꾸거나 브라우저 기록을 지우면 사라질 수 있어요. 가끔 파일로 보관해두세요.<button class="btn btn-soft" style="margin-top:10px" data-go="records" data-tab="days">기록 보관하러 가기</button></div>`:''}
   <button class="btn btn-soft" data-go="card">📸 오늘의 성장 카드 만들기</button>
   <button class="btn btn-soft" data-go="stretch">마무리 스트레칭 영상 보기 (선택)</button>
   <button class="btn btn-main" data-go="home">처음 화면으로</button>
@@ -850,6 +855,7 @@ records(){
   ${streak>=2?`<p class="note small"><b>${streak}주 연속 운동 중이에요!</b>일주일에 한 번만 와도 이어져요.</p>`:''}
   <div class="filters" role="group" aria-label="기록 보기 방식"><button data-tab="days" aria-pressed="${tab==='days'}">날짜별</button><button data-tab="machines" aria-pressed="${tab==='machines'}">기구별 성장</button><button data-tab="badges" aria-pressed="${tab==='badges'}">배지</button></div>
   ${data.logs.length?`<div class="duo"><button class="btn btn-soft" data-go="card">📸 성장 카드</button><button class="btn btn-soft" data-go="grow" data-from="records">📈 성장 가이드</button></div>`:''}
+  ${syncBox()}
   ${body}
   <details class="more" id="backup"><summary>휴대폰을 바꿀 때 · 기록 옮기기</summary><div class="in">
     <p class="small">기록은 이 휴대폰, 이 브라우저에만 저장돼요. 휴대폰을 바꾸거나 브라우저 기록을 지우기 전에 파일로 저장해두세요.</p>
@@ -1343,6 +1349,34 @@ function remICS(){const days=(data.remDays||[]).slice().sort();const BY=['MO','T
   return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AmazingSeokgye//Member//KO','CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:amazing-seokgye-'+Date.now()+'@member','DTSTAMP:'+stamp,'DTSTART;TZID=Asia/Seoul:'+f(start),'DTEND;TZID=Asia/Seoul:'+f(end),'RRULE:FREQ=WEEKLY;BYDAY='+days.map(d=>BY[d]).join(','),'SUMMARY:석계점 운동 가는 날 💪','DESCRIPTION:오늘도 득근! 앱 열기 '+NEW_URL,'LOCATION:어메이징휘트니스 석계점 (석계역 5번 출구)','BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:30분 뒤 운동 시간이에요','TRIGGER:-PT30M','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n')}
 // 이용 현황: 개인정보 없이 '무엇을 눌렀는지'만 셉니다. ANALYTICS_ID를 넣기 전에는 아무것도 보내지 않아요.
 const ANALYTICS_ID='0be13412-799f-4037-af5f-5daf552ff738';
+
+/* ---------- cloud backup + ranking (Google Sheet) ---------- */
+const SYNC_URL='';
+function syncOn(){return !!(SYNC_URL&&data.sync&&data.sync.name&&data.sync.pin)}
+async function cloud(action,extra){const r=await fetch(SYNC_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...extra})});return r.json()}
+function ym(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+let cloudBusy=false;
+async function cloudSave(silent){if(!syncOn()||cloudBusy)return false;cloudBusy=true;try{const sl=strengthLogs();const r=await cloud('save',{name:data.sync.name,pin:data.sync.pin,data:backupPayload(),month:ym(),monthCount:monthCount(),total:sl.length,last:sl.length?sl[sl.length-1].date:'',rank:data.sync.rank!==false});
+  if(r&&r.ok){data.sync.at=new Date().toISOString();save();rankCache=null;if(!silent){toast('기록을 안전하게 보관했어요.');render()}return true}
+  if(!silent)toast('보관하지 못했어요. 잠시 후 다시 해주세요.');return false}catch(e){if(!silent)toast('인터넷 연결을 확인해 주세요.');return false}finally{cloudBusy=false}}
+async function cloudLoad(name,pin){toast('기록을 찾고 있어요…');try{const r=await cloud('load',{name,pin});if(!r||!r.ok){toast(r&&r.err==='none'?'이 이름·번호로 보관된 기록이 없어요. 이름과 번호를 다시 확인해주세요.':'불러오지 못했어요. 잠시 후 다시 해주세요.');return}
+  data.sync={name,pin,rank:data.sync?.rank!==false};save();importText(r.data);cloudSave(true)}catch(e){toast('인터넷 연결을 확인해 주세요.')}}
+function syncForm(){const p=data.profile;return `<div class="sync-form stack">
+  <label class="small"><b>이름</b><input id="sy-name" class="inp" maxlength="12" autocomplete="name" value="${esc(data.sync?.name||p?.name||'')}" placeholder="예: 김지수"></label>
+  <label class="small"><b>전화번호 뒷자리 4개</b><input id="sy-pin" class="inp" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="예: 1234"></label>
+  <label class="chk small"><input type="checkbox" id="sy-ok"> 이름과 전화번호 뒷자리는 <b>기록 보관과 석계점 운동 랭킹(이름 가림)</b>에만 써요. 동의해요.</label>
+  <div class="duo"><button class="btn btn-main" data-act="sync-start">기록 보관 시작</button><button class="btn btn-soft" data-act="sync-load">다른 폰 기록 불러오기</button></div></div>`}
+function syncBox(){if(!SYNC_URL)return '';
+  if(syncOn())return `<div class="sync-on"><div><b>☁️ 기록 보관 중</b><span>${esc(data.sync.name)} · 뒷자리 ${esc(data.sync.pin)}${data.sync.at?` · 마지막 보관 ${fmtDay(data.sync.at)}`:''}</span></div><button class="btn btn-soft" data-act="sync-now">지금 보관</button></div>
+    <details class="more"><summary>보관 설정</summary><div class="in stack"><label class="chk small"><input type="checkbox" data-act="sync-rank" ${data.sync.rank!==false?'checked':''}> 랭킹에 내 이름 보이기 (가운데 글자는 가려져요. 예: 김*수)</label><p class="small muted">폰을 바꾸면 새 폰에서 "다른 폰 기록 불러오기"로 같은 이름·번호를 넣으면 돼요.</p><button class="btn-quiet small" data-act="sync-off">이 폰에서 보관 끄기</button></div></details>`;
+  return `<div class="sync-card stack"><p class="step-label">기록 안 잃어버리기</p><h2>폰을 바꿔도 기록이 그대로</h2><p class="small muted">이름과 전화번호 뒷자리만 넣으면 운동할 때마다 자동으로 보관돼요.</p>${syncForm()}</div>`}
+let rankCache=null;
+async function loadRank(){const box=$('#rank-box');if(!box||!SYNC_URL)return;
+  if(!rankCache||Date.now()-rankCache.t>10*60000){try{const r=await cloud('rank',{month:ym(),name:data.sync?.name||'',pin:data.sync?.pin||''});if(!r||!r.ok)return;rankCache={t:Date.now(),r}}catch(e){return}}
+  const b=$('#rank-box');if(!b)return;const r=rankCache.r,m=new Date().getMonth()+1;if(!r.top.length&&!syncOn())return;
+  b.innerHTML=`<div class="rank-card"><div class="rk-h"><b>🏅 ${m}월 석계점 운동 랭킹</b><span>${r.people}명 참여</span></div>
+  ${r.top.length?`<ol class="rk-l">${r.top.slice(0,5).map(x=>`<li><i>${x.place}</i><span>${esc(x.name)}</span><b class="tnum">${x.n}회</b></li>`).join('')}</ol>`:'<p class="small">이번 달 첫 기록의 주인공이 되어보세요!</p>'}
+  ${r.mine?`<p class="rk-me">내 순위 <b>${r.mine.place}위</b> · ${r.mine.n}회</p>`:syncOn()?'<p class="rk-me">이번 달 운동하면 순위에 올라가요</p>':`<button class="btn btn-soft" data-go="records" data-tab="days">기록 보관하고 랭킹 참여하기</button>`}</div>`}
 function track(ev){try{if(!ANALYTICS_ID||ON_CLAUDE||!window.umami)return;window.umami.track(ev)}catch(e){}}
 function koVoices(){try{return speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang))}catch(e){return []}}
 function mkUtt(t,base){const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';const vs=koVoices();const pick=vs.find(v=>v.voiceURI===data.voiceName)||null;if(pick)u.voice=pick;u.rate=base*(data.voiceRate||1);u.pitch=data.voicePitch||1;return u}
@@ -1373,11 +1407,12 @@ function finishWorkout(withWalk){
   const minutes=Math.min(Math.max(1,Math.round((Date.now()-s.started)/60000)),s.time+60);
   const log={date:new Date().toISOString(),goal:s.goal,focus:s.focus||null,minutes,items};
   data.active=null;
-  if(items.some(i=>!i.cardio)){const before=new Set(earned());data.logs.push(log);const nb=earned().filter(id=>!before.has(id));save();keepAwake(false);say('오늘 운동 끝! 정말 수고하셨어요.','finish');go('done',{log,newBadges:nb})}
+  if(items.some(i=>!i.cardio)){const before=new Set(earned());data.logs.push(log);const nb=earned().filter(id=>!before.has(id));save();keepAwake(false);say('오늘 운동 끝! 정말 수고하셨어요.','finish');cloudSave(true);go('done',{log,newBadges:nb})}
   else{save();keepAwake(false);toast('다음에 다시 시작해요. 괜찮아요!');go('home')}
 }
 
 /* ---------- events ---------- */
+document.addEventListener('change',ev=>{const t=ev.target;if(t.dataset&&t.dataset.act==='sync-rank'&&data.sync){data.sync.rank=!!t.checked;save();cloudSave(true);toast(t.checked?'랭킹에 이름이 가려서 보여요.':'랭킹에 익명으로 보여요.')}});
 document.addEventListener('click',async ev=>{
   {const t=ev.target.closest('a[data-track]');if(t){track(t.dataset.track);return}}
   const b=ev.target.closest('button,[data-go]');if(!b||b.disabled)return;
@@ -1482,6 +1517,12 @@ document.addEventListener('click',async ev=>{
     case 'inapp-hide': inappHidden=true; return render();
     case 'pose-sample':{const x=EX[view.id];const src=x.video||x.ai[0];toast('예시 영상을 불러오고 있어요…');try{const r=await fetch(src);const bl=await r.blob();runPose(new File([bl],'sample.mp4',{type:'video/mp4'}))}catch(e){toast('예시 영상을 불러오지 못했어요.')}return}
     case 'card-save': return saveCard();
+    case 'sync-start':case 'sync-load':{const name=($('#sy-name')?.value||'').replace(/\s/g,'').slice(0,12),pin=($('#sy-pin')?.value||'').replace(/\D/g,'');
+      if(!name){toast('이름을 넣어주세요.');return}if(pin.length!==4){toast('전화번호 뒷자리 4개를 넣어주세요.');return}if(!$('#sy-ok')?.checked){toast('안내 문구에 동의해 주세요.');return}
+      if(d.act==='sync-load')return cloudLoad(name,pin);
+      data.sync={name,pin,rank:true};save();track('sync-start');return cloudSave(false)}
+    case 'sync-now':return cloudSave(false);
+    case 'sync-off':{data.sync=null;save();toast('이 폰에서 보관을 껐어요. 보관된 기록은 그대로 있어요.');return render()}
     case 'paste-import':{const t=$('#paste-txt').value.trim();if(!t){toast('먼저 기록 글을 붙여넣어 주세요.');return}return importText(t)}
     case 'installed': data.installed=true; save(); toast('좋아요! 다음부터 아이콘으로 열어주세요.'); return go('home');
     case 'copy':{const t=$('#copy-txt');try{await navigator.clipboard.writeText(t.value);toast('복사했어요. 메모장이나 카톡 나와의 채팅에 붙여넣어 보관하세요.')}catch(e){t.select();toast('글자를 길게 눌러 복사해주세요.')}return}
