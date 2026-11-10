@@ -355,6 +355,23 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 @media (prefers-reduced-motion:reduce){.proof-badge{animation:none}}
 .fit-link{justify-self:center;margin-top:-6px}.fit-card{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 16px;border-radius:16px;background:var(--warm-soft);border:1.5px solid var(--warm)}.fit-card>div{flex:1 1 200px;display:grid;gap:3px}.fit-card b{font-size:1rem}.fit-card span{font-size:.9rem;line-height:1.45;color:var(--muted)}.fit-card .btn{flex:none;width:auto;padding:0 18px}
 .btn-gold{background:linear-gradient(90deg,#FFE38A,#E3AE3A);color:#120E07;font-weight:900;border:0}
+.tr-card{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:14px;border-radius:20px;border:0;background:linear-gradient(135deg,#17130c,#2a2213);color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.tr-ph{flex:none;width:68px;height:68px;border-radius:16px;overflow:hidden;background:#3a2f1a;border:2px solid #E8BE55;display:grid;place-items:center}.tr-ph img{width:100%;height:100%;object-fit:cover}.tr-ph0{color:#E8BE55;font-weight:900}
+.tr-t{flex:1;display:grid;gap:2px}.tr-t small{color:#E8BE55;font-weight:800;font-size:.78rem;letter-spacing:.04em}.tr-t b{font-size:1.12rem}.tr-t span{font-size:.88rem;color:#d9cfb5}.tr-card .arrow{color:#E8BE55;font-size:1.4rem}
+.tr-hero{position:relative;border-radius:24px;overflow:hidden;background:#111;min-height:380px;display:flex;align-items:flex-end}
+.tr-hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%}
+.tr-hero-0{display:grid;place-items:center;background:repeating-linear-gradient(135deg,#1c1a16 0 14px,#23201a 14px 28px);color:#8f8466;font-weight:800;text-align:center;line-height:1.5}
+.tr-hero-tx{position:relative;width:100%;padding:90px 20px 20px;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.82) 55%);color:#fff}.tr-hero-tx h1{margin:4px 0 6px;color:#fff;font-size:2.1rem}.tr-hero-tx p{margin:0;color:#e9dfc6}.tr-kick{color:#E8BE55!important;font-weight:800}
+.grow-card{display:flex;align-items:center;gap:14px;width:100%;padding:16px 18px;border-radius:20px;border:1.5px solid #e6d3a3;background:linear-gradient(135deg,#fffaf0,#f6ead0);text-align:left;color:inherit;font:inherit}.gc-ic{font-size:1.8rem}.gc-t{display:grid;gap:3px;flex:1}.gc-t small{color:#9a7420;font-weight:800;font-size:.8rem}.gc-t b{font-size:1.08rem}.gc-t em{font-style:normal;color:#b8862a}.gc-t span{color:var(--muted);font-size:.9rem}.grow-card .arrow{color:#b8862a;font-size:1.3rem}
+.pr-card{padding:16px 18px;border-radius:20px;background:#17130c;color:#fff}.pr-card .step-label{color:#E8BE55;margin:0 0 8px}.pr-card ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}.pr-card li{display:flex;justify-content:space-between;gap:10px;font-weight:700}.pr-card em{font-style:normal;color:#E8BE55;margin-left:6px}
+.next-l{list-style:none;margin:0;padding:0;display:grid;gap:10px}.next-l li{display:flex;justify-content:space-between;gap:10px;align-items:center}.next-l em{font-style:normal;font-weight:800}.next-l .up{color:#1f6b3d}.next-l .down{color:#a5512a}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .grow-card{background:linear-gradient(135deg,#2a2416,#211c11);border-color:#4a3d1f}}:root[data-theme="dark"] .grow-card{background:linear-gradient(135deg,#2a2416,#211c11);border-color:#4a3d1f}
+.tr-list{display:grid;border-radius:18px;background:var(--surface);border:1.5px solid var(--line);overflow:hidden}.tr-row{display:flex;align-items:center;gap:14px;padding:14px 16px;background:none;border:0;border-bottom:1px solid var(--line);text-align:left;min-height:64px;color:inherit;font:inherit}.tr-row:last-child{border-bottom:0}.tr-row b{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#17130c;color:#E8BE55;font-size:.95rem}.tr-row span{display:grid;gap:2px;flex:1}.tr-row strong{font-size:1.05rem}.tr-row small{color:var(--muted)}.tr-row i{font-style:normal;color:#b8862a;font-size:1.4rem}
+.tr-prog{display:flex;gap:6px}.tr-prog span{flex:1;height:6px;border-radius:3px;background:var(--line)}.tr-prog span.on{background:#C9A13B}.tr-h{margin:0;font-size:1.6rem}.tr-pt{margin:0;font-size:1.2rem;font-weight:800;line-height:1.5}.tr-sets{margin:0;display:inline-block;justify-self:start;align-self:flex-start;background:#17130c;color:#E8BE55;font-weight:800;padding:6px 12px;border-radius:10px;font-size:.9rem}.tr-nav{display:grid;grid-template-columns:auto 1fr;gap:10px}
+.tr-flow{display:grid;gap:0;padding:6px 16px;border-radius:16px;background:var(--surface);border:1.5px solid var(--line)}.tr-flow div{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.tr-flow div:last-child{border-bottom:0}.tr-flow b{flex:none;font-size:.72rem;color:#b8862a;letter-spacing:.04em;width:52px}.tr-flow span{font-weight:800;font-size:1rem}.tr-flow em{font-style:normal;color:var(--muted);font-size:.88rem;margin-left:auto;text-align:right}
+.tr-sh{display:flex;gap:12px;align-items:center}.tr-n{flex:none;background:#17130c;color:#E8BE55;font-weight:900;font-size:.8rem;padding:6px 10px;border-radius:10px}.tr-sh h2{margin:0}
+.tr-vid0{aspect-ratio:16/9;border-radius:16px;display:grid;place-items:center;background:repeating-linear-gradient(135deg,#efeadf 0 12px,#e7e1d3 12px 24px);color:#7a6f57;font-weight:800}
+.tr-why{margin:0;font-weight:700;line-height:1.55}.tr-how{margin:0;padding-left:22px;display:grid;gap:6px;line-height:1.55}
 </style>
 </head><body>
 
@@ -527,6 +544,19 @@ function suggestion(e){
   return {kg,text:`지난번 ${kg}kg × ${lastReps}회. 오늘은 같은 무게로 한두 번만 더 해봐요. ${max}회를 모든 세트에서 채우면 다음에 올려요.`};
 }
 
+
+/* ---------- growth (PR + next weight) ---------- */
+function topKg(i){const k=Math.max(...(i.records||[]).map(r=>r.kg||0));return k>0?k:null}
+function prsOf(l){const idx=data.logs.indexOf(l);if(idx<0)return [];const out=[];
+  (l.items||[]).forEach(i=>{if(i.cardio||!i.id)return;const k=topKg(i);if(k==null)return;let best=null;
+    for(let j=0;j<idx;j++){const it=(data.logs[j].items||[]).find(x=>x.id===i.id);if(it){const b=topKg(it);if(b!=null&&(best==null||b>best))best=b}}
+    if(best!=null&&k>best)out.push({name:i.name,kg:k,gain:+(k-best).toFixed(1)})});return out}
+function nextTips(l){return (l.items||[]).filter(i=>!i.cardio&&i.id&&EX[i.id]&&kind(i.id)!=='body'&&topKg(i)!=null).map(i=>{const mx=i.repMax||12;const sg=suggestion({id:i.id,repMax:mx,repMin:Math.max(1,mx-4)});return {name:i.name,sg}}).filter(x=>x.sg.up||(x.sg.kg!=null&&x.sg.kg<topKg(l.items.find(i=>i.name===x.name)))).slice(0,4)}
+function gainsAll(){const by={};data.logs.forEach(l=>(l.items||[]).forEach(i=>{if(i.cardio||!i.id)return;const k=topKg(i);if(k==null)return;const o=by[i.id]=by[i.id]||{name:i.name,first:k,best:k,n:0};o.best=Math.max(o.best,k);o.n++}));
+  return Object.values(by).filter(o=>o.n>=2&&o.best>o.first).map(o=>({...o,gain:+(o.best-o.first).toFixed(1)})).sort((a,b)=>b.gain-a.gain)}
+function growCard(){const g=gainsAll();if(!g.length)return '';const t=g[0];
+  return `<button class="grow-card" data-go="records" data-tab="machines"><span class="gc-ic" aria-hidden="true">📈</span><span class="gc-t"><small>내 성장</small><b>${esc(t.name)} 처음보다 <em>+${t.gain}kg</em></b><span>${g.length>1?`외 ${g.length-1}개 기구도 무게가 늘었어요`:'기구별 성장 그래프 보기'}</span></span><span class="arrow" aria-hidden="true">→</span></button>`}
+
 /* ---------- UI state ---------- */
 let view={name:'home'}, today={time:35,condition:'normal'}, guideFilter='all', restTimer=null, wake=null, pending=null;
 let onboard=null, draft={};
@@ -602,7 +632,8 @@ home(){
   ${!p&&!s?`<button class="btn-quiet fit-link" data-act="start">내 목표에 맞춰 시작할래요 <span class="small muted">(질문 6개 · 1분)</span></button>`:''}
   ${p?`<div class="confidence"><span class="num tnum">${week}주</span><div><p><b>${pr.cycle>1?pr.cycle+'번째 ':''}4주 계획 ${week}주차 · ${WEEKS[week].t}</b></p><p class="small">이번 주 ${weekDone}/${days}회${streakWeeks()>1?` · ${streakWeeks()}주 연속 운동 중`:''}</p><div class="weekdots" aria-label="4주 계획 진행 ${pr.inCycle} / ${total}회">${Array.from({length:total},(_,i)=>`<i class="${i<pr.inCycle?'on':''}"></i>`).join('')}</div></div></div>`
   :''}
-  ${p?challengeCard():''}
+  ${p?growCard()+challengeCard():''}
+  ${/[?&]preview=trainer/.test(location.search)?trainerCard():''}
   <button class="start-card" data-go="programs"><span class="num" aria-hidden="true">🍑</span><span><b>부위별 집중 루틴</b><span>애플힙 · 넓은 등 · 어깨 · 가슴 · 허벅지</span></span></button>
   <div class="duo">
     <button class="tile" data-go="guides"><span class="ic" aria-hidden="true">📖</span><b>기구 사용법</b><span>사진·영상으로 3단계만</span></button>
@@ -725,6 +756,8 @@ done(){
   <div class="done-hero"><div class="medal tnum" aria-hidden="true">${n}</div><p class="step-label">${n}번째 운동 완료${l.focus&&FOCUS[l.focus]?` · ${FOCUS[l.focus].ic} ${FOCUS[l.focus].t}`:''}</p><h1>오늘도 해냈어요!</h1><p class="muted">${lines[n%lines.length]}</p></div>
   <div class="cheer"><video id="cheer-v" src="assets/4d8eebefd964503a3bb17054.mp4" poster="assets/4d8eebefd964503a3bb17054.poster.jpg" playsinline preload="auto" aria-label="석계점 매니저의 축하 영상"></video><button class="cheer-btn" id="cheer-b" data-act="cheer" hidden>🔊 소리 켜고 보기</button><p class="cheer-cap">석계점 매니저가 보내는 응원이에요 👏</p></div>
   ${view.newBadges?.length?`<div class="newbadge"><p class="step-label">새 배지를 받았어요!</p><div class="badges">${view.newBadges.map(id=>{const b=BADGES.find(x=>x.id===id);return `<div class="badge on pop"><span class="bi">${b.ic}</span><b>${b.t}</b><span>${b.d}</span></div>`}).join('')}</div></div>`:''}
+  ${(()=>{const p=prsOf(l);return p.length?`<div class="pr-card"><p class="step-label">🏆 오늘 최고 기록 경신!</p><ul>${p.map(x=>`<li><span>${esc(x.name)}</span><b class="tnum">${x.kg}kg <em>+${x.gain}</em></b></li>`).join('')}</ul></div>`:''})()}
+  ${(()=>{const t=nextTips(l);return t.length?`<div class="card stack next-card"><p class="step-label">다음 운동에서는</p><ul class="next-l">${t.map(x=>`<li><b>${esc(x.name)}</b><span>${x.sg.up?`<em class="up">⬆ ${x.sg.kg}kg로 올려봐요</em>`:`<em class="down">⬇ ${x.sg.kg}kg로 자세부터</em>`}</span></li>`).join('')}</ul><p class="muted small">오늘 기록을 보고 정했어요. 다음 운동 때 화면에서도 같은 무게로 안내해요.</p></div>`:''})()}
   <button class="btn btn-gold share-btn" data-act="share-done">💬 카톡으로 오늘 운동 자랑하기</button>
   ${data.profile&&data.profile.quick?`<div class="fit-card"><div><b>다음엔 나에게 딱 맞게!</b><span>목표와 경험을 알려주시면 다음 운동부터 루틴을 맞춰 드려요.</span></div><button class="btn btn-soft" data-act="personalize">1분 맞추기</button></div>`:''}
   ${challengeCard()}
@@ -828,6 +861,31 @@ records(){
   </div></details>
   </div>`;
 },
+trainer(){const t=TRAINERS[view.tid||'doyoung'],n=t.steps.length;
+  if(view.step!=null){const i=Math.max(0,Math.min(n-1,view.step)),st=t.steps[i],x=st.id&&EX[st.id];
+    return top('trainer')+`<div class="stack-lg">
+    <div class="tr-prog" aria-label="${i+1}/${n}단계">${t.steps.map((_,k)=>`<span class="${k<=i?'on':''}"></span>`).join('')}</div>
+    <div class="tr-sh"><span class="tr-n">STEP ${i+1}/${n}</span><div><h1 class="tr-h">${esc(st.k)}</h1><p class="muted small">${esc(st.ex)}</p></div></div>
+    ${x?mainVideo(x,true):`<div class="tr-vid0"><span>🎬 도영 쌤 시범 영상 촬영 예정</span></div>`}
+    <p class="tr-pt">${esc(st.pt)}</p>
+    <p class="tr-sets">${esc(st.sets)}</p>
+    <details class="more"><summary>자세히 보기 (하는 법·주의)</summary><div class="in stack">
+      <p class="tr-why">${esc(st.why)}</p>
+      <ol class="tr-how">${st.how.map(h=>`<li>${esc(h)}</li>`).join('')}</ol>
+      <p class="note warn small"><b>주의</b>${esc(st.care)}</p>
+      ${st.tip?`<p class="note small"><b>도영 쌤 팁</b>${esc(st.tip)}</p>`:''}
+    </div></details>
+    <div class="tr-nav">${i>0?`<button class="btn" data-trs="${i-1}">← 이전</button>`:'<span></span>'}
+      ${i<n-1?`<button class="btn btn-main" data-trs="${i+1}">다음 · ${esc(t.steps[i+1].k)} →</button>`:`<button class="btn btn-main" data-go="trainer" data-tid="${view.tid||'doyoung'}">클래스 완료 👏</button>`}</div>
+    </div>`;}
+  return top('home')+`<div class="stack-lg">
+  <div class="tr-hero">${t.photo?`<img class="tr-hero-img" src="${t.photo}" alt="${esc(t.name)} 트레이너">`:`<div class="tr-hero-img tr-hero-0" aria-hidden="true"><span>도영 쌤<br>바디프로필 사진</span></div>`}
+    <div class="tr-hero-tx"><p class="tr-kick">${esc(t.role)} · ${esc(t.name)} 쌤의</p><h1>${esc(t.cls)}</h1><p>${esc(t.tag)} · ${n}가지 동작</p></div></div>
+  <div class="tr-list">${t.steps.map((st,i)=>`<button class="tr-row" data-trs="${i}"><b>${i+1}</b><span><strong>${esc(st.k)}</strong><small>${esc(st.ex)}</small></span><i aria-hidden="true">›</i></button>`).join('')}</div>
+  <button class="btn btn-main" data-trs="0">STEP 1부터 따라하기</button>
+  <p class="muted small" style="text-align:center">한 동작씩 영상 보고 따라 하면 돼요</p>
+  ${askCard('pt')}
+  </div>`;},
 programs(){
   return top('home')+`<div class="stack-lg">
   <div class="stack"><p class="step-label">부위별 집중 루틴</p><h1>오늘은 어디를<br>키워볼까요?</h1></div>
@@ -995,6 +1053,28 @@ function askCard(kind,exName){const n=data.profile?.name||'회원';
   const title=kind==='pain'?'트레이너에게 물어보기':kind==='pose'?'트레이너에게 자세 봐달라고 하기':kind==='pt'?'PT 상담 받아보기':'트레이너에게 물어보기';
   const sub=kind==='pain'?'아픈 곳이 계속되면 혼자 참지 마세요. 6층 데스크나 문자로 알려주시면 트레이너가 확인해 드려요.':kind==='pose'?'영상만으로는 정확하지 않을 수 있어요. 트레이너가 직접 봐 드리면 훨씬 빨라요.':kind==='pt'?'혼자 해보다 더 빠르게 바뀌고 싶다면, 내 몸에 맞춘 PT 상담을 받아보세요.':'헷갈리면 5층 운동하는 곳의 트레이너나 6층 데스크에 편하게 물어보세요.';
   return `<div class="ask-card"><b>🙋 ${title}</b><p>${sub}</p><div class="duo"><a class="btn btn-main" href="${smsHref(msg)}" data-track="ask_${kind}">문자 보내기</a><a class="btn btn-soft" href="tel:${GYM_TEL}" data-track="call_${kind}">전화하기</a></div><p class="small muted">석계점 ${GYM_TEL_SHOW} · 평일 06~24시, 주말 10~18시</p></div>`}
+const TRAINERS={
+  doyoung:{name:'도영',role:'근육 담당',cls:'프레임 클래스',tag:'옷핏이 달라지는 넓은 상체',photo:'',flow:'흉곽을 열고 → 등을 넓고 두껍게 → 어깨를 넓고 둥글게',
+    steps:[
+      {k:'흉곽 열기',pt:'덤벨을 머리 뒤로 내리며 가슴·겨드랑이를 쭉 늘려요',ex:'덤벨 풀오버',id:null,sets:'[세트·횟수 확인 중]',why:'프레임 키우기에 필수인 흉곽의 확장을 도와주는 동작. 가슴과 등을 한 번에 늘려주며 웜업이 돼요.',
+       how:['벤치에 누워서 덤벨의 끝 부분을 양손바닥으로 받쳐요.','흉곽을 부풀리며 숨을 마시고, 정수리 쪽으로 덤벨을 내려요.','명치를 들어주며 다시 올리고, 숨을 뱉어요.'],
+       care:'팔꿈치가 바깥쪽으로 돌아가지 않게 주의해요.'},
+      {k:'날개 펴기',pt:'팔꿈치를 엉덩이 쪽으로 내린다는 느낌으로 당겨요',ex:'랫풀다운',id:null,sets:'[세트·횟수 확인 중]',why:'상체 프레임에서 가장 큰 비중을 차지하는 광배근을 키우는 동작.',
+       how:['케이블의 시작점과 엉덩이가 비슷한 선에 오게 앉아요.','팔이 Y자를 그리도록 바를 잡아요.','팔꿈치가 엉덩이를 향하는 느낌으로 당겨요.'],
+       care:'허리를 과하게 젖히거나 팔꿈치가 뒤로 빠지지 않게 주의해요.'},
+      {k:'등 두께',pt:'등은 평평하게, 팔꿈치를 엉덩이 쪽으로 끌어와요',ex:'덤벨 로우',id:null,sets:'[세트·횟수 확인 중]',why:'랫풀다운이 등의 넓이를 만든다면, 로우는 등의 두께를 채워요. 옆에서 봐도 단단한 상체가 돼요.',
+       how:['벤치에 한쪽 손과 무릎을 올리고, 등을 평평하게 만들어요.','반대 손으로 덤벨을 잡고 팔을 아래로 길게 늘어뜨려요.','팔꿈치를 엉덩이 쪽으로 끌어오듯 당기고, 천천히 내려요.'],
+       care:'몸통이 돌아가거나 허리가 둥글게 말리지 않게 주의해요.'},
+      {k:'어깨 넓히기',pt:'들어 올리지 말고 옆으로 밀어낸다는 느낌으로',ex:'사이드 레터럴 레이즈',id:null,sets:'[사이클 구성 확인 중]',why:'눈에 바로 보이는 어깨 너비를 넓혀주는 동작.',
+       how:['상체를 앞으로 살짝 숙이고, 팔에 힘을 빼요.','손등이 향하는 방향으로 진행해요.','들어 올리기보다 옆으로 밀어낸다는 느낌으로 연습해요.'],
+       care:'날개뼈가 팔을 따라 올라가는 건 자연스러워요. 억지로 어깨를 누르지 말고 날개뼈를 편 채로 하면 어깨에 더 정확히 자극이 와요.',
+       tip:'무게를 다루기 어려운 동작이라, 두 가지 이상 무게로 바꿔 가며 이어서 하는 사이클 방식을 추천해요.'},
+      {k:'뒤태 완성',pt:'로프를 얼굴 쪽으로 당기며 양손을 귀 옆으로',ex:'페이스풀',id:null,sets:'[세트·횟수 확인 중]',why:'어깨 뒷면을 채워 어깨를 둥글고 입체적으로 만들고, 굽은 어깨를 펴줘요.',
+       how:['케이블을 얼굴 높이에 맞추고 로프를 양손으로 잡아요.','한 발 뒤로 물러나 가슴을 펴고 서요.','로프를 얼굴 쪽으로 당기며 양손을 귀 옆으로 벌려요.'],
+       care:'허리를 뒤로 젖히며 당기지 않게, 무게는 가볍게 해요.'}
+    ]}
+};
+function trainerCard(){const t=TRAINERS.doyoung;return `<button class="tr-card" data-go="trainer" data-tid="doyoung"><span class="tr-ph">${t.photo?`<img src="${t.photo}" alt="">`:'<span class="tr-ph0" aria-hidden="true">도영</span>'}</span><span class="tr-t"><small>트레이너 추천 클래스 · NEW</small><b>${t.name} 쌤의 ${t.cls}</b><span>${t.tag} · ${t.steps.length}단계</span></span><span class="arrow" aria-hidden="true">→</span></button>`}
 const NEW_URL='https://hyunwoo99657672-tech.github.io/amazing-member/';
 function moveBanner(){if(!ON_CLAUDE)return '';return `<div class="move-card"><b>🏠 새 주소로 이사했어요</b><p>이제 새 주소에서 더 빠르고 앱처럼 쓸 수 있어요. 홈 화면에 <b>금색 아이콘</b>으로 추가돼요.</p><a class="btn btn-main" href="${NEW_URL}" target="_blank" rel="noopener">새 주소로 가기 →</a><div class="duo"><button class="btn btn-soft" data-act="copy-new">주소 복사</button><button class="btn btn-soft" data-act="move-help">기록 옮기는 법</button></div><p class="small muted">여기서 쌓은 기록은 새 주소로 자동으로 넘어가지 않아요. <b>기록 옮기는 법</b>을 눌러 파일로 저장한 뒤, 새 주소의 <b>내 기록 → 기록 옮기기 → 저장한 파일 가져오기</b>를 눌러요.</p></div>`}
 function wrongBrowser(){return !ON_CLAUDE&&!STANDALONE&&((IS_AND&&!IS_CHROME)||(IS_IOS&&!IS_SAFARI))}
@@ -1301,7 +1381,7 @@ function finishWorkout(withWalk){
 document.addEventListener('click',async ev=>{
   {const t=ev.target.closest('a[data-track]');if(t){track(t.dataset.track);return}}
   const b=ev.target.closest('button,[data-go]');if(!b||b.disabled)return;
-  const d=b.dataset;
+  const d=b.dataset;if(d.trs!=null){view={name:'trainer',tid:view.tid||'doyoung',step:+d.trs};window.scrollTo(0,0);return render()}if(d.go==='trainer'){view={name:'trainer',tid:d.tid||view.tid||'doyoung'};window.scrollTo(0,0);return render()}
   if(d.go==='records'&&d.tab){return go('records',{tab:d.tab})}
   if(d.go==='grow'){return go('grow',{from:d.from||(view.name==='guides'?'guides':'guides')})}
   if(d.go==='guide'&&view.name==='pose'&&view.pg){return go('guide',view.pg)}
