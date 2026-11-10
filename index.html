@@ -640,7 +640,7 @@ home(){
   ${p?`<div class="confidence"><span class="num tnum">${week}주</span><div><p><b>${pr.cycle>1?pr.cycle+'번째 ':''}4주 계획 ${week}주차 · ${WEEKS[week].t}</b></p><p class="small">이번 주 ${weekDone}/${days}회${streakWeeks()>1?` · ${streakWeeks()}주 연속 운동 중`:''}</p><div class="weekdots" aria-label="4주 계획 진행 ${pr.inCycle} / ${total}회">${Array.from({length:total},(_,i)=>`<i class="${i<pr.inCycle?'on':''}"></i>`).join('')}</div></div></div>`
   :''}
   ${p?growCard()+challengeCard():''}${SYNC_URL?(setTimeout(loadRank,0),'<div id="rank-box"></div>'):''}
-  ${/[?&]preview=trainer/.test(location.search)?trainerCard():''}
+  ${trainerCard()}
   <button class="start-card" data-go="programs"><span class="num" aria-hidden="true">🍑</span><span><b>부위별 집중 루틴</b><span>애플힙 · 넓은 등 · 어깨 · 가슴 · 허벅지</span></span></button>
   <div class="duo">
     <button class="tile" data-go="guides"><span class="ic" aria-hidden="true">📖</span><b>기구 사용법</b><span>사진·영상으로 3단계만</span></button>
