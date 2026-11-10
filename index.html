@@ -1064,7 +1064,7 @@ function askCard(kind,exName){const n=data.profile?.name||'회원';
   const sub=kind==='pain'?'아픈 곳이 계속되면 혼자 참지 마세요. 6층 데스크나 문자로 알려주시면 트레이너가 확인해 드려요.':kind==='pose'?'영상만으로는 정확하지 않을 수 있어요. 트레이너가 직접 봐 드리면 훨씬 빨라요.':kind==='pt'?'혼자 해보다 더 빠르게 바뀌고 싶다면, 내 몸에 맞춘 PT 상담을 받아보세요.':'헷갈리면 5층 운동하는 곳의 트레이너나 6층 데스크에 편하게 물어보세요.';
   return `<div class="ask-card"><b>🙋 ${title}</b><p>${sub}</p><div class="duo"><a class="btn btn-main" href="${smsHref(msg)}" data-track="ask_${kind}">문자 보내기</a><a class="btn btn-soft" href="tel:${GYM_TEL}" data-track="call_${kind}">전화하기</a></div><p class="small muted">석계점 ${GYM_TEL_SHOW} · 평일 06~24시, 주말 10~18시</p></div>`}
 const TRAINERS={
-  doyoung:{name:'도영',role:'근육 담당',cls:'프레임 클래스',tag:'곧게 펴진 어깨, 탄탄한 등 라인',photo:'assets/dy-profile.jpg',thumb:'assets/dy-face.jpg',flow:'흉곽을 열고 → 등을 넓고 두껍게 → 어깨를 넓고 둥글게',
+  doyoung:{name:'도영',role:'근육 담당',cls:'프레임 클래스',tag:'당당한 어깨, 바르고 탄탄한 등 라인',photo:'assets/dy-profile.jpg',thumb:'assets/dy-face.jpg',flow:'흉곽을 열고 → 등을 넓고 두껍게 → 어깨를 넓고 둥글게',
     steps:[
       {k:'흉곽 열기',pt:'숨을 마시며 덤벨을 정수리 위로 늘리고, 올라오며 "후-" 뱉어요',ex:'덤벨 풀오버',id:null,
        vid:'assets/dy-pullover.mp4',poster:'assets/dy-pullover.jpg',ch:[['세팅',7],['동작',15],['주의',31],['호흡',66],['이럴 땐',80]],
