@@ -370,6 +370,7 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 .pr-card{padding:16px 18px;border-radius:20px;background:#17130c;color:#fff}.pr-card .step-label{color:#E8BE55;margin:0 0 8px}.pr-card ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}.pr-card li{display:flex;justify-content:space-between;gap:10px;font-weight:700}.pr-card em{font-style:normal;color:#E8BE55;margin-left:6px}
 .next-l{list-style:none;margin:0;padding:0;display:grid;gap:10px}.next-l li{display:flex;justify-content:space-between;gap:10px;align-items:center}.next-l em{font-style:normal;font-weight:800}.next-l .up{color:#1f6b3d}.next-l .down{color:#a5512a}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .grow-card{background:linear-gradient(135deg,#2a2416,#211c11);border-color:#4a3d1f}}:root[data-theme="dark"] .grow-card{background:linear-gradient(135deg,#2a2416,#211c11);border-color:#4a3d1f}
+.tr-v{display:flex;justify-content:center;background:#0A0907;border-radius:18px;overflow:hidden}.tr-v video{width:100%;max-width:400px;aspect-ratio:9/16;max-height:72vh;display:block;background:#000}.tr-ch{display:flex;flex-wrap:wrap;gap:8px}.tr-ch button{font:inherit;font-weight:800;font-size:.92rem;min-height:40px;padding:0 14px;border-radius:999px;border:1.5px solid #e6d3a3;background:var(--surface);color:inherit}.tr-ch small{color:#9a7420;font-weight:700;margin-left:2px}
 .tr-list{display:grid;border-radius:18px;background:var(--surface);border:1.5px solid var(--line);overflow:hidden}.tr-row{display:flex;align-items:center;gap:14px;padding:14px 16px;background:none;border:0;border-bottom:1px solid var(--line);text-align:left;min-height:64px;color:inherit;font:inherit}.tr-row:last-child{border-bottom:0}.tr-row b{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#17130c;color:#E8BE55;font-size:.95rem}.tr-row span{display:grid;gap:2px;flex:1}.tr-row strong{font-size:1.05rem}.tr-row small{color:var(--muted)}.tr-row i{font-style:normal;color:#b8862a;font-size:1.4rem}
 .tr-prog{display:flex;gap:6px}.tr-prog span{flex:1;height:6px;border-radius:3px;background:var(--line)}.tr-prog span.on{background:#C9A13B}.tr-h{margin:0;font-size:1.6rem}.tr-pt{margin:0;font-size:1.2rem;font-weight:800;line-height:1.5}.tr-sets{margin:0;display:inline-block;justify-self:start;align-self:flex-start;background:#17130c;color:#E8BE55;font-weight:800;padding:6px 12px;border-radius:10px;font-size:.9rem}.tr-nav{display:grid;grid-template-columns:auto 1fr;gap:10px}
 .tr-flow{display:grid;gap:0;padding:6px 16px;border-radius:16px;background:var(--surface);border:1.5px solid var(--line)}.tr-flow div{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.tr-flow div:last-child{border-bottom:0}.tr-flow b{flex:none;font-size:.72rem;color:#b8862a;letter-spacing:.04em;width:52px}.tr-flow span{font-weight:800;font-size:1rem}.tr-flow em{font-style:normal;color:var(--muted);font-size:.88rem;margin-left:auto;text-align:right}
@@ -872,7 +873,7 @@ trainer(){const t=TRAINERS[view.tid||'doyoung'],n=t.steps.length;
     return top('trainer')+`<div class="stack-lg">
     <div class="tr-prog" aria-label="${i+1}/${n}단계">${t.steps.map((_,k)=>`<span class="${k<=i?'on':''}"></span>`).join('')}</div>
     <div class="tr-sh"><span class="tr-n">STEP ${i+1}/${n}</span><div><h1 class="tr-h">${esc(st.k)}</h1><p class="muted small">${esc(st.ex)}</p></div></div>
-    ${x?mainVideo(x,true):`<div class="tr-vid0"><span>🎬 도영 쌤 시범 영상 촬영 예정</span></div>`}
+    ${st.vid?`<div class="tr-v"><video id="trv" src="${st.vid}" poster="${st.poster||''}" controls playsinline preload="metadata"></video></div>${st.ch?`<div class="tr-ch" aria-label="영상 구간 바로가기">${st.ch.map(c=>`<button data-act="tr-seek" data-t="${c[1]}">${esc(c[0])} <small>${Math.floor(c[1]/60)}:${String(c[1]%60).padStart(2,'0')}</small></button>`).join('')}</div>`:''}`:x?mainVideo(x,true):`<div class="tr-vid0"><span>🎬 도영 쌤 시범 영상 촬영 예정</span></div>`}
     <p class="tr-pt">${esc(st.pt)}</p>
     <p class="tr-sets">${esc(st.sets)}</p>
     <details class="more"><summary>자세히 보기 (하는 법·주의)</summary><div class="in stack">
@@ -1071,13 +1072,16 @@ const TRAINERS={
       {k:'등 두께',pt:'등은 평평하게, 팔꿈치를 엉덩이 쪽으로 끌어와요',ex:'덤벨 로우',id:null,sets:'[세트·횟수 확인 중]',why:'랫풀다운이 등의 넓이를 만든다면, 로우는 등의 두께를 채워요. 옆에서 봐도 단단한 상체가 돼요.',
        how:['벤치에 한쪽 손과 무릎을 올리고, 등을 평평하게 만들어요.','반대 손으로 덤벨을 잡고 팔을 아래로 길게 늘어뜨려요.','팔꿈치를 엉덩이 쪽으로 끌어오듯 당기고, 천천히 내려요.'],
        care:'몸통이 돌아가거나 허리가 둥글게 말리지 않게 주의해요.'},
+      {k:'뒤태 완성',pt:'팔꿈치를 양옆으로 열면서 이마 쪽으로 일직선으로 당겨요',ex:'페이스풀',id:null,sets:'[세트·횟수 확인 중]',
+       vid:'assets/dy-facepull.mp4',poster:'assets/dy-facepull.jpg',ch:[['세팅',9],['동작',30],['호흡',44],['꿀팁',66],['주의',91],['이럴 땐',113]],
+       why:'어깨 뒤편을 채워주고, 말린 어깨를 펴줘요.',
+       how:['케이블 높이는 눈~이마 높이로 맞춰요.','무게는 몸이 흔들리지 않을 만큼 가볍게 시작해요.','한 발 뒤로 물러나 손을 이마 앞에 두고, 팔꿈치를 양옆으로 열면서 일직선으로 당겨요.','당기면서 "후-" 뱉고, 늘리면서 들이마셔요.'],
+       care:'당길 때 어깨가 과하게 올라가거나 팔꿈치가 어깨보다 낮아지면 어깨에 부담이 되거나 팔 운동이 돼요. 허리가 젖혀지며 아프거나, 바르게 했는데도 어깨 앞쪽이 찝히면 도영 쌤을 찾아주세요.',
+       tip:'손을 뒤로 가져간다는 느낌보다 엄지를 뒤로 돌려준다는 느낌으로 팔을 돌리면 날개뼈 사이에 더 강한 자극이 와요.'},
       {k:'어깨 넓히기',pt:'들어 올리지 말고 옆으로 밀어낸다는 느낌으로',ex:'사이드 레터럴 레이즈',id:null,sets:'[사이클 구성 확인 중]',why:'눈에 바로 보이는 어깨 너비를 넓혀주는 동작.',
        how:['상체를 앞으로 살짝 숙이고, 팔에 힘을 빼요.','손등이 향하는 방향으로 진행해요.','들어 올리기보다 옆으로 밀어낸다는 느낌으로 연습해요.'],
        care:'날개뼈가 팔을 따라 올라가는 건 자연스러워요. 억지로 어깨를 누르지 말고 날개뼈를 편 채로 하면 어깨에 더 정확히 자극이 와요.',
-       tip:'무게를 다루기 어려운 동작이라, 두 가지 이상 무게로 바꿔 가며 이어서 하는 사이클 방식을 추천해요.'},
-      {k:'뒤태 완성',pt:'로프를 얼굴 쪽으로 당기며 양손을 귀 옆으로',ex:'페이스풀',id:null,sets:'[세트·횟수 확인 중]',why:'어깨 뒷면을 채워 어깨를 둥글고 입체적으로 만들고, 굽은 어깨를 펴줘요.',
-       how:['케이블을 얼굴 높이에 맞추고 로프를 양손으로 잡아요.','한 발 뒤로 물러나 가슴을 펴고 서요.','로프를 얼굴 쪽으로 당기며 양손을 귀 옆으로 벌려요.'],
-       care:'허리를 뒤로 젖히며 당기지 않게, 무게는 가볍게 해요.'}
+       tip:'무게를 다루기 어려운 동작이라, 두 가지 이상 무게로 바꿔 가며 이어서 하는 사이클 방식을 추천해요.'}
     ]}
 };
 function trainerCard(){const t=TRAINERS.doyoung;return `<button class="tr-card" data-go="trainer" data-tid="doyoung"><span class="tr-ph">${t.photo?`<img src="${t.photo}" alt="">`:'<span class="tr-ph0" aria-hidden="true">도영</span>'}</span><span class="tr-t"><small>트레이너 추천 클래스 · NEW</small><b>${t.name} 쌤의 ${t.cls}</b><span>${t.tag} · ${t.steps.length}단계</span></span><span class="arrow" aria-hidden="true">→</span></button>`}
@@ -1523,6 +1527,7 @@ document.addEventListener('click',async ev=>{
       data.sync={name,pin,rank:true};save();track('sync-start');return cloudSave(false)}
     case 'sync-now':return cloudSave(false);
     case 'sync-off':{data.sync=null;save();toast('이 폰에서 보관을 껐어요. 보관된 기록은 그대로 있어요.');return render()}
+    case 'tr-seek':{const v=$('#trv');if(v){v.currentTime=+d.t;v.play().catch(()=>{});}return}
     case 'paste-import':{const t=$('#paste-txt').value.trim();if(!t){toast('먼저 기록 글을 붙여넣어 주세요.');return}return importText(t)}
     case 'installed': data.installed=true; save(); toast('좋아요! 다음부터 아이콘으로 열어주세요.'); return go('home');
     case 'copy':{const t=$('#copy-txt');try{await navigator.clipboard.writeText(t.value);toast('복사했어요. 메모장이나 카톡 나와의 채팅에 붙여넣어 보관하세요.')}catch(e){t.select();toast('글자를 길게 눌러 복사해주세요.')}return}
