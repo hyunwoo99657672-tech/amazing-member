@@ -709,7 +709,7 @@ workout(){
     <div class="stack"><p class="step-label">마지막 · 마무리</p><h1>기구 운동 끝!<br>${s.walk}분만 걸어요.</h1><p class="muted">${s.goal==='fitness'?'1분 빠르게 · 2분 보통, 번갈아':'조금 빠르게'} · 마지막 2분은 천천히</p></div>
     <button class="btn btn-main" data-act="finish">다 걸었어요 · 오늘 운동 끝</button>
     <button class="btn btn-soft" data-act="finish-skip">걷기는 건너뛰고 끝내기</button></div>`;
-  const e=s.queue[s.index], x=EX[e.id];
+  const e=s.queue[s.index], x=EX[e.id], T=s.cls&&TRAINERS[s.cls], cst=T&&T.steps[s.index];
   if(s.phase==='rest'){
     const next=e.done.length<e.target?`${x.name} ${e.done.length+1}세트`:(s.queue[s.index+1]?EX[s.queue[s.index+1].id].name:'마무리 걷기');
     return top()+`<div class="stack-lg">${bar}<div class="rest">
@@ -732,8 +732,8 @@ workout(){
   const repVal=view.reps!=null?view.reps:(prev?.reps??e.repMin);
   const first=!e.done.length;
   return top()+`<div class="stack-lg">${bar}
-  <div class="ex-head"><p class="step-label">기구 ${s.index+1} / ${total}</p><h1>${esc(x.name)}</h1></div>
-  ${mainVideo(x,true)}
+  <div class="ex-head"><p class="step-label">${cst?`${esc(T.name)} 쌤 ${esc(T.cls)} · STEP ${s.index+1} / ${total} · ${esc(cst.k)}`:`기구 ${s.index+1} / ${total}`}</p><h1>${esc(cst?cst.ex:x.name)}</h1></div>
+  ${cst&&cst.vid?trVideo(cst):mainVideo(x,true)}
   <div class="set-box" id="setbox">
     <div class="set-top"><h2>${setN}세트째</h2><div class="set-dots" aria-label="${e.target}세트 중 ${e.done.length}세트 완료">${Array.from({length:e.target},(_,k)=>`<i class="${k<e.done.length?'done':k===e.done.length?'now':''}">${k<e.done.length?'✓':k+1}</i>`).join('')}</div></div>
     <p class="muted small">목표 ${e.repMin}~${e.repMax}회</p>
@@ -746,11 +746,13 @@ workout(){
     ${kind(e.id)==='bar'&&first?'<p class="note warn small"><b>바벨은 안전이 먼저</b>무거우면 보조자와 함께, 원판엔 클립을 채워요.</p>':''}
     <button class="btn btn-main" data-act="set-done">✓ ${setN}세트 완료</button>
   </div>
-  <div class="card stack">${s.focus&&FOCUS[s.focus].tip[e.id]?`<p class="focus-tip"><b>${FOCUS[s.focus].ic} ${FOCUS[s.focus].t} 포인트</b>${esc(FOCUS[s.focus].tip[e.id])}</p>`:''}<ul class="cues">${x.quick.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>${data.equip[e.id]?`<p class="hint">내 설정 메모: ${esc(data.equip[e.id])}</p>`:''}</div>
+  ${cst?`<div class="card stack"><p class="tr-pt">${esc(cst.pt)}</p><ul class="cues">${cst.how.map(q=>`<li>${esc(q)}</li>`).join('')}</ul></div><details class="more"><summary>🚫 주의 · 이럴 땐 멈춰요</summary><div class="in"><p>${esc(cst.care)}</p></div></details>${cst.tip?`<details class="more"><summary>💡 ${esc(T.name)} 쌤 꿀팁</summary><div class="in"><p>${esc(cst.tip)}</p></div></details>`:''}${trAsk(s.cls,s.index)}`:''}
+  ${cst?'':`<div class="card stack">${s.focus&&FOCUS[s.focus].tip[e.id]?`<p class="focus-tip"><b>${FOCUS[s.focus].ic} ${FOCUS[s.focus].t} 포인트</b>${esc(FOCUS[s.focus].tip[e.id])}</p>`:''}<ul class="cues">${x.quick.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>${data.equip[e.id]?`<p class="hint">내 설정 메모: ${esc(data.equip[e.id])}</p>`:''}</div>
   ${first?`<details class="more" ${sug.first||needs('setup')||needs('form')?'open':''}><summary>기구 맞추는 법</summary><div class="in"><ol class="steps-n">${x.setup.map(([t,d])=>`<li><div><b>${esc(t)}</b><span>${esc(d)}</span></div></li>`).join('')}</ol>${KG_HINT[kind(e.id)]?`<p class="muted small">${KG_HINT[kind(e.id)]}</p>`:''}${x.lock?`<div class="lock-card" role="group" aria-label="시작 전 확인"><h3>✅ 시작 전 확인 <small>눌러서 체크해요</small></h3>${x.lock.map(t=>`<button class="lock-i" data-act="lock" aria-pressed="false"><span class="bx" aria-hidden="true"></span>${esc(t)}</button>`).join('')}</div>`:''}</div></details>`:''}
   ${x.pain?`<details class="more"><summary>🚫 이런 통증이면 멈춰요</summary><div class="in"><ul class="pain-l">${x.pain.map(([w,f])=>`<li><b>${esc(w)}</b><span>${esc(f)}</span></li>`).join('')}</ul></div></details>`:''}
   <details class="more"><summary>어디가 힘들까요?</summary><div class="in">${musclesCard(x,true)}</div></details>
   <div class="ex-tools"><button data-guide="${e.id}" data-from="workout">사용법</button>${POSE_KIND[e.id]?`<button data-pose="${e.id}" data-from="workout">📹 자세 확인</button>`:''}<button data-act="swap">기구가 사용 중</button>${!e.done.length&&s.index<total-1?'<button data-act="later">나중에 할게요</button>':''}<button data-act="pain">통증이 있어요</button></div>
+`}
   <details class="more"><summary>그 밖에</summary><div class="in"><div class="ex-tools" style="justify-content:flex-start">${vbtn}<button data-act="memo">설정 메모</button><button data-act="skip">건너뛰기</button>${kind(e.id)!=='body'?'<button data-go="grow" data-from="workout">무게 올리는 법</button>':''}<button data-act="quit">오늘은 여기까지</button></div></div></details>
   </div>`;
 },
@@ -760,7 +762,7 @@ done(){
   const n=strengthLogs().length;
   const lines=['혼자서도 충분히 해내고 있어요.','PT 없이도 이만큼 했어요. 다음에도 화면만 따라오세요.','꾸준함이 제일 큰 실력이에요.'];
   return top()+`<div class="stack-lg">
-  <div class="done-hero"><div class="medal tnum" aria-hidden="true">${n}</div><p class="step-label">${n}번째 운동 완료${l.focus&&FOCUS[l.focus]?` · ${FOCUS[l.focus].ic} ${FOCUS[l.focus].t}`:''}</p><h1>오늘도 해냈어요!</h1><p class="muted">${lines[n%lines.length]}</p></div>
+  <div class="done-hero"><div class="medal tnum" aria-hidden="true">${n}</div><p class="step-label">${n}번째 운동 완료${l.cls&&TRAINERS[l.cls]?` · ${TRAINERS[l.cls].name} 쌤 ${TRAINERS[l.cls].cls}`:l.focus&&FOCUS[l.focus]?` · ${FOCUS[l.focus].ic} ${FOCUS[l.focus].t}`:''}</p><h1>오늘도 해냈어요!</h1><p class="muted">${lines[n%lines.length]}</p></div>
   <div class="cheer"><video id="cheer-v" src="assets/4d8eebefd964503a3bb17054.mp4" poster="assets/4d8eebefd964503a3bb17054.poster.jpg" playsinline preload="auto" aria-label="석계점 매니저의 축하 영상"></video><button class="cheer-btn" id="cheer-b" data-act="cheer" hidden>🔊 소리 켜고 보기</button><p class="cheer-cap">석계점 매니저가 보내는 응원이에요 👏</p></div>
   ${view.newBadges?.length?`<div class="newbadge"><p class="step-label">새 배지를 받았어요!</p><div class="badges">${view.newBadges.map(id=>{const b=BADGES.find(x=>x.id===id);return `<div class="badge on pop"><span class="bi">${b.ic}</span><b>${b.t}</b><span>${b.d}</span></div>`}).join('')}</div></div>`:''}
   ${(()=>{const p=prsOf(l);return p.length?`<div class="pr-card"><p class="step-label">🏆 오늘 최고 기록 경신!</p><ul>${p.map(x=>`<li><span>${esc(x.name)}</span><b class="tnum">${x.kg}kg <em>+${x.gain}</em></b></li>`).join('')}</ul></div>`:''})()}
@@ -780,7 +782,7 @@ done(){
   </div>`;
 },
 guides(){
-  const list=Object.entries(EX).filter(([k,x])=>guideFilter==='all'||x.group===guideFilter);
+  const list=Object.entries(EX).filter(([k,x])=>!x.cls&&(guideFilter==='all'||x.group===guideFilter));
   return top('home')+`<div class="stack-lg">
   <div class="stack"><h1>기구 사용법</h1><p class="muted">사진과 같은 기구를 눌러보세요.</p></div>
   <button class="start-card" data-go="basics"><span class="num" aria-hidden="true">6</span><span><b>헬스장이 처음이라면 · 기본 6가지</b><span>무게 고르는 법, 숨 쉬는 법, 기구 같이 쓰는 법</span></span></button>
@@ -875,7 +877,7 @@ trainer(){const t=TRAINERS[view.tid||'doyoung'],n=t.steps.length;
     return top('trainer')+`<div class="stack-lg">
     <div class="tr-prog" aria-label="${i+1}/${n}단계">${t.steps.map((_,k)=>`<span class="${k<=i?'on':''}"></span>`).join('')}</div>
     <div class="tr-sh"><span class="tr-n">STEP ${i+1}/${n}</span><div><h1 class="tr-h">${esc(st.k)}</h1><p class="muted small">${esc(st.ex)}</p></div></div>
-    ${st.vid?`<div class="tr-v"><video id="trv" src="${st.vid}" poster="${st.poster||''}" controls playsinline preload="metadata"></video></div>${st.ch?`<div class="tr-ch" aria-label="영상 구간 바로가기">${st.ch.map(c=>`<button data-act="tr-seek" data-t="${c[1]}">${esc(c[0])} <small>${Math.floor(c[1]/60)}:${String(c[1]%60).padStart(2,'0')}</small></button>`).join('')}</div>`:''}`:x?mainVideo(x,true):`<div class="tr-vid0"><span>🎬 도영 쌤 시범 영상 촬영 예정</span></div>`}
+    ${st.vid?trVideo(st):x?mainVideo(x,true):`<div class="tr-vid0"><span>🎬 도영 쌤 시범 영상 촬영 예정</span></div>`}
     <p class="tr-pt">${esc(st.pt)}</p>
     ${trSets(st)}
     <details class="more"><summary>자세히 보기 (하는 법·주의)</summary><div class="in stack">
@@ -884,16 +886,19 @@ trainer(){const t=TRAINERS[view.tid||'doyoung'],n=t.steps.length;
       <p class="note warn small"><b>주의</b>${esc(st.care)}</p>
       ${st.tip?`<p class="note small"><b>도영 쌤 팁</b>${esc(st.tip)}</p>`:''}
     </div></details>
+    ${trAsk(view.tid||'doyoung',i)}
     <div class="tr-nav">${i>0?`<button class="btn" data-trs="${i-1}">← 이전</button>`:'<span></span>'}
-      ${i<n-1?`<button class="btn btn-main" data-trs="${i+1}">다음 · ${esc(t.steps[i+1].k)} →</button>`:`<button class="btn btn-main" data-go="trainer" data-tid="${view.tid||'doyoung'}">클래스 완료 👏</button>`}</div>
+      ${i<n-1?`<button class="btn btn-main" data-trs="${i+1}">다음 · ${esc(t.steps[i+1].k)} →</button>`:`<button class="btn btn-main" data-act="tr-start">이대로 운동 시작 💪</button>`}</div>
     </div>`;}
   return top('home')+`<div class="stack-lg">
   <div class="tr-hero">${t.photo?`<img class="tr-hero-img" src="${t.photo}" alt="${esc(t.name)} 트레이너">`:`<div class="tr-hero-img tr-hero-0" aria-hidden="true"><span>도영 쌤<br>바디프로필 사진</span></div>`}
     <div class="tr-hero-tx"><p class="tr-kick">${esc(t.role)} · ${esc(t.name)} 쌤의</p><h1>${esc(t.cls)}</h1><p>${esc(t.tag)} · ${n}가지 동작</p></div></div>
   <div class="tr-list">${t.steps.map((st,i)=>`<button class="tr-row" data-trs="${i}"><b>${i+1}</b><span><strong>${esc(st.k)}</strong><small>${esc(st.ex)}</small></span><i aria-hidden="true">›</i></button>`).join('')}</div>
   <div class="card stack"><p class="step-label">내 등급에 맞는 세트·횟수</p>${trSets(null)}</div>
-  <button class="btn btn-main" data-trs="0">STEP 1부터 따라하기</button>
-  <p class="muted small" style="text-align:center">한 동작씩 영상 보고 따라 하면 돼요</p>
+  <button class="btn btn-main" data-act="tr-start">클래스로 운동 시작 💪</button>
+  <p class="muted small" style="text-align:center">무게·횟수 기록, 쉬는 시간 타이머, 랭킹까지 일반 운동과 똑같이 기록돼요.</p>
+  <button class="btn btn-soft" data-trs="0">운동 전에 동작 영상 먼저 보기</button>
+  <p class="muted small" style="text-align:center">📶 영상 5개, 약 53MB예요. 와이파이에서 보시면 데이터 걱정이 없어요.</p>
   ${askCard('pt')}
   </div>`;},
 programs(){
@@ -1066,29 +1071,29 @@ function askCard(kind,exName){const n=data.profile?.name||'회원';
 const TRAINERS={
   doyoung:{name:'도영',role:'근육 담당',cls:'프레임 클래스',tag:'당당한 어깨, 바르고 탄탄한 등 라인',photo:'assets/dy-profile.jpg',thumb:'assets/dy-face.jpg',flow:'흉곽을 열고 → 등을 넓고 두껍게 → 어깨를 넓고 둥글게',
     steps:[
-      {k:'흉곽 열기',pt:'숨을 마시며 덤벨을 정수리 위로 늘리고, 올라오며 "후-" 뱉어요',ex:'덤벨 풀오버',id:null,
+      {k:'흉곽 열기',eid:'dpo',pt:'숨을 마시며 덤벨을 정수리 위로 늘리고, 올라오며 "후-" 뱉어요',ex:'덤벨 풀오버',id:null,
        vid:'assets/dy-pullover.mp4',poster:'assets/dy-pullover.jpg',ch:[['세팅',7],['동작',15],['주의',31],['호흡',66],['이럴 땐',80]],
        why:'가슴과 등을 한 번에 늘려주는 첫 동작이에요.',
        how:['머리가 벤치 끝에 오게 눕고, 발은 바닥을 단단하게 눌러요.','덤벨을 명치 위에서부터 정수리 위로 천천히 늘려요.','올라오면서 "후-" 뱉어요.','팔꿈치는 벌어지지 않게 모으고, 어깨만 움직여요.'],
        care:'팔꿈치가 벌어지거나 굽혔다 폈다 하면 팔 운동이 돼요. 내렸을 때 허리가 붕 뜨거나 어깨 관절이 찝히는 느낌이 들면 바로 멈추고 도영 쌤을 찾아주세요.'},
-      {k:'날개 펴기',pt:'팔꿈치가 엉덩이를 향해 내려간다는 느낌으로 당겨요',ex:'랫풀다운',id:null,
+      {k:'날개 펴기',eid:'2',pt:'팔꿈치가 엉덩이를 향해 내려간다는 느낌으로 당겨요',ex:'랫풀다운',id:null,
        vid:'assets/dy-latpull.mp4',poster:'assets/dy-latpull.jpg',ch:[['세팅',5],['그립·당기기',31],['주의',48],['이럴 땐',83]],
        why:'날개를 펼쳐주는 동작. 상체 프레임에서 가장 큰 광배근을 키워요.',
        how:['허벅지 패드를 다리 길이에 맞게 맞추고, 다리로 단단하게 눌러요.','바는 어깨보다 살짝 넓게, 팔이 Y자가 되게 잡아요.','팔꿈치가 엉덩이를 향해 내려간다는 느낌으로 당기면서 "후-" 뱉어요.','늘릴 때는 툭 놓지 말고, 등이 늘어나는 느낌을 느끼며 천천히 올려요.'],
        care:'당길 때 허리를 과하게 젖히거나 몸통을 뒤로 빼면 등 대신 허리가 일해요. 어깨 앞쪽이나 팔꿈치 안쪽이 아프면 무게를 줄이세요. 바를 목 뒤로 당기는 동작은 어깨에 부담이 커서 하지 않아도 돼요.'},
-      {k:'등 두께',pt:'팔꿈치를 엉덩이 쪽으로 당긴다고 생각하며 끌어와요',ex:'원암 덤벨 로우',id:null,
+      {k:'등 두께',eid:'drow',pt:'팔꿈치를 엉덩이 쪽으로 당긴다고 생각하며 끌어와요',ex:'원암 덤벨 로우',id:null,
        vid:'assets/dy-dbrow.mp4',poster:'assets/dy-dbrow.jpg',ch:[['세팅',5],['동작',30],['호흡',50],['꿀팁',65],['주의',91],['이럴 땐',109]],
        why:'등을 두껍게 채워주는 동작. 옆에서 봐도 단단한 상체가 돼요.',
        how:['벤치에 기댈 때 상체가 바닥과 수평이 되게 해요. 이게 가장 중요해요.','무릎은 편한 위치에 올리고, 손은 어깨와 비슷한 선에서 받쳐요.','무게 중심을 동작하는 쪽 발에 실으면 중심 잡기가 편해요.','그냥 위로 올리면 팔꿈치가 바깥으로 빠지기 쉬워요. 엉덩이 쪽으로 당긴다고 생각하세요.','당겼을 때 "후-" 뱉고, 늘리면서 마셔요.'],
        care:'당겼을 때 어깨가 앞으로 빠지지 않게, 어깨도 팔꿈치와 같이 뒤로 가게 해요. 허리가 아프면 허리가 둥글게 말렸거나 무게가 너무 무거운 거예요. 무게를 낮춰도 아프면 도영 쌤을 찾아주세요.',
        tip:'등 자극이 잘 안 오면, 자세는 그대로 두고 당기면서 몸통을 같이 돌려보세요. 등 근육을 더 쥐어짜는 느낌이 와요.'},
-      {k:'뒤태 완성',pt:'팔꿈치를 양옆으로 열면서 이마 쪽으로 일직선으로 당겨요',ex:'페이스풀',id:null,
+      {k:'뒤태 완성',eid:'fp',pt:'팔꿈치를 양옆으로 열면서 이마 쪽으로 일직선으로 당겨요',ex:'페이스풀',id:null,
        vid:'assets/dy-facepull.mp4',poster:'assets/dy-facepull.jpg',ch:[['세팅',9],['동작',30],['호흡',44],['꿀팁',66],['주의',91],['이럴 땐',113]],
        why:'어깨 뒤편을 채워주고, 말린 어깨를 펴줘요.',
        how:['케이블 높이는 눈~이마 높이로 맞춰요.','무게는 몸이 흔들리지 않을 만큼 가볍게 시작해요.','한 발 뒤로 물러나 손을 이마 앞에 두고, 팔꿈치를 양옆으로 열면서 일직선으로 당겨요.','당기면서 "후-" 뱉고, 늘리면서 들이마셔요.'],
        care:'당길 때 어깨가 과하게 올라가거나 팔꿈치가 어깨보다 낮아지면 어깨에 부담이 되거나 팔 운동이 돼요. 허리가 젖혀지며 아프거나, 바르게 했는데도 어깨 앞쪽이 찝히면 도영 쌤을 찾아주세요.',
        tip:'손을 뒤로 가져간다는 느낌보다 엄지를 뒤로 돌려준다는 느낌으로 팔을 돌리면 날개뼈 사이에 더 강한 자극이 와요.'},
-      {k:'어깨 넓히기',pt:'날개뼈를 편 채로, 바닥을 쓸며 양옆으로 밀어내요',ex:'덤벨 사이드 레터럴 레이즈',id:null,cyc:true,
+      {k:'어깨 넓히기',eid:'dlr',pt:'날개뼈를 편 채로, 바닥을 쓸며 양옆으로 밀어내요',ex:'덤벨 사이드 레터럴 레이즈',id:null,cyc:true,
        vid:'assets/dy-lateral.mp4',poster:'assets/dy-lateral.jpg',ch:[['세팅',10],['동작',20],['꿀팁',40],['주의',84],['이럴 땐',126]],
        why:'측면 어깨에 볼륨감을 키워서 어깨 너비를 직접 넓혀주는 동작이에요.',
        how:['처음엔 몸이 흔들리지 않을 만큼 가벼운 무게로 골라요.','덤벨이 한쪽으로 치우치지 않게 가운데를 잡아요.','상체를 살짝 기울이고, 양옆으로 밀어내듯이 올려요.'],
@@ -1099,6 +1104,18 @@ const TRAINERS={
 const TR_LV={new:{t:'초급',s:'3세트 × 15회',n:'가벼운 무게로 자세부터 익혀요.'},some:{t:'중급',s:'4세트 × 12~15회',n:'15회가 쉬워지면 무게를 한 칸 올려요.'},advanced:{t:'상급',s:'5세트 × 12회',n:'12회째가 겨우 되는 무게로 해요.'}};
 function trLv(){const v=data.trLv||data.profile?.level;return TR_LV[v]?v:'new'}
 function trSets(st){const k=trLv(),L=TR_LV[k];return `<div class="tr-lv"><div class="tr-lv-b" role="group" aria-label="내 운동 등급">${Object.entries(TR_LV).map(([key,x])=>`<button data-act="tr-lv" data-lv="${key}" aria-pressed="${key===k}">${x.t}</button>`).join('')}</div><p class="tr-sets"><b>${L.s}</b>${st&&st.cyc?' · 1세트 = 무거운 덤벨로 하다가 바로 가벼운 덤벨로 이어서':''}</p><p class="small muted" style="margin:0">${L.n} 세트 사이 1분 쉬어요.</p></div>`}
+/* class-only exercises (not shown in guides) */
+EX.dpo=EX.dpo||{name:'덤벨 풀오버',group:'chest',cls:true,part:'가슴·등 · 광배근',quick:[],setup:[],mus:{p:['lats','chest'],s:['triceps'],a:['core']},video:'assets/dy-pullover.mp4',vposter:'assets/dy-pullover.jpg',thumb:'assets/dy-pullover.jpg'};
+EX.dlr=EX.dlr||{name:'덤벨 사이드 레터럴 레이즈',group:'shoulder',cls:true,part:'어깨 옆 · 측면 삼각근',quick:[],setup:[],mus:{p:['sideDelts'],s:['traps'],a:[]},video:'assets/dy-lateral.mp4',vposter:'assets/dy-lateral.jpg',thumb:'assets/dy-lateral.jpg'};
+TYPE.dpo='db';TYPE.dlr='db';
+const TR_REP={new:[15,15,3],some:[12,15,4],advanced:[12,12,5]};
+function classPlan(tid){const t=TRAINERS[tid],p=data.profile||{},lv=trLv(),[repMin,repMax,target]=TR_REP[lv];
+  const queue=t.steps.map(st=>({id:st.eid,target,done:[],rest:60,repMin,repMax,lastHard:false}));
+  const goals=goalsOf(p);
+  return {queue,warm:3,walk:5,time:35,condition:'normal',goal:goals[0]||'muscle',goals,focus:null,cls:tid,level:lv,days:p.days===3?3:2,week:1,cycle:1,slot:strengthLogs().length,index:-1,phase:'warm',started:Date.now(),note:''}}
+function trVideo(st){return `<div class="tr-v"><video id="trv" src="${st.vid}" poster="${st.poster||''}" controls playsinline preload="metadata"></video></div>${st.ch?`<div class="tr-ch" aria-label="영상 구간 바로가기">${st.ch.map(c=>`<button data-act="tr-seek" data-t="${c[1]}">${esc(c[0])} <small>${Math.floor(c[1]/60)}:${String(c[1]%60).padStart(2,'0')}</small></button>`).join('')}</div>`:''}`}
+function trAsk(tid,i){const t=TRAINERS[tid],st=t.steps[i],n=data.profile?.name||'회원';const msg=`[석계점 회원앱] ${n} 회원이에요. ${t.name} 쌤 ${t.cls} ${i+1}단계 ${st.ex} 하다가 여쭤보고 싶은 게 있어요.`;
+  return `<div class="ask-card"><b>💬 ${t.name} 쌤에게 물어보기</b><p>자세가 헷갈리거나 아픈 곳이 있으면 혼자 참지 마세요. 문자를 보내면 ${t.name} 쌤에게 전달해 드려요.</p><div class="duo"><a class="btn btn-main" href="${smsHref(msg)}" data-track="ask_trainer">문자 보내기</a><a class="btn btn-soft" href="tel:${GYM_TEL}" data-track="call_trainer">전화하기</a></div></div>`}
 function trainerCard(){const t=TRAINERS.doyoung;return `<button class="tr-card" data-go="trainer" data-tid="doyoung"><span class="tr-ph">${t.photo?`<img src="${t.thumb||t.photo}" alt="">`:'<span class="tr-ph0" aria-hidden="true">도영</span>'}</span><span class="tr-t"><small>트레이너 추천 클래스 · NEW</small><b>${t.name} 쌤의 ${t.cls}</b><span>${t.tag} · ${t.steps.length}단계</span></span><span class="arrow" aria-hidden="true">→</span></button>`}
 const NEW_URL='https://hyunwoo99657672-tech.github.io/amazing-member/';
 function moveBanner(){if(!ON_CLAUDE)return '';return `<div class="move-card"><b>🏠 새 주소로 이사했어요</b><p>이제 새 주소에서 더 빠르고 앱처럼 쓸 수 있어요. 홈 화면에 <b>금색 아이콘</b>으로 추가돼요.</p><a class="btn btn-main" href="${NEW_URL}" target="_blank" rel="noopener">새 주소로 가기 →</a><div class="duo"><button class="btn btn-soft" data-act="copy-new">주소 복사</button><button class="btn btn-soft" data-act="move-help">기록 옮기는 법</button></div><p class="small muted">여기서 쌓은 기록은 새 주소로 자동으로 넘어가지 않아요. <b>기록 옮기는 법</b>을 눌러 파일로 저장한 뒤, 새 주소의 <b>내 기록 → 기록 옮기기 → 저장한 파일 가져오기</b>를 눌러요.</p></div>`}
@@ -1424,7 +1441,7 @@ function finishWorkout(withWalk){
   s.queue.filter(e=>e.done.length).forEach(e=>items.push({id:e.id,name:EX[e.id].name,records:e.done,effort:e.effort||null,repMax:e.repMax,formDrop:!!e.formDrop}));
   if(withWalk) items.push({cardio:true,name:'마무리 걷기',minutes:s.walk});
   const minutes=Math.min(Math.max(1,Math.round((Date.now()-s.started)/60000)),s.time+60);
-  const log={date:new Date().toISOString(),goal:s.goal,focus:s.focus||null,minutes,items};
+  const log={date:new Date().toISOString(),goal:s.goal,focus:s.focus||null,minutes,items};if(s.cls)log.cls=s.cls;
   data.active=null;
   if(items.some(i=>!i.cardio)){const before=new Set(earned());data.logs.push(log);const nb=earned().filter(id=>!before.has(id));save();keepAwake(false);say('오늘 운동 끝! 정말 수고하셨어요.','finish');cloudSave(true);go('done',{log,newBadges:nb})}
   else{save();keepAwake(false);toast('다음에 다시 시작해요. 괜찮아요!');go('home')}
@@ -1489,7 +1506,7 @@ document.addEventListener('click',async ev=>{
     case 'rest-add': s.restEnd=Math.max(s.restEnd,Date.now())+30000;save();return;
     case 'swap':{const e=s.queue[s.index],x=EX[e.id];const used=new Set(s.queue.map(q=>q.id.replace(/^4[sl]$/,'4')));
       const senior=data.profile?.age==='senior'&&data.profile?.level==='new';
-      const prefs=(SWAP[e.id]||[]).concat(Object.keys(EX).filter(k=>EX[k].group===x.group));
+      const prefs=(SWAP[e.id]||[]).concat(Object.keys(EX).filter(k=>!EX[k].cls&&EX[k].group===x.group));
       const novice=data.profile?.level==='new', okFree=k=>!(novice&&HARD(k))&&(!FREE(k)||(!novice&&(kind(k)==='db'||data.profile?.level==='advanced')));
       const alt=prefs.find(k=>k!==e.id&&EX[k]&&!used.has(k.replace(/^4[sl]$/,'4'))&&k!=='13'&&!(senior&&(k==='9'||k==='12'))&&okFree(k));
       const had=e.done.length;
@@ -1542,6 +1559,7 @@ document.addEventListener('click',async ev=>{
       data.sync={name,pin,rank:true};save();track('sync-start');return cloudSave(false)}
     case 'sync-now':return cloudSave(false);
     case 'sync-off':{data.sync=null;save();toast('이 폰에서 보관을 껐어요. 보관된 기록은 그대로 있어요.');return render()}
+    case 'tr-start':{const tid=view.tid||'doyoung';if(data.active&&data.active.queue&&data.active.queue.some(e=>e.done.length)){toast('진행 중인 운동이 있어요. 이어서 하거나 정리한 뒤 시작해요.');return go('workout')}data.active=classPlan(tid);save();keepAwake(true);track('class_start');return go('workout')}
     case 'tr-lv':{data.trLv=d.lv;save();return render()}
     case 'tr-seek':{const v=$('#trv');if(v){v.currentTime=+d.t;v.play().catch(()=>{});}return}
     case 'paste-import':{const t=$('#paste-txt').value.trim();if(!t){toast('먼저 기록 글을 붙여넣어 주세요.');return}return importText(t)}
