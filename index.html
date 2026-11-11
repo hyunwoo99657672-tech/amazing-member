@@ -893,7 +893,7 @@ trainer(){const t=TRAINERS[view.tid||'doyoung'],n=t.steps.length;
       ${i<n-1?`<button class="btn btn-main" data-trs="${i+1}">다음 · ${esc(t.steps[i+1].k)} →</button>`:`<button class="btn btn-main" data-act="tr-start">이대로 운동 시작 💪</button>`}</div>
     </div>`;}
   return top('home')+`<div class="stack-lg">
-  <div class="tr-hero">${t.photo?`<img class="tr-hero-img" src="${t.photo}" alt="${esc(t.name)} 트레이너">`:`<div class="tr-hero-img tr-hero-0" aria-hidden="true"><span>도영 쌤<br>바디프로필 사진</span></div>`}
+  <div class="tr-hero">${t.photo?`<img class="tr-hero-img" src="${t.photo}" alt="${esc(t.name)} 트레이너">`:`<div class="tr-hero-img tr-hero-0" aria-hidden="true"><span>${esc(t.name)} 쌤<br>프로필 사진</span></div>`}
     <div class="tr-hero-tx"><p class="tr-kick">${esc(t.role)} · ${esc(t.name)} 쌤의</p><h1>${esc(t.cls)}</h1><p>${esc(t.tag)} · ${n}가지 동작</p></div></div>
   ${t.hello?(view.hello?`<div class="tr-hello-v"><video src="${t.hello}" poster="${t.helloPoster||''}" controls autoplay playsinline></video></div>`:`<button class="tr-hello" data-act="tr-hello"><span class="th-img" style="background-image:url('${t.helloPoster}')"><i aria-hidden="true">▶</i></span><span class="th-tx"><b>${esc(t.name)} 쌤 인사 영상</b><small>시작 전에 ${esc(t.name)} 쌤이 클래스를 소개해요 · ${esc(t.helloLen||'')}</small></span></button>`):''}
   <div class="tr-list">${t.steps.map((st,i)=>`<button class="tr-row" data-trs="${i}"><b>${i+1}</b><span><strong>${esc(st.k)}</strong><small>${esc(st.ex)}</small></span><i aria-hidden="true">›</i></button>`).join('')}</div>
@@ -901,7 +901,7 @@ trainer(){const t=TRAINERS[view.tid||'doyoung'],n=t.steps.length;
   <button class="btn btn-main" data-act="tr-start">클래스로 운동 시작 💪</button>
   <p class="muted small" style="text-align:center">무게·횟수 기록, 쉬는 시간 타이머, 랭킹까지 일반 운동과 똑같이 기록돼요.</p>
   <button class="btn btn-soft" data-trs="0">운동 전에 동작 영상 먼저 보기</button>
-  <p class="muted small" style="text-align:center">📶 영상 5개, 약 53MB예요. 와이파이에서 보시면 데이터 걱정이 없어요.</p>
+  <p class="muted small" style="text-align:center">📶 영상 ${n}개, 약 ${t.mb||Math.round(n*11)}MB예요. 와이파이에서 보시면 데이터 걱정이 없어요.</p>
   ${askCard('pt')}
   </div>`;},
 programs(){
@@ -1072,7 +1072,34 @@ function askCard(kind,exName){const n=data.profile?.name||'회원';
   const sub=kind==='pain'?'아픈 곳이 계속되면 혼자 참지 마세요. 6층 데스크나 문자로 알려주시면 트레이너가 확인해 드려요.':kind==='pose'?'영상만으로는 정확하지 않을 수 있어요. 트레이너가 직접 봐 드리면 훨씬 빨라요.':kind==='pt'?'혼자 해보다 더 빠르게 바뀌고 싶다면, 내 몸에 맞춘 PT 상담을 받아보세요.':'헷갈리면 5층 운동하는 곳의 트레이너나 6층 데스크에 편하게 물어보세요.';
   return `<div class="ask-card"><b>🙋 ${title}</b><p>${sub}</p><div class="duo"><a class="btn btn-main" href="${smsHref(msg)}" data-track="ask_${kind}">문자 보내기</a><a class="btn btn-soft" href="tel:${GYM_TEL}" data-track="call_${kind}">전화하기</a></div><p class="small muted">석계점 ${GYM_TEL_SHOW} · 평일 06~24시, 주말 10~18시</p></div>`}
 const TRAINERS={
-  doyoung:{name:'도영',role:'근육 담당',cls:'프레임 클래스',tag:'당당한 어깨, 바르고 탄탄한 등 라인',photo:'assets/dy-profile.jpg',thumb:'assets/dy-face.jpg',hello:'assets/dy-hello.mp4',helloPoster:'assets/dy-hello.jpg',helloLen:'9초',flow:'흉곽을 열고 → 등을 넓고 두껍게 → 어깨를 넓고 둥글게',
+  eunbin:{name:'은빈',role:'힙운동 담당',cls:'힙 밸런스 클래스',tag:'탄탄한 엉덩이, 균형 잡힌 하체 라인',photo:'assets/eb-profile.jpg',thumb:'assets/eb-face.jpg',hello:'assets/eb-hello.mp4',helloPoster:'assets/eb-hello.jpg',helloLen:'14초',isNew:true,mb:58,flow:'엉덩이를 깨우고 → 하체 전체를 쓰고 → 뒷벅지를 채우고 → 좌우 균형 맞추기',
+    steps:[
+      {k:'엉덩이 깨우기',eid:'5',mus:{p:['glutes'],s:['hamstrings','sideGlutes'],a:['quads']},feel:'엉덩이가 단단하게 조여들면 정답이에요. 허벅지 앞만 뻐근하면 발바닥으로 밀고 있는 거예요.',pt:'골반을 앞으로 내민다는 느낌으로 허벅지로 패드를 밀어요',ex:'몬스터 글루트',id:null,
+       vid:'assets/eb-glute.mp4',poster:'assets/eb-glute.jpg',ch:[['세팅',4],['동작',40],['패드 각도',54],['꿀팁',75],['주의',108]],
+       why:'엉덩이 메인 운동. 대둔근을 먼저 깨워서 하체 루틴의 첫 단추를 끼워요.',
+       how:['발을 모으고 손잡이를 안쪽으로 모아 잡아요.','안전벨트는 주황색 끈으로 늘리고 검은색 끈으로 조여요. 체형에 맞게 꽉 조여 주세요.','엉덩이를 의자 쪽으로 최대한 밀고, 허벅지로 패드를 밀면서 "후-" 뱉어요.','끝에서 1초 멈췄다가 천천히 돌아와요.'],
+       care:'발바닥으로 밀면 허벅지가 떠서 엉덩이 자극이 다 빠져요. 허벅지로 민다고 생각하세요. 그래도 엉덩이 자극이 안 오거나 허리가 불편하면 은빈 쌤을 찾아주세요.',
+       tip:'패드를 세우면 엉덩이 아래쪽과 햄스트링, 패드를 뒤로 밀고 가슴을 세우면 엉덩이 위쪽에 자극이 와요.'},
+      {k:'하체 전체',eid:'9',mus:{p:['quads','glutes'],s:['hamstrings','adductors'],a:['lowerBack']},feel:'엉덩이와 허벅지 전체가 같이 쓰이면 정답이에요. 허리가 먼저 뻐근하면 엉덩이가 패드에서 떨어진 거예요.',pt:'엉덩이로 뒤 패드를 꾹 누르면서 깊게 내려갔다 올라와요',ex:'V 스쿼트',id:null,
+       vid:'assets/eb-vsquat.mp4',poster:'assets/eb-vsquat.jpg',ch:[['세팅',4],['발 위치',17],['호흡',50],['꿀팁',68],['주의',96]],
+       why:'하체 전체를 한 번에 쓰면서 앞·뒤·안쪽 허벅지 밸런스를 맞춰요.',
+       how:['안으로 들어가 어깨 패드를 맞추고, 엉덩이로 뒤 패드를 계속 밀어줘요.','일어나면 손잡이가 들려요. 발 위치로 자극 부위를 골라요.','발을 넓게 → 안쪽 허벅지, 멀리 → 뒤쪽 허벅지·엉덩이, 가까이 → 앞쪽 허벅지.','숨을 참고 내려갔다가, 올라오면서 "후-" 뱉어요.'],
+       care:'내려갈 때 허리가 패드에서 멀어지면 허리에 힘이 많이 가요. 엉덩이를 패드 쪽으로 꾹 누르고 발바닥으로 바닥을 밀어요. 허리나 무릎이 아프면 은빈 쌤을 찾아주세요.',
+       tip:'몸을 아래로 짓누른다는 느낌으로 최대한 깊게 내려가면 엉덩이, 뒷벅지, 앞벅지를 한 번에 쓸 수 있어요.'},
+      {k:'뒷벅지 채우기',eid:'4s',mus:{p:['hamstrings'],s:['calves'],a:['quads']},feel:'허벅지 뒤쪽이 단단해지면 정답이에요. 종아리가 아프면 발로 너무 세게 밀고 있는 거예요.',pt:'허벅지로 패드를 위로 밀면서 무릎을 접어요',ex:'시티드 레그컬',id:null,
+       vid:'assets/eb-legcurl.mp4',poster:'assets/eb-legcurl.jpg',ch:[['세팅',4],['동작',35],['꿀팁',50],['주의',67]],
+       why:'허벅지 뒤쪽 햄스트링을 채워서 하체 뒷라인을 만들어요.',
+       how:['손잡이를 잡고 엉덩이로 의자를 뒤로 민 다음, 앞으로 당겨 고정해요.','다리를 뻗었을 때 발목 패드가 아킬레스건 쪽에 오게 맞춰요.','무게는 15개 정도 할 수 있는 무게로 정해요.','패드를 당기면서 "후-", 돌아갈 때는 천천히 버티면서 펴요.'],
+       care:'너무 빠르게 하면 패드가 뜨면서 허벅지 뒤쪽 힘이 풀려요. 종아리가 아프면 발로 미는 대신 무릎을 접는다고만 생각하세요. 그래도 아프면 은빈 쌤을 찾아주세요.',
+       tip:'허벅지 뒤쪽 자극이 안 오면 허벅지를 위 패드에 꽉 누른다는 느낌으로 해 보세요. 은빈 쌤만의 팁이에요.'},
+      {k:'좌우 밸런스',eid:'split',mus:{p:['glutes','quads'],s:['hamstrings','sideGlutes'],a:['lowerBack']},feel:'앞다리의 엉덩이와 허벅지가 뻐근하면 정답이에요. 허리가 뻐근하면 뒷발에 힘이 들어간 거예요.',pt:'짝다리 짚듯 앞다리에 체중을 싣고 내려갔다 올라와요',ex:'불가리안 스플릿 스쿼트',id:null,
+       vid:'assets/eb-bulgarian.mp4',poster:'assets/eb-bulgarian.jpg',ch:[['세팅',4],['동작',17],['레벨업',28],['꿀팁',39],['주의',60]],
+       why:'한쪽씩 하면서 좌우 하체 밸런스와 안정성을 맞춰요. 세트·횟수는 한쪽 다리 기준이에요.',
+       how:['걸터앉아 다리를 걸고 일어나서, 발목 쪽을 패드에 걸쳐요.','정면을 보고 숨을 참은 채 천천히 내려가요.','올라오면서 "후-" 뱉어요.','익숙해지면 덤벨을 들고 해요.'],
+       care:'뒷발에 힘을 과하게 주면 올라오면서 허리에 무리가 가요. 뒷다리는 걸쳐만 두고 앞다리로 올라와요. 무릎이나 허리가 아프면 은빈 쌤을 찾아주세요.',
+       tip:'무릎이 발목보다 앞으로 나가면 앞벅지, 무릎과 발목을 일자로 맞추면 뒷벅지와 엉덩이에 자극이 와요.'}
+    ]},
+  doyoung:{name:'도영',role:'근육 담당',cls:'프레임 클래스',tag:'당당한 어깨, 바르고 탄탄한 등 라인',photo:'assets/dy-profile.jpg',thumb:'assets/dy-face.jpg',hello:'assets/dy-hello.mp4',helloPoster:'assets/dy-hello.jpg',helloLen:'9초',mb:53,flow:'흉곽을 열고 → 등을 넓고 두껍게 → 어깨를 넓고 둥글게',
     steps:[
       {k:'흉곽 열기',eid:'dpo',mus:{p:['lats','chest'],s:['triceps','abs'],a:['frontDelts']},feel:'겨드랑이 아래(광배)와 가슴 아래쪽이 쭉 늘어나는 느낌이 나면 정답이에요.',pt:'숨을 마시며 덤벨을 정수리 위로 늘리고, 올라오며 "후-" 뱉어요',ex:'덤벨 풀오버',id:null,
        vid:'assets/dy-pullover.mp4',poster:'assets/dy-pullover.jpg',ch:[['세팅',7],['동작',15],['주의',31],['호흡',66],['이럴 땐',80]],
@@ -1119,7 +1146,7 @@ function classPlan(tid){const t=TRAINERS[tid],p=data.profile||{},lv=trLv(),[repM
 function trVideo(st){return `<div class="tr-v"><video id="trv" src="${st.vid}" poster="${st.poster||''}" controls playsinline preload="metadata"></video></div>${st.ch?`<div class="tr-ch" aria-label="영상 구간 바로가기">${st.ch.map(c=>`<button data-act="tr-seek" data-t="${c[1]}">${esc(c[0])} <small>${Math.floor(c[1]/60)}:${String(c[1]%60).padStart(2,'0')}</small></button>`).join('')}</div>`:''}`}
 function trAsk(tid,i){const t=TRAINERS[tid],st=t.steps[i],n=data.profile?.name||'회원';const msg=`[석계점 회원앱] ${n} 회원이에요. ${t.name} 쌤 ${t.cls} ${i+1}단계 ${st.ex} 하다가 여쭤보고 싶은 게 있어요.`;
   return `<div class="ask-card"><b>💬 ${t.name} 쌤에게 물어보기</b><p>자세가 헷갈리거나 아픈 곳이 있으면 혼자 참지 마세요. 문자를 보내면 ${t.name} 쌤에게 전달해 드려요.</p><div class="duo"><a class="btn btn-main" href="${smsHref(msg)}" data-track="ask_trainer">문자 보내기</a><a class="btn btn-soft" href="tel:${GYM_TEL}" data-track="call_trainer">전화하기</a></div></div>`}
-function trainerCard(){const t=TRAINERS.doyoung;return `<button class="tr-card" data-go="trainer" data-tid="doyoung"><span class="tr-ph">${t.photo?`<img src="${t.thumb||t.photo}" alt="">`:'<span class="tr-ph0" aria-hidden="true">도영</span>'}</span><span class="tr-t"><small>트레이너 추천 클래스 · NEW</small><b>${t.name} 쌤의 ${t.cls}</b><span>${t.tag} · ${t.steps.length}단계</span></span><span class="arrow" aria-hidden="true">→</span></button>`}
+function trainerCard(){return ['eunbin','doyoung'].filter(k=>TRAINERS[k]).map(k=>{const t=TRAINERS[k];return `<button class="tr-card" data-go="trainer" data-tid="${k}"><span class="tr-ph">${t.photo?`<img src="${t.thumb||t.photo}" alt="">`:`<span class="tr-ph0" aria-hidden="true">${esc(t.name)}</span>`}</span><span class="tr-t"><small>트레이너 추천 클래스${t.isNew?' · NEW':''}</small><b>${t.name} 쌤의 ${t.cls}</b><span>${t.tag} · ${t.steps.length}단계</span></span><span class="arrow" aria-hidden="true">→</span></button>`}).join('')}
 const NEW_URL='https://hyunwoo99657672-tech.github.io/amazing-member/';
 function moveBanner(){if(!ON_CLAUDE)return '';return `<div class="move-card"><b>🏠 새 주소로 이사했어요</b><p>이제 새 주소에서 더 빠르고 앱처럼 쓸 수 있어요. 홈 화면에 <b>금색 아이콘</b>으로 추가돼요.</p><a class="btn btn-main" href="${NEW_URL}" target="_blank" rel="noopener">새 주소로 가기 →</a><div class="duo"><button class="btn btn-soft" data-act="copy-new">주소 복사</button><button class="btn btn-soft" data-act="move-help">기록 옮기는 법</button></div><p class="small muted">여기서 쌓은 기록은 새 주소로 자동으로 넘어가지 않아요. <b>기록 옮기는 법</b>을 눌러 파일로 저장한 뒤, 새 주소의 <b>내 기록 → 기록 옮기기 → 저장한 파일 가져오기</b>를 눌러요.</p></div>`}
 function wrongBrowser(){return !ON_CLAUDE&&!STANDALONE&&((IS_AND&&!IS_CHROME)||(IS_IOS&&!IS_SAFARI))}
