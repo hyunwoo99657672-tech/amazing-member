@@ -878,7 +878,7 @@ trainer(){const t=TRAINERS[view.tid||'doyoung'],n=t.steps.length;
     return top('trainer')+`<div class="stack-lg">
     <div class="tr-prog" aria-label="${i+1}/${n}단계">${t.steps.map((_,k)=>`<span class="${k<=i?'on':''}"></span>`).join('')}</div>
     <div class="tr-sh"><span class="tr-n">STEP ${i+1}/${n}</span><div><h1 class="tr-h">${esc(st.k)}</h1><p class="muted small">${esc(st.ex)}</p></div></div>
-    ${st.vid?trVideo(st):x?mainVideo(x,true):`<div class="tr-vid0"><span>🎬 도영 쌤 시범 영상 촬영 예정</span></div>`}
+    ${st.vid?trVideo(st):x?mainVideo(x,true):`<div class="tr-vid0"><span>🎬 ${esc(t.name)} 쌤 시범 영상 촬영 예정</span></div>`}
     <p class="tr-pt">${esc(st.pt)}</p>
     ${trSets(st)}
     ${st.mus?musclesCard({mus:st.mus,feel:st.feel}):''}
@@ -886,7 +886,7 @@ trainer(){const t=TRAINERS[view.tid||'doyoung'],n=t.steps.length;
       <p class="tr-why">${esc(st.why)}</p>
       <ol class="tr-how">${st.how.map(h=>`<li>${esc(h)}</li>`).join('')}</ol>
       <p class="note warn small"><b>주의</b>${esc(st.care)}</p>
-      ${st.tip?`<p class="note small"><b>도영 쌤 팁</b>${esc(st.tip)}</p>`:''}
+      ${st.tip?`<p class="note small"><b>${esc(t.name)} 쌤 팁</b>${esc(st.tip)}</p>`:''}
     </div></details>
     ${trAsk(view.tid||'doyoung',i)}
     <div class="tr-nav">${i>0?`<button class="btn" data-trs="${i-1}">← 이전</button>`:'<span></span>'}
