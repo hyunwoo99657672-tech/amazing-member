@@ -569,12 +569,28 @@ function growCard(){const g=gainsAll();if(!g.length)return '';const t=g[0];
 let view={name:'home'}, today={time:35,condition:'normal'}, guideFilter='all', restTimer=null, wake=null, pending=null;
 let onboard=null, draft={};
 
-function go(name,extra){if(name!=='settings')draft={};stopMedia();clearInterval(restTimer);view={name,...(extra||{})};render();window.scrollTo(0,0)}
+function go(name,extra,pop){if(name!=='settings')draft={};stopMedia();clearInterval(restTimer);const prev=view.name;view={name,...(extra||{})};
+  if(!pop){if(name==='home'&&navDepth>0&&navRootHome){const d=navDepth;navDepth=0;navSkip=true;try{history.go(-d)}catch(e){}}else navPush(prev!==name)}
+  render();window.scrollTo(0,0)}
+/* 기기 뒤로가기: 화면이 바뀔 때마다 기록을 쌓고, 휴대폰 뒤로가기(제스처)로 이전 화면으로 돌아가요 */
+let navDepth=0,navSkip=false,navRootHome=true;
+function navState(){try{return JSON.parse(JSON.stringify(view))}catch(e){return {name:view.name}}}
+function navPush(isNew){try{if(isNew){navDepth++;history.pushState({v:navState(),d:navDepth},'')}else history.replaceState({v:navState(),d:navDepth},'')}catch(e){}}
+function navInit(){navDepth=0;navRootHome=view.name==='home';try{history.replaceState({v:navState(),d:0},'')}catch(e){}}
+window.addEventListener('popstate',e=>{const st=e.state;if(!st||!st.v)return;navDepth=st.d||0;
+  if(navSkip){navSkip=false;if(view.name==='home')return}
+  let t=st.v;
+  if(view.name==='workout'&&t.name!=='workout'&&data.active)t={name:'home'};
+  if(t.name==='workout'&&!data.active)t={name:'home'};
+  if(t.name==='onboard'&&!onboard)t={name:'home'};
+  if(t.name==='done'&&!t.log)t={name:'home'};
+  const {name,...rest}=t;go(name,rest,true);if(t!==st.v)try{history.replaceState({v:navState(),d:navDepth},'')}catch(e){}});
+const IOS_APP=(()=>{try{return navigator.standalone===true}catch(e){return false}})();
 function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,3200)}
 function stopMedia(){document.querySelectorAll('video').forEach(v=>{try{v.pause()}catch(e){}});try{speechSynthesis.cancel()}catch(e){}}
 
 function top(back){
-  return `<div class="top"><button class="brand" data-go="home" aria-label="처음 화면으로"><span class="mark" aria-hidden="true">A</span><span><b>어메이징휘트니스 석계점</b><small>혼자서도 쉬운 운동 안내</small></span></button>${back?`<button class="back" data-go="${back}">← 뒤로</button>`:''}</div>`;
+  return `<div class="top"><button class="brand" data-go="home" aria-label="처음 화면으로"><span class="mark" aria-hidden="true">A</span><span><b>어메이징휘트니스 석계점</b><small>혼자서도 쉬운 운동 안내</small></span></button>${back&&IOS_APP?`<button class="back" data-go="${back}">← 뒤로</button>`:''}</div>`;
 }
 function thumb(ex){return `<div class="thumb"><span aria-hidden="true">${ICON[ex.group]}</span>${ex.thumb?`<img src="${ex.thumb}" alt="" loading="lazy">`:''}</div>`}
 function vidOf(ex,ai){if(ai&&ex.ai)return ex.ai[data.profile?.sex==='female'?1:0];return ex.video||(ex.ai?ex.ai[data.profile?.sex==='female'?1:0]:null)}
@@ -643,12 +659,13 @@ home(){
   ${p?growCard()+challengeCard():''}${SYNC_URL?(setTimeout(loadRank,0),'<div id="rank-box"></div>'):''}
   ${trainerCard()}
   <button class="start-card" data-go="programs"><span class="num" aria-hidden="true">🍑</span><span><b>부위별 집중 루틴</b><span>애플힙 · 넓은 등 · 어깨 · 가슴 · 허벅지</span></span></button>
+  <button class="start-card" data-go="stretch"><span class="num" aria-hidden="true">🧘</span><span><b>스트레칭 영상 따라하기</b><span>가슴 · 어깨 · 등 · 허벅지 · 엉덩이 ${ST.length}가지 동작</span></span></button>
   <div class="duo">
     <button class="tile" data-go="guides"><span class="ic" aria-hidden="true">📖</span><b>기구 사용법</b><span>사진·영상으로 3단계만</span></button>
     <button class="tile" data-go="records"><span class="ic" aria-hidden="true">📅</span><b>내 기록</b><span>${data.logs.length?`최근 ${fmtDay(data.logs[data.logs.length-1].date)}`:'운동하면 자동 저장'}</span></button>
   </div>
   ${data.installed?'':`<button class="start-card" data-go="install"><span class="num" aria-hidden="true">📲</span><span><b>앱처럼 쓰기 · 홈 화면에 추가</b><span>다음부터 아이콘 한 번에 바로 열려요</span></span></button>`}
-  <div class="foot-links">${p?'<button class="btn-quiet" data-go="settings">내 정보 바꾸기</button>':''}<button class="btn-quiet" data-go="stretch">스트레칭 영상</button><button class="btn-quiet" data-go="faq">자주 묻는 질문</button>${data.installed?'<button class="btn-quiet" data-go="install">홈 화면 추가 방법</button>':''}</div>
+  <div class="foot-links">${p?'<button class="btn-quiet" data-go="settings">내 정보 바꾸기</button>':''}<button class="btn-quiet" data-go="faq">자주 묻는 질문</button>${data.installed?'<button class="btn-quiet" data-go="install">홈 화면 추가 방법</button>':''}</div>
   </div>`;
 },
 onboard(){
@@ -1177,23 +1194,51 @@ async function drawCard(){
   const p=data.profile||{},t=stats(),pr=progress(),mg=machineGrowth()[0],have=earned();
   x.fillStyle=CREAM;x.font=F(700,34,'b');x.fillText('AMAZING FITNESS · 석계점',80,120);
   x.fillStyle=GOLD;x.font=F(400,40,'d');x.fillText('회원루틴프로그램',80,175);
-  x.fillStyle='#fff';x.font=F(400,96,'d');const nm=(p.name||'회원')+' 님의';x.fillText(nm,80,330);x.fillText('성장 기록',80,440);
-  // stat boxes
-  const box=(bx,label,val)=>{x.fillStyle='rgba(255,255,255,.12)';rr(x,bx,500,290,210,32);x.fill();x.fillStyle=GOLD;x.font=F(400,84,'d');x.fillText(val,bx+30,610);x.fillStyle=CREAM;x.font=F(700,32,'b');x.fillText(label,bx+30,668)};
-  box(80,'총 운동',t.n+'회');box(395,'연속',streakWeeks()+'주');box(710,new Date().getMonth()+1+'월',monthCount()+'회');
+  x.fillStyle='#fff';x.font=F(400,92,'d');const nm=(p.name||'회원')+' 님의';x.fillText(nm,80,300);x.fillText('성장 기록',80,400);
+  const now=new Date(),PANEL='rgba(255,255,255,.10)',DIM='rgba(246,241,228,.55)';
+  // ① 이번 달 달력 — 운동한 날에 금색 동그라미
+  const days=new Set(strengthLogs().map(l=>{const d=new Date(l.date);return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()?d.getDate():0}));
+  x.fillStyle=PANEL;rr(x,80,450,470,470,32);x.fill();
+  x.fillStyle=CREAM;x.font=F(400,48,'d');x.fillText(`${now.getMonth()+1}월`,110,515);
+  x.fillStyle=GOLD;x.font=F(400,48,'d');x.textAlign='right';x.fillText(`${monthCount()}회`,520,515);x.textAlign='left';
+  const first=new Date(now.getFullYear(),now.getMonth(),1).getDay(),last=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const cw=60,cx0=110,cy0=575,rows=Math.ceil((first+last)/7),rh=Math.min(56,300/rows);
+  x.font=F(700,22,'b');x.textAlign='center';'일월화수목금토'.split('').forEach((w,i)=>{x.fillStyle=DIM;x.fillText(w,cx0+cw*i+cw/2,cy0)});
+  for(let d=1;d<=last;d++){const k=first+d-1,c=k%7,r=Math.floor(k/7),cx=cx0+cw*c+cw/2,cy=cy0+38+r*rh;
+    if(days.has(d)){x.fillStyle=GOLD;x.beginPath();x.arc(cx,cy,Math.min(24,rh/2-2),0,7);x.fill();x.fillStyle=INK}
+    else if(d===now.getDate()){x.strokeStyle=CREAM;x.lineWidth=3;x.beginPath();x.arc(cx,cy,Math.min(24,rh/2-2),0,7);x.stroke();x.fillStyle=CREAM}
+    else x.fillStyle=d>now.getDate()?'rgba(246,241,228,.28)':DIM;
+    x.font=F(700,24,'b');x.fillText(String(d),cx,cy+8)}
+  x.textAlign='left';
+  // ② 최근 8주 막대그래프 — 연속 주
+  const sw=startOfWeek(now).getTime(),wk=[];for(let i=7;i>=0;i--){const s=sw-i*7*86400000,e=s+7*86400000;wk.push(data.logs.filter(l=>{const t=new Date(l.date).getTime();return t>=s&&t<e}).length)}
+  const st=streakWeeks(),mx=Math.max(3,...wk);
+  x.fillStyle=PANEL;rr(x,580,450,420,225,32);x.fill();
+  x.fillStyle=CREAM;x.font=F(700,26,'b');x.fillText('연속 운동',610,500);
+  x.fillStyle=GOLD;x.font=F(400,52,'d');x.textAlign='right';x.fillText(st+'주',970,505);x.textAlign='left';
+  wk.forEach((n,i)=>{const bx=612+i*46,h=n?Math.max(12,n/mx*92):6,on=i>=8-st;x.fillStyle=n?(on?GOLD:'rgba(227,178,92,.5)'):'rgba(255,255,255,.18)';rr(x,bx,640-h,30,h,8);x.fill()});
+  x.fillStyle=DIM;x.font=F(500,20,'b');x.fillText('8주 전',612,662);x.textAlign='right';x.fillText('이번 주',964,662);x.textAlign='left';
+  // ③ 총 운동 — 다음 목표까지 링
+  const tot=t.n,goal=[10,30,50,100,200,300,500].find(g=>g>tot)||tot+100,prevG=[0,10,30,50,100,200,300,500].filter(g=>g<=tot).pop()||0,pct=Math.max(.03,(tot-prevG)/(goal-prevG));
+  x.fillStyle=PANEL;rr(x,580,695,420,225,32);x.fill();
+  const rcx=685,rcy=808,rad=72;x.lineWidth=18;x.lineCap='round';x.strokeStyle='rgba(255,255,255,.18)';x.beginPath();x.arc(rcx,rcy,rad,0,7);x.stroke();
+  x.strokeStyle=GOLD;x.beginPath();x.arc(rcx,rcy,rad,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,pct));x.stroke();x.lineCap='butt';
+  x.fillStyle='#fff';x.font=F(400,50,'d');x.textAlign='center';x.fillText(String(tot),rcx,rcy+12);x.textAlign='left';
+  x.fillStyle=CREAM;x.font=F(700,26,'b');x.fillText('총 운동',790,780);
+  x.fillStyle=GOLD;x.font=F(400,44,'d');x.fillText(tot+'회',790,832);
+  x.fillStyle=DIM;x.font=F(500,22,'b');x.fillText(`${goal}회까지 ${goal-tot}회`,790,872);
   // highlight
-  x.fillStyle=CREAM;rr(x,80,760,920,260,32);x.fill();
-  x.fillStyle=G;x.font=F(700,32,'b');x.fillText(mg&&mg.gain>0?'가장 많이 늘었어요':'지금 나의 단계',120,830);
-  x.fillStyle=INK;x.font=F(400,62,'d');
-  if(mg&&mg.gain>0){x.fillText(fit(x,mg.name,840),120,905);x.fillStyle=G;x.font=F(400,54,'d');x.fillText(`${mg.first}kg → ${mg.best}kg  (+${mg.gain}kg)`,120,985)}
-  else{x.fillText(`4주 계획 ${pr.week}주차`,120,910);x.fillStyle=G;x.font=F(700,34,'b');x.fillText(WEEKS[pr.week].t,120,975)}
+  x.fillStyle=CREAM;rr(x,80,945,920,175,32);x.fill();
+  x.fillStyle=G;x.font=F(700,28,'b');x.fillText(mg&&mg.gain>0?'가장 많이 늘었어요':'지금 나의 단계',115,995);
+  if(mg&&mg.gain>0){x.fillStyle=INK;x.font=F(400,48,'d');x.fillText(fit(x,mg.name,840),115,1052);x.fillStyle=G;x.font=F(400,40,'d');x.fillText(`${mg.first}kg → ${mg.best}kg  (+${mg.gain}kg)`,115,1100)}
+  else{x.fillStyle=INK;x.font=F(400,48,'d');x.fillText(`4주 계획 ${pr.week}주차`,115,1055);x.fillStyle=G;x.font=F(700,30,'b');x.fillText(WEEKS[pr.week].t,115,1100)}
   // badges
-  x.fillStyle=CREAM;x.font=F(700,32,'b');x.fillText(`받은 배지 ${have.length}개`,80,1090);
-  x.font='64px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
-  BADGES.filter(b=>have.includes(b.id)).slice(0,10).forEach((b,i)=>x.fillText(b.ic,80+i*92,1180));
-  if(!have.length){x.font=F(500,30,'b');x.fillStyle='rgba(255,255,255,.7)';x.fillText('첫 운동을 마치면 배지가 생겨요',80,1160)}
-  x.fillStyle='rgba(255,255,255,.75)';x.font=F(700,30,'b');x.fillText('PT 없이도, 혼자서도 충분히.',80,1265);
-  x.textAlign='right';x.fillText(new Date().toLocaleDateString('ko-KR'),W-80,1265);x.textAlign='left';
+  x.fillStyle=CREAM;x.font=F(700,28,'b');x.fillText(`받은 배지 ${have.length}개`,80,1170);
+  x.font='52px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+  BADGES.filter(b=>have.includes(b.id)).slice(0,11).forEach((b,i)=>x.fillText(b.ic,80+i*80,1235));
+  if(!have.length){x.font=F(500,28,'b');x.fillStyle='rgba(255,255,255,.7)';x.fillText('첫 운동을 마치면 배지가 생겨요',80,1225)}
+  x.fillStyle='rgba(255,255,255,.75)';x.font=F(700,30,'b');x.fillText('PT 없이도, 혼자서도 충분히.',80,1295);
+  x.textAlign='right';x.fillText(new Date().toLocaleDateString('ko-KR'),W-80,1295);x.textAlign='left';
 }
 async function shareImage(l){try{const b=await shareImage1(l,true);if(b)return b}catch(e){}return await shareImage1(l,false)}
 async function shareImage1(l,withIcon){const cv=document.createElement('canvas');cv.width=1080;cv.height=1350;const x=cv.getContext('2d');
@@ -1668,7 +1713,7 @@ function importText(txt){{try{
 
 if(/selftest/.test(location.search))window.__t={plan,minutes,suggestion,progress,setData:d=>{data=d},getData:()=>data,EX,SLUG,SWAP,FOCUS,POSE_KIND,ST,GROUPS,D,go:(n,o={})=>{view={name:n,...o};render()},screens:()=>Object.keys(SCREENS),shareImage};
 function fromHash(){if(location.hash==='#posetest'){view={name:'pose',id:'12',from:'guides'};setTimeout(()=>document.querySelector('[data-act="pose-sample"]')?.click(),800);return true}const m=/^#m-([a-z]+)$/.exec(location.hash||'');if(!m)return false;const id=Object.keys(SLUG).find(k=>SLUG[k]===m[1]);if(!id||!EX[id])return false;view={name:'guide',id,from:'guides',qr:true};return true}
-window.addEventListener('hashchange',()=>{if(fromHash()){render();window.scrollTo(0,0)}});
+window.addEventListener('hashchange',()=>{if(fromHash()){render();navInit();window.scrollTo(0,0)}});
 function helloText(){const n=data.profile?.name;return `${n?n+' ':''}회원님, 오늘도 득근입니다. 득근득근.`}
 function playHello(force){if(!force&&(data.hello===false||!data.profile))return;const t=new Date().toLocaleDateString('en-CA');if(!force&&data.lastHello===t)return;
   const f=(D.voice||{}).hello;let ok=false;try{if(f){const a=new Audio(f);a.play().catch(()=>{});ok=true}}catch(e){}
@@ -1676,7 +1721,7 @@ function playHello(force){if(!force&&(data.hello===false||!data.profile))return;
   if(!force){data.lastHello=t;save()}}
 function armHello(){const go=()=>{document.removeEventListener('pointerdown',go,true);document.removeEventListener('keydown',go,true);setTimeout(()=>playHello(false),60)};document.addEventListener('pointerdown',go,true);document.addEventListener('keydown',go,true)}
 function boot(h){if(openRightBrowser(false)){setTimeout(()=>boot2(h),1500);return}boot2(h)}
-function boot2(h){try{const td=new Date().toLocaleDateString('en-CA');data.visitDays=data.visitDays||[];if(data.visitDays[data.visitDays.length-1]!==td){data.visitDays.push(td);data.visitDays=data.visitDays.slice(-30);save()}}catch(e){}try{if(h&&h.view){view=h.view;onboard=h.onboard||null;today=h.today||today}}catch(e){}fromHash();render();armHello();try{if(ANALYTICS_ID&&!ON_CLAUDE){const sc=document.createElement('script');sc.defer=true;sc.src='https://cloud.umami.is/script.js';sc.dataset.websiteId=ANALYTICS_ID;sc.dataset.domains='hyunwoo99657672-tech.github.io';sc.dataset.autoTrack='false';sc.onload=()=>{try{window.umami.track(p=>({...p,url:'/amazing-member/'+(view.name||'home'),title:view.name||'home'}))}catch(e){}};document.head.appendChild(sc)}}catch(e){}try{if(!ON_CLAUDE&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
+function boot2(h){try{const td=new Date().toLocaleDateString('en-CA');data.visitDays=data.visitDays||[];if(data.visitDays[data.visitDays.length-1]!==td){data.visitDays.push(td);data.visitDays=data.visitDays.slice(-30);save()}}catch(e){}try{if(h&&h.view){view=h.view;onboard=h.onboard||null;today=h.today||today}}catch(e){}fromHash();render();navInit();armHello();try{if(ANALYTICS_ID&&!ON_CLAUDE){const sc=document.createElement('script');sc.defer=true;sc.src='https://cloud.umami.is/script.js';sc.dataset.websiteId=ANALYTICS_ID;sc.dataset.domains='hyunwoo99657672-tech.github.io';sc.dataset.autoTrack='false';sc.onload=()=>{try{window.umami.track(p=>({...p,url:'/amazing-member/'+(view.name||'home'),title:view.name||'home'}))}catch(e){}};document.head.appendChild(sc)}}catch(e){}try{if(!ON_CLAUDE&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
 try{window.claude?.hot?.snapshot?.(()=>({view,onboard,today}))}catch(e){}
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
 })();
