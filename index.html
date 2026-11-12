@@ -505,9 +505,12 @@ function plan(time,condition,focus){
   if(F) ids=F.order(level).filter(i=>EX[i]&&!(novice&&(FREE(i)||HARD(i)))&&!(i==='13'&&level!=='advanced'));
   if(!F&&goals.includes('hips')&&goal!=='hips'&&!ids.slice(0,time===20?2:3).some(i=>['0','9','12','slp','5','abd','4'].includes(i)))ids.splice(1,0,'5');
   if(senior) ids=ids.map(i=>i==='9'||i==='12'?'0':i);
+  // 사진·영상이 아직 없는 기구는 같은 부위 다른 기구로 바꿔서 추천해요 (기구 사용법 목록에는 그대로 있어요)
+  const MEDIA=i=>EX[i]&&(EX[i].video||EX[i].ai||EX[i].thumb), OKN=i=>!(novice&&(FREE(i)||HARD(i)));
+  ids=ids.map(i=>MEDIA(i)?i:((SWAP[i]||[]).find(x=>MEDIA(x)&&OKN(x)&&!ids.includes(x))||i));
   const want=light||time===20?2:time===35?3:4;
   ids=[...new Set(ids)];
-  for(const extra of F?[]:[...access,...pull,...push]){if(ids.length>=want)break;if(!ids.includes(extra)&&!(senior&&(extra==='9'||extra==='12'))&&!(novice&&(FREE(extra)||HARD(extra))))ids.push(extra)}
+  for(const extra of F?[]:[...access,...pull,...push]){if(ids.length>=want)break;if(!ids.includes(extra)&&MEDIA(extra)&&!(senior&&(extra==='9'||extra==='12'))&&!(novice&&(FREE(extra)||HARD(extra))))ids.push(extra)}
   ids=ids.slice(0,want);
   const curlCount=data.logs.filter(l=>(l.items||[]).some(i=>String(i.id).startsWith('4'))).length;
   const rest=(light||novice?90:goal==='muscle'?120:90)+(middle?15:0);
@@ -1087,7 +1090,7 @@ function askCard(kind,exName){const n=data.profile?.name||'회원';
     :`[석계점 회원앱] ${n} 회원이에요. ${exName?exName+' ':''}사용법이 궁금해요.`;
   const title=kind==='pain'?'트레이너에게 물어보기':kind==='pose'?'트레이너에게 자세 봐달라고 하기':kind==='pt'?'PT 상담 받아보기':'트레이너에게 물어보기';
   const sub=kind==='pain'?'아픈 곳이 계속되면 혼자 참지 마세요. 6층 데스크나 문자로 알려주시면 트레이너가 확인해 드려요.':kind==='pose'?'영상만으로는 정확하지 않을 수 있어요. 트레이너가 직접 봐 드리면 훨씬 빨라요.':kind==='pt'?'혼자 해보다 더 빠르게 바뀌고 싶다면, 내 몸에 맞춘 PT 상담을 받아보세요.':'헷갈리면 5층 운동하는 곳의 트레이너나 6층 데스크에 편하게 물어보세요.';
-  return `<div class="ask-card"><b>🙋 ${title}</b><p>${sub}</p><div class="duo"><a class="btn btn-main" href="${smsHref(msg)}" data-track="ask_${kind}">문자 보내기</a><a class="btn btn-soft" href="tel:${GYM_TEL}" data-track="call_${kind}">전화하기</a></div><p class="small muted">석계점 ${GYM_TEL_SHOW} · 평일 06~24시, 주말 10~18시</p></div>`}
+  return `<div class="ask-card"><b>🙋 ${title}</b><p>${sub}</p><div class="duo"><a class="btn btn-main" href="${smsHref(msg)}" data-track="ask_${kind}">문자 보내기</a><a class="btn btn-soft" href="tel:${GYM_TEL}" data-track="call_${kind}">전화하기</a></div><p class="small muted">석계점 ${GYM_TEL_SHOW} · 평일 06~24시, 주말·공휴일 10~18시, 1·3주 일요일 휴관</p></div>`}
 const TRAINERS={
   eunbin:{name:'은빈',role:'힙운동 담당',cls:'힙 밸런스 클래스',tag:'탄탄한 엉덩이, 균형 잡힌 하체 라인',photo:'assets/eb-profile.jpg',thumb:'assets/eb-face.jpg',hello:'assets/eb-hello.mp4',helloPoster:'assets/eb-hello.jpg',helloLen:'15초',isNew:true,mb:58,flow:'엉덩이를 깨우고 → 하체 전체를 쓰고 → 뒷벅지를 채우고 → 좌우 균형 맞추기',
     steps:[
