@@ -5,13 +5,23 @@
 <meta name="theme-color" content="#245b38">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="어메이징석계">
+<meta name="apple-mobile-web-app-title" content="석계 운동파트너">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="description" content="어메이징휘트니스 석계점 회원용 운동 루틴·기구 사용법">
+<meta name="description" content="석계점 기구 영상을 보며 따라 하는 내 운동 루틴. 설치·가입 없이 바로 시작해요.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="어메이징휘트니스 석계점">
+<meta property="og:title" content="어메이징석계 운동파트너">
+<meta property="og:description" content="석계점 기구 영상을 보며 따라 하는 내 운동 루틴. 설치·가입 없이 바로 시작해요.">
+<meta property="og:url" content="https://hyunwoo99657672-tech.github.io/amazing-member/">
+<meta property="og:image" content="https://hyunwoo99657672-tech.github.io/amazing-member/assets/og-share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<title>어메이징석계 · 회원 운동</title>
+<title>어메이징석계 운동파트너</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
@@ -676,12 +686,12 @@ const SCREENS={
 home(){
   const p=data.profile, s=data.active;
   const pr=progress(), n=pr.n, days=pr.days, total=pr.total, weekDone=pr.thisWeek, week=pr.week;
-  const greet=p?`${p.name?esc(p.name)+' ':''}회원님,<br>오늘도 같이 해요.`:'PT 없이도<br>충분히 할 수 있어요.';
+  const greet=p?`${p.name?esc(p.name)+' ':''}회원님,<br>오늘도 같이 해요.`:'오늘도 함께<br>운동 시작해요.';
   return top()+`<div class="stack-lg">
   ${browserBanner()}${inappBanner()}${installSheet()}
   ${moveBanner()}
   ${loadProblem==='corrupt'||loadProblem==='restored'?`<div class="note warn"><b>${loadProblem==='restored'?'기록 파일 일부가 손상돼 바로 전 기록으로 되살렸어요':'기록 파일이 손상돼 읽지 못했어요'}</b>원래 파일은 지우지 않고 휴대폰 안에 따로 보관해 두었어요. ${syncOn()?'':'기록 보관을 쓰셨다면 "내 기록 → 다른 폰 기록 불러오기"로 되찾을 수 있어요. '}어려우면 6층 데스크에 폰을 보여주세요.</div>`:''}
-  <div class="hello"><p class="kicker">${p?(n?`지금까지 ${n}번 운동했어요`:'첫 운동을 기다리고 있어요'):'처음 오셨나요?'}</p><h1>${greet}</h1></div>
+  <div class="hello"><p class="kicker">${p?(n?`지금까지 ${n}번 운동했어요`:'첫 운동을 기다리고 있어요'):'어메이징휘트니스 석계점 운동파트너'}</p><h1>${greet}</h1></div>
   ${s&&Date.now()-s.started>8*3600000?`<div class="note"><b>${fmtDay(new Date(s.started).toISOString())}에 하던 운동이 남아 있어요</b>이어서 하거나, 한 만큼 저장하고 오늘 운동을 새로 시작할 수 있어요.<div class="duo" style="margin-top:10px"><button class="btn btn-soft" data-act="resume">이어하기</button><button class="btn btn-soft" data-act="abandon">저장하고 새로</button></div></div>`:''}
   <button class="btn btn-main hero-btn" data-act="${s?'resume':p?'start':'quick'}">${s?'하던 운동 이어하기':p?'오늘 운동 시작':'바로 운동 시작'}<small>${s?'멈춘 곳부터 다시 안내해요':p?'오늘 할 운동을 바로 짜드려요':'질문 없이 35분 기본 루틴이 바로 나와요'}</small><span class="arrow" aria-hidden="true">→</span></button>
   ${!p&&!s?`<button class="goal-btn" data-act="start"><span class="goal-ic" aria-hidden="true">🎯</span><span class="goal-tx"><em>추천 · 질문 6개 · 1분</em><b>내 목표에 맞춰 시작하기</b><small>다이어트·근육·애플힙, 나한테 맞는 루틴</small></span><span class="goal-ar" aria-hidden="true">→</span></button>`:''}
