@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="어메이징석계">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="description" content="어메이징피트니스 석계점 회원용 운동 루틴·기구 사용법">
+<meta name="description" content="어메이징휘트니스 석계점 회원용 운동 루틴·기구 사용법">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -408,13 +408,25 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const EX=D.ex, ST=D.stretch;
 
 /* ---------- storage ---------- */
-let data={};
-try{data=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){data={}}
-data.logs=Array.isArray(data.logs)?data.logs:[];
-data.equip=data.equip||{};
+let data={},loadProblem=null;
+(function(){let raw=null;try{raw=localStorage.getItem(KEY)}catch(e){loadProblem='blocked'}
+  if(raw==null)return;
+  try{const j=JSON.parse(raw);if(j&&typeof j==='object'&&!Array.isArray(j)){data=j;return}throw 0}
+  catch(e){ // 기록을 읽지 못하면 빈 기록으로 덮어쓰지 않고 원본을 따로 보관해요
+    loadProblem='corrupt';try{localStorage.setItem(KEY+'-damaged-'+Date.now(),raw)}catch(_){}
+    try{const prev=JSON.parse(localStorage.getItem(KEY+'-prev')||'null');if(prev&&Array.isArray(prev.logs)){data=prev;loadProblem='restored'}}catch(_){}}})();
+data.logs=Array.isArray(data.logs)?data.logs.filter(l=>l&&typeof l==='object'&&!isNaN(new Date(l.date))):[];
+data.logs.forEach(l=>{if(!Array.isArray(l.items))l.items=[]});
+if(data.logs.some((l,i)=>i&&new Date(l.date)<new Date(data.logs[i-1].date)))data.logs.sort((a,b)=>new Date(a.date)-new Date(b.date));
+data.equip=data.equip&&typeof data.equip==='object'?data.equip:{};
 if(data.active&&(!Array.isArray(data.active.queue)||data.active.queue.some(e=>!EX[e.id])))data.active=null;
 let storageOK=true;
-function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){storageOK=false;toast('이 브라우저에서는 기록이 저장되지 않아요. 사파리·크롬으로 열어주세요.')}}
+let prevN=-1;
+function save(){try{const txt=JSON.stringify(data);
+    // 운동 기록 수가 바뀔 때마다 바로 전 정상본을 하나 더 보관해요 (손상 시 복구용)
+    if(data.logs.length!==prevN){try{const old=localStorage.getItem(KEY);if(old){const o=JSON.parse(old);if(o&&Array.isArray(o.logs)&&o.logs.length)localStorage.setItem(KEY+'-prev',old)}}catch(_){}prevN=data.logs.length}
+    localStorage.setItem(KEY,txt);storageOK=true}
+  catch(e){storageOK=false;toast(e&&e.name==='QuotaExceededError'?'휴대폰 저장 공간이 부족해 기록을 저장하지 못했어요. "내 기록 → 파일로 저장"을 먼저 해주세요.':'이 브라우저에서는 기록이 저장되지 않아요. 사파리·크롬으로 열어주세요.')}}
 
 /* ---------- labels ---------- */
 const GOALS={
@@ -442,7 +454,10 @@ const stepOf=id=>kind(id)==='body'?0:kind(id)==='db'?2:5;
 const UNIT=id=>({stack:'핀을 한 칸',plate:'원판을 한 단계',bar:'원판을 한 단계',db:'덤벨을 한 단계'})[kind(id)]||'한 칸';
 const KG_HINT={plate:'원판 기구는 끼운 원판 무게를 매번 같은 방식(예: 한쪽 기준)으로 적으면 돼요.',bar:'바(보통 20kg)와 양쪽 원판을 합친 무게를 적어요.',db:'덤벨 한 개의 무게를 적어요.'};
 const WEEKS={1:{t:'기구와 친해지기',s:'가벼운 무게로 자세부터 익혀요. 무게 욕심은 아직 내려놓아요.'},2:{t:'자세 굳히기',s:'세트가 조금 늘어요. 처음과 같은 자세로 끝까지 해봐요.'},3:{t:'조금씩 무겁게',s:'목표 횟수를 다 채운 기구는 한 칸씩 올려봐요.'},4:{t:'혼자서도 척척',s:'이제 무게와 횟수를 스스로 정할 수 있어요.'}};
-function progress(){const p=data.profile||{},days=p.days===3?3:2,n=strengthLogs().length;return {n,days,total:days*4,cycle:Math.floor(n/(days*4))+1,week:Math.floor(n/days)%4+1,inCycle:n%(days*4),thisWeek:n%days}}
+function progress(){const p=data.profile||{},days=p.days===3?3:2,sl=strengthLogs(),n=sl.length,total=days*4,inCycle=n%total;
+  const wk0=startOfWeek(new Date()).getTime(),thisWeek=sl.filter(l=>new Date(l.date).getTime()>=wk0).length;
+  const first=sl[n-inCycle];const elapsed=first&&inCycle?Math.floor((wk0-startOfWeek(new Date(first.date)).getTime())/(7*864e5))+1:1;
+  return {n,days,total,cycle:Math.floor(n/total)+1,week:Math.floor(n/days)%4+1,inCycle,thisWeek,elapsed}}
 const BADGES=[
  {id:'first',ic:'🌱',t:'첫걸음',d:'첫 운동 완료',ok:t=>t.n>=1},
  {id:'n3',ic:'🔥',t:'세 번째',d:'운동 3번',ok:t=>t.n>=3},
@@ -552,7 +567,8 @@ function suggestion(e){
   const H=historyOf(e.id,3), last=H[0];
   if(kind(e.id)==='body') return {kg:null,text:last?`지난번 ${last.records[last.records.length-1].reps}회 했어요. 오늘은 1~2회만 더 해봐요.`:'맨몸 운동이에요. 작은 범위부터 천천히 해봐요.'};
   if(!last) return {kg:null,first:true,text:'처음 쓰는 기구예요. 가장 가벼운 무게로 5번 연습해보고, 10번을 편하게 할 수 있는 무게를 찾아요.'};
-  const top=r=>Math.max(...r.records.map(x=>x.kg||0))||null;
+  // 한 세트만 무겁게 든 경우가 아니라, 목표 근처 횟수를 해낸 '작업 세트' 무게를 기준으로 해요
+  const top=r=>{const ok=r.records.filter(x=>x.kg>0&&(x.reps||0)>=Math.max(5,(e.repMin||10)-2));const src=ok.length?ok:r.records;return Math.max(...src.map(x=>x.kg||0))||null};
   const kg=top(last), lastReps=last.records[last.records.length-1].reps, max=last.repMax||e.repMax, step=stepOf(e.id);
   const allTop=last.records.every(r=>r.reps>=max);
   if(kg==null) return {kg:null,text:'지난번엔 무게를 안 적었어요. 오늘 적어두면 다음부터 무게를 맞춰드려요.'};
@@ -664,11 +680,12 @@ home(){
   return top()+`<div class="stack-lg">
   ${browserBanner()}${inappBanner()}${installSheet()}
   ${moveBanner()}
+  ${loadProblem==='corrupt'||loadProblem==='restored'?`<div class="note warn"><b>${loadProblem==='restored'?'기록 파일 일부가 손상돼 바로 전 기록으로 되살렸어요':'기록 파일이 손상돼 읽지 못했어요'}</b>원래 파일은 지우지 않고 휴대폰 안에 따로 보관해 두었어요. ${syncOn()?'':'기록 보관을 쓰셨다면 "내 기록 → 다른 폰 기록 불러오기"로 되찾을 수 있어요. '}어려우면 6층 데스크에 폰을 보여주세요.</div>`:''}
   <div class="hello"><p class="kicker">${p?(n?`지금까지 ${n}번 운동했어요`:'첫 운동을 기다리고 있어요'):'처음 오셨나요?'}</p><h1>${greet}</h1></div>
   ${s&&Date.now()-s.started>8*3600000?`<div class="note"><b>${fmtDay(new Date(s.started).toISOString())}에 하던 운동이 남아 있어요</b>이어서 하거나, 한 만큼 저장하고 오늘 운동을 새로 시작할 수 있어요.<div class="duo" style="margin-top:10px"><button class="btn btn-soft" data-act="resume">이어하기</button><button class="btn btn-soft" data-act="abandon">저장하고 새로</button></div></div>`:''}
   <button class="btn btn-main hero-btn" data-act="${s?'resume':p?'start':'quick'}">${s?'하던 운동 이어하기':p?'오늘 운동 시작':'바로 운동 시작'}<small>${s?'멈춘 곳부터 다시 안내해요':p?'오늘 할 운동을 바로 짜드려요':'질문 없이 35분 기본 루틴이 바로 나와요'}</small><span class="arrow" aria-hidden="true">→</span></button>
   ${!p&&!s?`<button class="goal-btn" data-act="start"><span class="goal-ic" aria-hidden="true">🎯</span><span class="goal-tx"><em>추천 · 질문 6개 · 1분</em><b>내 목표에 맞춰 시작하기</b><small>다이어트·근육·애플힙, 나한테 맞는 루틴</small></span><span class="goal-ar" aria-hidden="true">→</span></button>`:''}
-  ${p?`<div class="confidence"><span class="num tnum">${week}주</span><div><p><b>${pr.cycle>1?pr.cycle+'번째 ':''}4주 계획 ${week}주차 · ${WEEKS[week].t}</b></p><p class="small">이번 주 ${weekDone}/${days}회${streakWeeks()>1?` · ${streakWeeks()}주 연속 운동 중`:''}</p><div class="weekdots" aria-label="4주 계획 진행 ${pr.inCycle} / ${total}회">${Array.from({length:total},(_,i)=>`<i class="${i<pr.inCycle?'on':''}"></i>`).join('')}</div></div></div>`
+  ${p?`<div class="confidence"><span class="num tnum">${week}주</span><div><p><b>${pr.cycle>1?pr.cycle+'번째 ':''}4주 계획 ${week}주차 · ${WEEKS[week].t}</b></p><p class="small">이번 주 ${Math.min(weekDone,days)}/${days}회${weekDone>days?` (+${weekDone-days})`:''} · 계획 ${pr.inCycle}/${total}회 완료${pr.inCycle&&pr.elapsed>1?` · 시작한 지 ${pr.elapsed}주째`:''}${streakWeeks()>1?` · ${streakWeeks()}주 연속 운동 중`:''}</p><div class="weekdots" aria-label="4주 계획 진행 ${pr.inCycle} / ${total}회">${Array.from({length:total},(_,i)=>`<i class="${i<pr.inCycle?'on':''}"></i>`).join('')}</div></div></div>`
   :''}
   ${p?growCard()+challengeCard():''}${SYNC_URL?(setTimeout(loadRank,0),'<div id="rank-box"></div>'):''}
   ${trainerCard()}
@@ -1508,11 +1525,13 @@ function syncOn(){return !!(SYNC_URL&&data.sync&&data.sync.name&&data.sync.pin)}
 async function cloud(action,extra){const r=await fetch(SYNC_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...extra})});return r.json()}
 function ym(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
 let cloudBusy=false;
-async function cloudSave(silent){if(!syncOn()||cloudBusy)return false;cloudBusy=true;try{const sl=strengthLogs();const r=await cloud('save',{name:data.sync.name,pin:data.sync.pin,data:backupPayload(),month:ym(),monthCount:monthCount(),total:sl.length,last:sl.length?sl[sl.length-1].date:'',rank:data.sync.rank!==false});
-  if(r&&r.ok){data.sync.at=new Date().toISOString();save();rankCache=null;if(!silent){toast('기록을 안전하게 보관했어요.');render()}return true}
+async function cloudMerge(){if(data.sync.merged)return true;const r=await cloud('load',{name:data.sync.name,pin:data.sync.pin});
+  if(r&&r.ok&&r.data){importText(r.data,true)}else if(!(r&&r.err==='none'))return false;data.sync.merged=true;save();return true}
+async function cloudSave(silent){if(!syncOn()||cloudBusy)return false;cloudBusy=true;data.sync.dirty=true;save();try{if(!(await cloudMerge())){if(!silent)toast('보관하지 못했어요. 잠시 후 다시 해주세요.');return false}const sl=strengthLogs();const r=await cloud('save',{name:data.sync.name,pin:data.sync.pin,data:backupPayload(),month:ym(),monthCount:monthCount(),total:sl.length,last:sl.length?sl[sl.length-1].date:'',rank:data.sync.rank!==false});
+  if(r&&r.ok){data.sync.at=new Date().toISOString();data.sync.dirty=false;save();rankCache=null;if(!silent){toast('기록을 안전하게 보관했어요.');render()}return true}
   if(!silent)toast('보관하지 못했어요. 잠시 후 다시 해주세요.');return false}catch(e){if(!silent)toast('인터넷 연결을 확인해 주세요.');return false}finally{cloudBusy=false}}
-async function cloudLoad(name,pin){toast('기록을 찾고 있어요…');try{const r=await cloud('load',{name,pin});if(!r||!r.ok){toast(r&&r.err==='none'?'이 이름·번호로 보관된 기록이 없어요. 이름과 번호를 다시 확인해주세요.':'불러오지 못했어요. 잠시 후 다시 해주세요.');return}
-  data.sync={name,pin,rank:data.sync?.rank!==false};save();importText(r.data);cloudSave(true)}catch(e){toast('인터넷 연결을 확인해 주세요.')}}
+async function cloudLoad(name,pin){toast('기록을 찾고 있어요…');try{const r=await cloud('load',{name,pin});if(!r||!r.ok){toast(r&&r.err==='none'?'이 이름·번호로 보관된 기록이 없어요. 이름과 번호를 다시 확인해주세요.':r&&r.err==='locked'?'번호를 여러 번 틀려서 10분 동안 잠겼어요. 잠시 후 다시 해주세요.':'불러오지 못했어요. 잠시 후 다시 해주세요.');return}
+  data.sync={name,pin,rank:data.sync?.rank!==false,merged:true};save();importText(r.data);cloudSave(true)}catch(e){toast('인터넷 연결을 확인해 주세요.')}}
 const SETUPV={"0": ["assets/setup/s-0.mp4", 26], "1": ["assets/setup/s-1.mp4", 29], "2": ["assets/setup/s-2.mp4", 36], "3": ["assets/setup/s-3.mp4", 24], "5": ["assets/setup/s-5.mp4", 31], "6": ["assets/setup/s-6.mp4", 21], "7": ["assets/setup/s-7.mp4", 24], "8": ["assets/setup/s-8.mp4", 45], "9": ["assets/setup/s-9.mp4", 25], "10": ["assets/setup/s-10.mp4", 34], "11": ["assets/setup/s-11.mp4", 15], "13": ["assets/setup/s-13.mp4", 15], "4s": ["assets/setup/s-4s.mp4", 29], "4l": ["assets/setup/s-4l.mp4", 15], "slp": ["assets/setup/s-slp.mp4", 35], "abd": ["assets/setup/s-abd.mp4", 9], "add": ["assets/setup/s-add.mp4", 20], "lsp": ["assets/setup/s-lsp.mp4", 29], "lip": ["assets/setup/s-lip.mp4", 39], "lfp": ["assets/setup/s-lfp.mp4", 32], "curl": ["assets/setup/s-curl.mp4", 13], "wpd": ["assets/setup/s-wpd.mp4", 19], "hrow": ["assets/setup/s-hrow.mp4", 22], "mrow": ["assets/setup/s-mrow.mp4", 13], "lrow": ["assets/setup/s-lrow.mp4", 22], "drow": ["assets/setup/s-drow.mp4", 18], "dsp": ["assets/setup/s-dsp.mp4", 21], "split": ["assets/setup/s-split.mp4", 20], "sl": ["assets/setup/s-sl.mp4", 11], "fp": ["assets/setup/s-fp.mp4", 25]};
 function setupVid(id){const v=SETUPV[id];if(!v)return '';return `<div class="setv"><video src="${v[0]}" poster="${v[0].replace('.mp4','.jpg')}" autoplay muted loop playsinline preload="metadata" aria-label="기구 세팅 영상(소리 없음)"></video><span class="setv-tag">🎬 세팅만 보기 · 소리 없이 반복 · ${v[1]}초</span></div>`}
 function syncForm(){const p=data.profile;return `<div class="sync-form stack">
@@ -1522,7 +1541,7 @@ function syncForm(){const p=data.profile;return `<div class="sync-form stack">
   <div class="sync-btns"><button class="btn btn-main" data-act="sync-start">기록 보관 시작</button><button class="btn btn-soft" data-act="sync-load">다른 폰 기록 불러오기</button></div></div>`}
 function syncBox(){if(!SYNC_URL)return '';
   if(syncOn())return `<div class="sync-on"><div><b>☁️ 기록 보관 중</b><span>${esc(data.sync.name)} · 뒷자리 ${esc(data.sync.pin)}${data.sync.at?` · 마지막 보관 ${fmtDay(data.sync.at)}`:''}</span></div><button class="btn btn-soft" data-act="sync-now">지금 보관</button></div>
-    <details class="more"><summary>보관 설정</summary><div class="in stack"><label class="chk small"><input type="checkbox" data-act="sync-rank" ${data.sync.rank!==false?'checked':''}><span>랭킹에 내 이름 보이기 (가운데 글자는 가려져요. 예: 김*수)</span></label><p class="small muted">폰을 바꾸면 새 폰에서 "다른 폰 기록 불러오기"로 같은 이름·번호를 넣으면 돼요.</p><button class="btn-quiet small" data-act="sync-off">이 폰에서 보관 끄기</button></div></details>`;
+    <details class="more"><summary>보관 설정</summary><div class="in stack"><label class="chk small"><input type="checkbox" data-act="sync-rank" ${data.sync.rank!==false?'checked':''}><span>랭킹에 내 이름 보이기 (가운데 글자는 가려져요. 예: 김*수)</span></label><p class="small muted">폰을 바꾸면 새 폰에서 "다른 폰 기록 불러오기"로 같은 이름·번호를 넣으면 돼요.</p><button class="btn-quiet small" data-act="sync-off">이 폰에서 보관 끄기</button><button class="btn-quiet small" data-act="sync-del">클라우드에 보관된 내 기록 지우기</button></div></details>`;
   return `<div class="sync-card sync-hi stack"><div class="sync-top"><span class="sync-ic" aria-hidden="true">☁️</span><div><p class="step-label">기록 안 잃어버리기 · 30초면 끝</p><h2>폰을 바꿔도 기록이 그대로</h2></div></div><p class="sync-lead">이름과 전화번호 뒷자리 <b>딱 2가지</b>만 넣으면, 운동할 때마다 자동으로 보관되고 <b>석계점 랭킹</b>에도 참여해요.</p>${syncForm()}</div>`}
 let rankCache=null;
 async function loadRank(){const box=$('#rank-box');if(!box||!SYNC_URL)return;
@@ -1644,7 +1663,8 @@ document.addEventListener('click',async ev=>{
     case 'finish': return finishWorkout(true);
     case 'finish-skip': return finishWorkout(false);
     case 'save-settings':{const p=data.profile;const n=$('#set-name').value.trim();if(n)p.name=n.slice(0,12);Object.assign(p,draft);if(p.goals)p.goal=p.goals[0];draft={};save();toast('저장했어요.');return go('home')}
-    case 'reset': try{localStorage.removeItem(KEY)}catch(e){} data={logs:[],equip:{}}; toast('모두 지웠어요.'); return go('home');
+    case 'reset':{if(!view.resetAsk){view={...view,resetAsk:true};toast('정말 지울까요? 한 번 더 누르면 모든 기록이 지워져요.');b.textContent='한 번 더 누르면 모두 지워져요';return}
+      try{localStorage.setItem(KEY+'-prev',localStorage.getItem(KEY)||'');localStorage.removeItem(KEY)}catch(e){} data={logs:[],equip:{}}; toast('모두 지웠어요.'); return go('home');}
     case 'export': return exportLogs();
     case 'copy-new':{try{await navigator.clipboard.writeText(NEW_URL);toast('새 주소를 복사했어요. 카톡 나와의 채팅에 붙여넣어 보관하세요.')}catch(e){toast(NEW_URL)}return}
     case 'move-help':{view={name:'records'};render();setTimeout(()=>{const d=document.getElementById('backup');if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})}},50);return}
@@ -1674,8 +1694,10 @@ document.addEventListener('click',async ev=>{
     case 'sync-start':case 'sync-load':{const name=($('#sy-name')?.value||'').replace(/\s/g,'').slice(0,12),pin=($('#sy-pin')?.value||'').replace(/\D/g,'');
       if(!name){toast('이름을 넣어주세요.');return}if(pin.length!==4){toast('전화번호 뒷자리 4개를 넣어주세요.');return}if(!$('#sy-ok')?.checked){toast('안내 문구에 동의해 주세요.');return}
       if(d.act==='sync-load')return cloudLoad(name,pin);
-      data.sync={name,pin,rank:true};save();track('sync-start');return cloudSave(false)}
+      data.sync={name,pin,rank:true,merged:false};save();track('sync-start');return cloudSave(false)}
     case 'sync-now':return cloudSave(false);
+    case 'sync-del':{if(!syncOn())return;if(!view.delAsk){view={...view,delAsk:true};b.textContent='한 번 더 누르면 클라우드 기록이 지워져요';toast('이 폰의 기록은 그대로 두고, 클라우드 보관본만 지워요.');return}
+      try{const r=await cloud('delete',{name:data.sync.name,pin:data.sync.pin});if(r&&r.ok){data.sync=null;save();toast('클라우드에 보관된 기록을 지웠어요.');return render()}toast(r&&r.err==='action'?'아직 지원하지 않아요. 6층 데스크에 요청해 주세요.':'지우지 못했어요. 잠시 후 다시 해주세요.')}catch(e){toast('인터넷 연결을 확인해 주세요.')}return}
     case 'sync-off':{data.sync=null;save();toast('이 폰에서 보관을 껐어요. 보관된 기록은 그대로 있어요.');return render()}
     case 'tr-start':{const tid=view.tid||'doyoung';if(data.active&&data.active.queue&&data.active.queue.some(e=>e.done.length)){toast('진행 중인 운동이 있어요. 이어서 하거나 정리한 뒤 시작해요.');return go('workout')}data.active=classPlan(tid);save();keepAwake(true);track('class_start');return go('workout')}
     case 'tr-hello':{view={...view,hello:true};track('trainer_hello');return render()}
@@ -1714,6 +1736,8 @@ async function runPose(file){
 }
 document.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target.id==='ob-name'){ev.preventDefault();document.querySelector('[data-act="ob-next"]')?.click()}});
 document.addEventListener('error',ev=>{const t=ev.target;if(t.tagName==='IMG'){if(t.hasAttribute('data-fallback-media'))t.closest('.media')?.classList.add('noimg');else t.remove()}if(t.tagName==='VIDEO'||t.tagName==='SOURCE'){const m=t.closest('.media');const err=m?.nextElementSibling;if(err&&err.classList.contains('media-err')){err.hidden=false;err.textContent='영상을 불러오지 못했어요. 잠시 후 다시 열어주세요.'}}},true);
+window.addEventListener('online',()=>{if(syncOn()&&data.sync.dirty)cloudSave(true)});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&syncOn()&&data.sync.dirty&&navigator.onLine!==false)cloudSave(true)});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&data.active&&view.name==='workout')keepAwake(true)});
 function captureName(){const i=$('#ob-name');if(i&&onboard)onboard.name=i.value}
 function showPain(){
@@ -1738,21 +1762,22 @@ async function exportLogs(){
   $('#copy-area').innerHTML=`<p class="small">${sent?'다운로드 폴더에 파일이 안 보이면':'이 화면에서는 파일 저장이 안 돼요.'} 아래 글을 복사해 메모장이나 카톡 '나와의 채팅'에 보관하세요.</p><textarea class="copy" id="copy-txt" readonly>${esc(text)}</textarea><button class="btn btn-soft" data-act="copy">복사하기</button>`;
 }
 function importFile(file){const fr=new FileReader();fr.onload=()=>importText(fr.result);fr.onerror=()=>toast('파일을 읽지 못했어요. 다시 골라주세요.');fr.readAsText(file)}
-function importText(txt){{try{
+function importText(txt,quiet){{try{
     const j=JSON.parse(txt);if(!j||j.app!=='amazing-seokgye'||!j.data||!Array.isArray(j.data.logs))throw 0;
     const nameToId={};Object.entries(EX).forEach(([k,x])=>nameToId[x.name]=k);nameToId['레그프레스']='0';nameToId['시티드 로우']='3';
     const logs=j.data.logs.slice(0,3000).map(l=>({date:String(l.date||''),goal:l.goal||null,minutes:l.minutes||null,items:(l.items||[]).slice(0,30).map(i=>{
       if(i.cardio||i.minutes&&!i.records&&!i.sets) return {cardio:true,name:String(i.name||'걷기'),minutes:+i.minutes||0};
       const recs=Array.isArray(i.records)?i.records.map(r=>({kg:r.kg==null||!isFinite(+r.kg)?null:+r.kg,reps:+r.reps||0})):Array.from({length:Math.min(+i.sets||0,20)},()=>({kg:i.kg==null?null:+i.kg,reps:0}));
-      return {id:i.id!=null&&EX[String(i.id)]?String(i.id):nameToId[i.name]||null,name:String(i.name||''),records:recs,effort:i.effort||null};
-    })})).filter(l=>!isNaN(new Date(l.date)));
+      const o={id:i.id!=null&&EX[String(i.id)]?String(i.id):nameToId[i.name]||null,name:String(i.name||''),records:recs,effort:['easy','ok','hard'].includes(i.effort)?i.effort:null};
+      if(+i.repMax>0)o.repMax=+i.repMax;if(i.formDrop)o.formDrop=true;return o;
+    }),...(l.focus&&FOCUS[l.focus]?{focus:l.focus}:{}),...(l.cls&&TRAINERS[l.cls]?{cls:l.cls}:{})})).filter(l=>!isNaN(new Date(l.date)));
     const seen=new Set(data.logs.map(l=>l.date));let added=0;
     logs.forEach(l=>{if(!seen.has(l.date)){data.logs.push(l);added++}});
     data.logs.sort((a,b)=>new Date(a.date)-new Date(b.date));
     if(!data.profile&&j.data.profile){const p=j.data.profile;data.profile={name:String(p.name||'회원').slice(0,12),goal:GOALS[p.goal]?p.goal:'daily',level:LEVELS[p.level]?p.level:LEVELS[p.exp]?p.exp:'new',age:AGES[p.age]?p.age:ageBand(p.birth),days:+p.days===3?3:2,sex:p.sex==='female'||p.sex==='male'?p.sex:null}}
     if(j.data.equip&&typeof j.data.equip==='object')Object.entries(j.data.equip).forEach(([k,v])=>{if(EX[k]&&typeof v==='string')data.equip[k]=v.slice(0,40)});
-    save();toast(added?`기록 ${added}개를 가져왔어요.`:'새로 가져올 기록이 없어요.');render();
-  }catch(e){toast('이 프로그램에서 저장한 기록 파일인지 확인해주세요.')}}
+    save();if(quiet){if(added){toast(`보관된 기록 ${added}개를 합쳤어요.`);render()}return}toast(added?`기록 ${added}개를 가져왔어요.`:'새로 가져올 기록이 없어요.');render();
+  }catch(e){if(!quiet)toast('이 프로그램에서 저장한 기록 파일인지 확인해주세요.')}}
 }
 
 if(/selftest/.test(location.search))window.__t={plan,minutes,suggestion,progress,setData:d=>{data=d},getData:()=>data,EX,SLUG,SWAP,FOCUS,POSE_KIND,ST,GROUPS,D,go:(n,o={})=>{view={name:n,...o};render()},screens:()=>Object.keys(SCREENS),shareImage};
