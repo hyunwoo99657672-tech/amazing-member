@@ -1097,9 +1097,9 @@ const TRAINERS={
   jay:{name:'제이',role:'기능성운동 담당',cls:'3대 운동 클래스',tag:'자세가 잡히면 무게는 따라와요',photo:'assets/jy-profile.jpg?v=2',thumb:'assets/jy-face.jpg',hello:'assets/jy-hello.mp4',helloPoster:'assets/jy-hello.jpg',helloLen:'6초',outro:'assets/jy-outro.mp4',outroPoster:'assets/jy-outro.jpg',outroLen:'15초',isNew:true,mb:22,flow:'하체로 앉았다 일어나고 → 상체로 밀고 → 몸 뒤쪽으로 들어 올리기',
     steps:[
       {k:'하체 기본기',eid:'bsq',mus:{p:['quads','glutes'],s:['adductors','lowerBack','abs'],a:['hamstrings']},feel:'허벅지 앞과 엉덩이가 같이 뻐근하면 정답이에요. 허리가 먼저 아프면 상체가 너무 숙여졌거나 너무 깊이 앉은 거예요.',pt:'코로 크게 마시고, 숨을 잠깐 참은 채 앉았다 일어나요',ex:'바벨 스쿼트',id:null,
-       vid:'assets/jy-squat.mp4',poster:'assets/jy-squat.jpg',ch:[['호흡',0],['꿀팁',16],['주의',39]],
+       vid:'assets/jy-squat.mp4?v=2',poster:'assets/jy-squat.jpg?v=2',ch:[['세팅',0],['호흡',34],['꿀팁',50],['주의',73]],
        why:'우리 몸의 가장 기본 움직임, 앉았다 일어나기를 무게로 연습해요. 하체 전체와 몸통 힘을 같이 길러요.',
-       how:['바를 어깨에 걸 때 손을 너무 넓게 잡지 말고, 날개뼈를 단단히 모아요.','내려가기 전에 코로 크게 들이마셔요.','숨을 잠깐 참은 채, 무릎이 발끝 방향을 따라가게 앉아요.','다 올라와서 숨을 뱉어요.'],
+       how:['바 밑으로 들어가 다리는 어깨너비로 벌리고, 날개뼈를 강하게 모아요.','손은 너무 넓지 않게, 날개뼈가 풀리지 않는 위치로 잡아요.','바를 들고 한 발짝 뒤로 나와 발끝을 살짝 바깥쪽으로 벌려요.','내려가기 전에 코로 크게 들이마셔요.','숨을 잠깐 참은 채, 무릎이 발끝 방향을 따라가게 앉아요.','다 올라와서 숨을 뱉어요.'],
        care:'앉을 때 무릎이 안으로 모이면 무릎을 다칠 수 있어요. 골반이 말리는 벗윙크가 생기면 그 전까지만 앉아요. 허리나 무릎이 아프면 바로 멈추고 제이 쌤을 찾아주세요.',
        tip:'상체가 앞으로 많이 숙여지거나 발목이 뻣뻣해 앉기 힘들면 뒤꿈치 아래에 발판을 놓고 해보세요. 훨씬 편하게 앉았다 일어날 수 있어요.'},
       {k:'상체 밀기',eid:'bb',mus:{p:['chest'],s:['frontDelts','triceps'],a:['upperBack','rearDelts']},feel:'가슴 전체가 뻐근하면 정답이에요. 어깨 앞만 아프면 어깨가 떠 있거나 앞으로 말린 거예요.',pt:'날개뼈를 모으고 발로 바닥을 밀어 어깨를 내린 채, 바를 가슴 쪽으로 내려요',ex:'바벨 벤치프레스',id:null,
@@ -1181,7 +1181,7 @@ function trSets(st){const k=trLv(),L=TR_LV[k];return `<div class="tr-lv"><div cl
 EX.dpo=EX.dpo||{name:'덤벨 풀오버',group:'chest',cls:true,part:'가슴·등 · 광배근',quick:[],setup:[],mus:{p:['lats','chest'],s:['triceps'],a:['core']},video:'assets/dy-pullover.mp4',vposter:'assets/dy-pullover.jpg',thumb:'assets/dy-pullover.jpg'};
 EX.dlr=EX.dlr||{name:'덤벨 사이드 레터럴 레이즈',group:'shoulder',cls:true,part:'어깨 옆 · 측면 삼각근',quick:[],setup:[],mus:{p:['sideDelts'],s:['traps'],a:[]},video:'assets/dy-lateral.mp4',vposter:'assets/dy-lateral.jpg',thumb:'assets/dy-lateral.jpg'};
 TYPE.dpo='db';TYPE.dlr='db';
-EX.bsq=EX.bsq||{name:'바벨 스쿼트',group:'lower',cls:true,part:'하체 전체 · 엉덩이',quick:[],setup:[],mus:{p:['quads','glutes'],s:['adductors','lowerBack','abs'],a:['hamstrings']},video:'assets/jy-squat.mp4',vposter:'assets/jy-squat.jpg',thumb:'assets/jy-squat.jpg'};
+EX.bsq=EX.bsq||{name:'바벨 스쿼트',group:'lower',cls:true,part:'하체 전체 · 엉덩이',quick:[],setup:[],mus:{p:['quads','glutes'],s:['adductors','lowerBack','abs'],a:['hamstrings']},video:'assets/jy-squat.mp4?v=2',vposter:'assets/jy-squat.jpg?v=2',thumb:'assets/jy-squat.jpg?v=2'};
 EX.bdl=EX.bdl||{name:'바벨 데드리프트',group:'lower',cls:true,part:'몸 뒤쪽 · 엉덩이·허벅지 뒤',quick:[],setup:[],mus:{p:['glutes','hamstrings','lowerBack'],s:['quads','lats','upperBack','forearms'],a:['abs']},video:'assets/jy-dead.mp4',vposter:'assets/jy-dead.jpg',thumb:'assets/jy-dead.jpg'};
 TYPE.bsq='bar';TYPE.bdl='bar';
 const TR_REP={new:[15,15,3],some:[12,15,4],advanced:[12,12,5]};
