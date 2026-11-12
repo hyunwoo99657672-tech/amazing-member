@@ -522,7 +522,7 @@ function plan(time,condition,focus){
     return {id:key,target:2,done:[],rest:rest+(senior||last?.effort==='hard'?15:0),repMin,repMax,lastHard:last?.effort==='hard'};
   });
   const warm=time===20?3:time===35?4:5;
-  const W=g=>light?{20:5,35:8,50:12}[time]:g==='fitness'?{20:6,35:12,50:18}[time]:g==='weight'?{20:6,35:10,50:15}[time]:g==='shape'?{20:5,35:8,50:12}[time]:{20:4,35:6,50:8}[time];
+  const W=g=>g==='weight'?{20:8,35:15,50:22}[time]:light?{20:5,35:8,50:12}[time]:g==='fitness'?{20:6,35:12,50:18}[time]:g==='shape'?{20:6,35:10,50:15}[time]:{20:4,35:6,50:8}[time];
   let walk=Math.max(...goals.map(W));
   if(F) walk=Math.min(walk,{20:4,35:6,50:8}[time]);
   const s={queue,warm,walk,time,condition,goal,goals,focus:F?focus:null,level,days,week,cycle,slot,index:-1,phase:'warm',started:Date.now(),note:''};
@@ -707,7 +707,7 @@ today(){
   <ol class="plan-list">
     <li class="plan-item cardio"><div class="thumb" aria-hidden="true">🚶</div><div><b>걷기로 몸 풀기 ${s.warm}분</b><span>6층 트레드밀 · 대화할 수 있는 속도</span></div></li>
     ${s.queue.map((e,i)=>{const x=EX[e.id];return `<li class="plan-item">${thumb(x)}<div><b>${i+1}. ${esc(x.name)}</b><span>${esc(x.part.split('·')[0].trim())} · ${e.target}세트 × ${e.repMin}~${e.repMax}회</span></div><button class="how" data-guide="${e.id}" data-from="today">사용법</button></li>`}).join('')}
-    <li class="plan-item cardio"><div class="thumb" aria-hidden="true">🏃</div><div><b>마무리 걷기 ${s.walk}분</b><span>${s.goal==='fitness'?'1분 빠르게 · 2분 보통 반복':'조금 빠르게, 마지막 2분은 천천히'}</span></div></li>
+    <li class="plan-item cardio"><div class="thumb" aria-hidden="true">🏃</div><div><b>마무리 걷기 ${s.walk}분</b><span>${s.goal==='fitness'?'1분 빠르게 · 2분 보통 반복':(s.goal==='weight'||(s.goals||[]).includes('weight'))?'경사 5~10% 빠르게 걷기 · 숨이 조금 찰 정도':'조금 빠르게, 마지막 2분은 천천히'}</span></div></li>
   </ol>
   ${s.note?`<p class="note small">${esc(s.note)}</p>`:''}
   ${p?.care?`<p class="note warn small"><b>통증·부상이 있다고 알려주셨어요</b>직원과 운동 범위를 확인한 뒤 시작해주세요. 아픈 동작은 건너뛰어도 괜찮아요.</p>`:''}
@@ -727,7 +727,7 @@ workout(){
     <button class="btn btn-soft" data-go="stretch" data-back="workout">스트레칭도 할래요 (2분)</button>
     ${tools}</div>`;
   if(s.phase==='walk') return top()+`<div class="stack-lg">${bar}
-    <div class="stack"><p class="step-label">마지막 · 마무리</p><h1>기구 운동 끝!<br>${s.walk}분만 걸어요.</h1><p class="muted">${s.goal==='fitness'?'1분 빠르게 · 2분 보통, 번갈아':'조금 빠르게'} · 마지막 2분은 천천히</p></div>
+    <div class="stack"><p class="step-label">마지막 · 마무리</p><h1>기구 운동 끝!<br>${s.walk}분${s.walk>=12?' 걸어요':'만 걸어요'}.</h1><p class="muted">${s.goal==='fitness'?'1분 빠르게 · 2분 보통, 번갈아':(s.goal==='weight'||(s.goals||[]).includes('weight'))?'트레드밀 경사 5~10%, 숨이 조금 찰 정도로 빠르게 걸어요. 체지방 관리에 제일 중요한 시간이에요':'조금 빠르게'} · 마지막 2분은 천천히</p></div>
     <button class="btn btn-main" data-act="finish">다 걸었어요 · 오늘 운동 끝</button>
     <button class="btn btn-soft" data-act="finish-skip">걷기는 건너뛰고 끝내기</button></div>`;
   const e=s.queue[s.index], x=EX[e.id], T=s.cls&&TRAINERS[s.cls], cst=T&&T.steps[s.index];
