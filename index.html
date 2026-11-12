@@ -19,7 +19,7 @@
 /* Layout: 한 손 엄지로 쓰는 단일 컬럼. 화면마다 큰 버튼 하나가 주인공, 나머지는 조용하게. */
 :root{
   --bg:#f3f2ec; --surface:#ffffff; --sunk:#ebeae2; --ink:#1c2620; --muted:#5a665e; --line:#dcdfd5;
-  --accent:#245b38; --accent-ink:#ffffff; --accent-soft:#e2ecdc; --warm:#a8651f; --warm-soft:#f6ead9;
+  --accent:#245b38; --accent-ink:#ffffff; --accent-soft:#e2ecdc; --warm:#93561a; --warm-soft:#f6ead9;
   --danger:#a9392a; --danger-soft:#f8e3de;
   --m-p:#de4f39; --m-s:#eeb030; --m-a:#3f86d4; --m-off:#d5cfc8; --m-body:#ebe7e2; --m-edge:#aaa198;
   --display:'Jua','Noto Sans KR',system-ui,sans-serif;
@@ -226,14 +226,14 @@ details.more .in{padding:0 16px 16px;display:flex;flex-direction:column;gap:12px
 .icon-btn{background:none;border:0;color:var(--muted);font-size:14px;font-weight:700;min-height:40px;padding:4px 8px;text-decoration:underline}
 
 .mstat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 4px}
-.mstat span{display:block;font-size:12px;color:var(--muted)}
+.mstat span{display:block;font-size:13px;color:var(--muted)}
 .mstat b{font-size:16px}
 .spark{width:100%;height:56px;display:block;margin-top:6px}
 .spark .sl{fill:none;stroke:var(--accent);stroke-width:2.5;vector-effect:non-scaling-stroke}
 .spark .sa{fill:var(--accent-soft);stroke:none}
 .spark .sd{fill:var(--accent)}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:14px;margin-top:6px}
-.cal i{font-style:normal;color:var(--muted);font-size:12px;font-weight:700}
+.cal i{font-style:normal;color:var(--muted);font-size:13px;font-weight:700}
 .cal span{aspect-ratio:1;display:grid;place-items:center;border-radius:50%;color:var(--muted);font-variant-numeric:tabular-nums}
 .cal span.on{background:var(--accent);color:var(--accent-ink);font-weight:800}
 .cal span.today{outline:2px solid var(--warm);outline-offset:-2px}
@@ -251,7 +251,7 @@ details.more .in{padding:0 16px 16px;display:flex;flex-direction:column;gap:12px
 .badges{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .badge{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:12px 8px;text-align:center;display:flex;flex-direction:column;gap:2px;align-items:center;opacity:.55}
 .badge.on{opacity:1;border-color:var(--warm);background:var(--warm-soft)}
-.badge .bi{font-size:30px;line-height:1.2}.badge b{font-size:15px;line-height:1.3}.badge span:last-child{font-size:12px;color:var(--muted);line-height:1.35}
+.badge .bi{font-size:30px;line-height:1.2}.badge b{font-size:15px;line-height:1.3}.badge span:last-child{font-size:13px;color:var(--muted);line-height:1.35}
 .badge.pop{animation:pop .5s ease-out}@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
 .newbadge{display:flex;flex-direction:column;gap:10px;align-items:stretch;text-align:center}
 .cardprev{border-radius:var(--r-lg);overflow:hidden;box-shadow:0 6px 24px #0002;max-width:100%}
@@ -313,7 +313,7 @@ details.more .in{padding:0 16px 16px;display:flex;flex-direction:column;gap:12px
 .prog-ic{font-size:36px;line-height:1;flex:none}
 .prog-h h2{font-size:24px}
 .prog-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.prog-m{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;font-size:12px;color:var(--muted);line-height:1.3;min-width:0}
+.prog-m{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;font-size:13px;color:var(--muted);line-height:1.3;min-width:0}
 .prog-m .thumb{width:100%;height:auto;aspect-ratio:1}
 /* toast + confirm */
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:14px;font-size:16px;font-weight:700;max-width:calc(100% - 32px);z-index:50;box-shadow:0 6px 20px #0004}
@@ -659,7 +659,7 @@ home(){
   ${p?growCard()+challengeCard():''}${SYNC_URL?(setTimeout(loadRank,0),'<div id="rank-box"></div>'):''}
   ${trainerCard()}
   <button class="start-card" data-go="programs"><span class="num" aria-hidden="true">🍑</span><span><b>부위별 집중 루틴</b><span>애플힙 · 넓은 등 · 어깨 · 가슴 · 허벅지</span></span></button>
-  <button class="start-card" data-go="stretch"><span class="num" aria-hidden="true">🧘</span><span><b>스트레칭 영상 따라하기</b><span>가슴 · 어깨 · 등 · 허벅지 · 엉덩이 ${ST.length}가지 동작</span></span></button>
+  <button class="start-card" data-go="stretch"><span class="num" aria-hidden="true">🧘</span><span><b>스트레칭 영상 따라하기</b><span>운동 전후 따라하는 ${ST.length}가지 동작</span></span></button>
   <div class="duo">
     <button class="tile" data-go="guides"><span class="ic" aria-hidden="true">📖</span><b>기구 사용법</b><span>사진·영상으로 3단계만</span></button>
     <button class="tile" data-go="records"><span class="ic" aria-hidden="true">📅</span><b>내 기록</b><span>${data.logs.length?`최근 ${fmtDay(data.logs[data.logs.length-1].date)}`:'운동하면 자동 저장'}</span></button>
@@ -1201,9 +1201,9 @@ async function drawCard(){
   x.fillStyle=PANEL;rr(x,80,450,470,470,32);x.fill();
   x.fillStyle=CREAM;x.font=F(400,48,'d');x.fillText(`${now.getMonth()+1}월`,110,515);
   x.fillStyle=GOLD;x.font=F(400,48,'d');x.textAlign='right';x.fillText(`${monthCount()}회`,520,515);x.textAlign='left';
-  const first=new Date(now.getFullYear(),now.getMonth(),1).getDay(),last=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const first=(new Date(now.getFullYear(),now.getMonth(),1).getDay()+6)%7,last=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
   const cw=60,cx0=110,cy0=575,rows=Math.ceil((first+last)/7),rh=Math.min(56,300/rows);
-  x.font=F(700,22,'b');x.textAlign='center';'일월화수목금토'.split('').forEach((w,i)=>{x.fillStyle=DIM;x.fillText(w,cx0+cw*i+cw/2,cy0)});
+  x.font=F(700,22,'b');x.textAlign='center';'월화수목금토일'.split('').forEach((w,i)=>{x.fillStyle=DIM;x.fillText(w,cx0+cw*i+cw/2,cy0)});
   for(let d=1;d<=last;d++){const k=first+d-1,c=k%7,r=Math.floor(k/7),cx=cx0+cw*c+cw/2,cy=cy0+38+r*rh;
     if(days.has(d)){x.fillStyle=GOLD;x.beginPath();x.arc(cx,cy,Math.min(24,rh/2-2),0,7);x.fill();x.fillStyle=INK}
     else if(d===now.getDate()){x.strokeStyle=CREAM;x.lineWidth=3;x.beginPath();x.arc(cx,cy,Math.min(24,rh/2-2),0,7);x.stroke();x.fillStyle=CREAM}
@@ -1721,7 +1721,7 @@ function playHello(force){if(!force&&(data.hello===false||!data.profile))return;
   if(!force){data.lastHello=t;save()}}
 function armHello(){const go=()=>{document.removeEventListener('pointerdown',go,true);document.removeEventListener('keydown',go,true);setTimeout(()=>playHello(false),60)};document.addEventListener('pointerdown',go,true);document.addEventListener('keydown',go,true)}
 function boot(h){if(openRightBrowser(false)){setTimeout(()=>boot2(h),1500);return}boot2(h)}
-function boot2(h){try{const td=new Date().toLocaleDateString('en-CA');data.visitDays=data.visitDays||[];if(data.visitDays[data.visitDays.length-1]!==td){data.visitDays.push(td);data.visitDays=data.visitDays.slice(-30);save()}}catch(e){}try{if(h&&h.view){view=h.view;onboard=h.onboard||null;today=h.today||today}}catch(e){}fromHash();render();navInit();armHello();try{if(ANALYTICS_ID&&!ON_CLAUDE){const sc=document.createElement('script');sc.defer=true;sc.src='https://cloud.umami.is/script.js';sc.dataset.websiteId=ANALYTICS_ID;sc.dataset.domains='hyunwoo99657672-tech.github.io';sc.dataset.autoTrack='false';sc.onload=()=>{try{window.umami.track(p=>({...p,url:'/amazing-member/'+(view.name||'home'),title:view.name||'home'}))}catch(e){}};document.head.appendChild(sc)}}catch(e){}try{if(!ON_CLAUDE&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
+function boot2(h){try{const td=new Date().toLocaleDateString('en-CA');data.visitDays=data.visitDays||[];if(data.visitDays[data.visitDays.length-1]!==td){data.visitDays.push(td);data.visitDays=data.visitDays.slice(-30);save()}}catch(e){}try{if(h&&h.view){view=h.view;onboard=h.onboard||null;today=h.today||today}}catch(e){}fromHash();render();navInit();armHello();try{if(!ON_CLAUDE&&navigator.storage&&navigator.storage.persist)navigator.storage.persisted().then(p=>{if(!p)navigator.storage.persist()}).catch(()=>{})}catch(e){}try{if(ANALYTICS_ID&&!ON_CLAUDE){const sc=document.createElement('script');sc.defer=true;sc.src='https://cloud.umami.is/script.js';sc.dataset.websiteId=ANALYTICS_ID;sc.dataset.domains='hyunwoo99657672-tech.github.io';sc.dataset.autoTrack='false';sc.onload=()=>{try{window.umami.track(p=>({...p,url:'/amazing-member/'+(view.name||'home'),title:view.name||'home'}))}catch(e){}};document.head.appendChild(sc)}}catch(e){}try{if(!ON_CLAUDE&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
 try{window.claude?.hot?.snapshot?.(()=>({view,onboard,today}))}catch(e){}
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
 })();
