@@ -390,6 +390,7 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 .goal-btn:active{transform:scale(.98)}.goal-ic{flex:none;width:46px;height:46px;border-radius:14px;background:#17130C;display:grid;place-items:center;font-size:24px}
 .goal-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.goal-tx em{font-style:normal;font-size:.8rem;font-weight:900;color:#8A6418}.goal-tx b{font-size:1.18rem;line-height:1.3;font-weight:900}.goal-tx small{font-size:.9rem;line-height:1.45;color:#5A4E36}
 .goal-ar{flex:none;width:40px;height:40px;border-radius:50%;background:#E8BE55;color:#17130C;display:grid;place-items:center;font-size:1.2rem;font-weight:900}
+.mark-af{width:62px!important;background:#17130C!important;padding:0 6px;box-sizing:border-box;box-shadow:0 0 0 1.5px #5a4520}.mark-af img{width:100%;height:auto;display:block}
 </style>
 </head><body>
 
@@ -603,7 +604,7 @@ function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTi
 function stopMedia(){document.querySelectorAll('video').forEach(v=>{try{v.pause()}catch(e){}});try{speechSynthesis.cancel()}catch(e){}}
 
 function top(back){
-  return `<div class="top"><button class="brand" data-go="home" aria-label="처음 화면으로"><span class="mark" aria-hidden="true">A</span><span><b>어메이징휘트니스 석계점</b><small>혼자서도 쉬운 운동 안내</small></span></button>${back&&IOS_APP?`<button class="back" data-go="${back}">← 뒤로</button>`:''}</div>`;
+  return `<div class="top"><button class="brand" data-go="home" aria-label="처음 화면으로"><span class="mark mark-af" aria-hidden="true"><img src="assets/af-mark.png" alt=""></span><span><b>어메이징휘트니스 석계점</b><small>혼자서도 쉬운 운동 안내</small></span></button>${back&&IOS_APP?`<button class="back" data-go="${back}">← 뒤로</button>`:''}</div>`;
 }
 function thumb(ex){return `<div class="thumb"><span aria-hidden="true">${ICON[ex.group]}</span>${ex.thumb?`<img src="${ex.thumb}" alt="" loading="lazy">`:''}</div>`}
 function vidOf(ex,ai){if(ai&&ex.ai)return ex.ai[data.profile?.sex==='female'?1:0];return ex.video||(ex.ai?ex.ai[data.profile?.sex==='female'?1:0]:null)}
