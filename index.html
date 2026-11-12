@@ -386,6 +386,10 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 .sy-f b{display:flex;align-items:center;gap:8px;font-size:1.1rem}.sy-f b i{font-style:normal;width:26px;height:26px;border-radius:50%;background:#17130C;color:#F2C94C;display:grid;place-items:center;font-size:.85rem}
 .inp-big{font-size:1.35rem!important;min-height:62px!important;padding:14px 18px!important;border:2px solid #d9c38c!important;border-radius:16px!important;font-weight:700;background:#fff!important;color:#1A150D!important}.inp-big:focus{outline:none;border-color:#B8862A!important;box-shadow:0 0 0 4px rgba(232,190,85,.35)}.inp-pin{letter-spacing:.35em;font-variant-numeric:tabular-nums}.inp-big::placeholder{color:#b9ad92;font-weight:500;letter-spacing:normal}
 .sync-hi .sync-btns .btn-main{min-height:60px;font-size:1.15rem}
+.goal-btn{display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;text-align:left;padding:16px 14px;border-radius:var(--r-lg,22px);border:2.5px solid #E8BE55;background:linear-gradient(135deg,#fffaf0,#f6ead0);color:#1A150D;cursor:pointer;box-shadow:0 8px 24px rgba(184,134,42,.2);font:inherit}
+.goal-btn:active{transform:scale(.98)}.goal-ic{flex:none;width:46px;height:46px;border-radius:14px;background:#17130C;display:grid;place-items:center;font-size:24px}
+.goal-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.goal-tx em{font-style:normal;font-size:.8rem;font-weight:900;color:#8A6418}.goal-tx b{font-size:1.18rem;line-height:1.3;font-weight:900}.goal-tx small{font-size:.9rem;line-height:1.45;color:#5A4E36}
+.goal-ar{flex:none;width:40px;height:40px;border-radius:50%;background:#E8BE55;color:#17130C;display:grid;place-items:center;font-size:1.2rem;font-weight:900}
 </style>
 </head><body>
 
@@ -662,7 +666,7 @@ home(){
   <div class="hello"><p class="kicker">${p?(n?`지금까지 ${n}번 운동했어요`:'첫 운동을 기다리고 있어요'):'처음 오셨나요?'}</p><h1>${greet}</h1></div>
   ${s&&Date.now()-s.started>8*3600000?`<div class="note"><b>${fmtDay(new Date(s.started).toISOString())}에 하던 운동이 남아 있어요</b>이어서 하거나, 한 만큼 저장하고 오늘 운동을 새로 시작할 수 있어요.<div class="duo" style="margin-top:10px"><button class="btn btn-soft" data-act="resume">이어하기</button><button class="btn btn-soft" data-act="abandon">저장하고 새로</button></div></div>`:''}
   <button class="btn btn-main hero-btn" data-act="${s?'resume':p?'start':'quick'}">${s?'하던 운동 이어하기':p?'오늘 운동 시작':'바로 운동 시작'}<small>${s?'멈춘 곳부터 다시 안내해요':p?'오늘 할 운동을 바로 짜드려요':'질문 없이 35분 기본 루틴이 바로 나와요'}</small><span class="arrow" aria-hidden="true">→</span></button>
-  ${!p&&!s?`<button class="btn-quiet fit-link" data-act="start">내 목표에 맞춰 시작할래요 <span class="small muted">(질문 6개 · 1분)</span></button>`:''}
+  ${!p&&!s?`<button class="goal-btn" data-act="start"><span class="goal-ic" aria-hidden="true">🎯</span><span class="goal-tx"><em>추천 · 질문 6개 · 1분</em><b>내 목표에 맞춰 시작하기</b><small>다이어트·근육·애플힙, 나한테 맞는 루틴</small></span><span class="goal-ar" aria-hidden="true">→</span></button>`:''}
   ${p?`<div class="confidence"><span class="num tnum">${week}주</span><div><p><b>${pr.cycle>1?pr.cycle+'번째 ':''}4주 계획 ${week}주차 · ${WEEKS[week].t}</b></p><p class="small">이번 주 ${weekDone}/${days}회${streakWeeks()>1?` · ${streakWeeks()}주 연속 운동 중`:''}</p><div class="weekdots" aria-label="4주 계획 진행 ${pr.inCycle} / ${total}회">${Array.from({length:total},(_,i)=>`<i class="${i<pr.inCycle?'on':''}"></i>`).join('')}</div></div></div>`
   :''}
   ${p?growCard()+challengeCard():''}${SYNC_URL?(setTimeout(loadRank,0),'<div id="rank-box"></div>'):''}
