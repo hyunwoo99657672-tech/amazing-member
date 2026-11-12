@@ -869,7 +869,7 @@ function renderHistory(){
   const list = records();
   el.innerHTML = list.length ? list.map((r, i) => {
     const bad = r.items.filter(x => x.status === "bad").length, warn = r.items.filter(x => x.status === "warn").length;
-    return `<article><b>${r.member || "이름 없음"} · ${r.score}점</b><button class="x" data-del="${i}">삭제</button><small>${new Date(r.savedAt).toLocaleString("ko-KR")} · 개선 필요 ${bad} · 주의 ${warn}</small>${r.comment ? `<p>${r.comment.replace(/</g, "&lt;")}</p>` : ""}</article>`;
+    return `<article><b>${String(r.member || "이름 없음").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))} · ${+r.score||0}점</b><button class="x" data-del="${i}">삭제</button><small>${new Date(r.savedAt).toLocaleString("ko-KR")} · 개선 필요 ${bad} · 주의 ${warn}</small>${r.comment ? `<p>${r.comment.replace(/</g, "&lt;")}</p>` : ""}</article>`;
   }).join("") : `<p class="notice">저장된 기록이 없어요.</p>`;
   el.querySelectorAll("[data-del]").forEach(b => b.onclick = () => { const l = records(); l.splice(+b.dataset.del, 1); writeRecords(l); renderHistory(); });
 }
@@ -885,6 +885,7 @@ $("#cameraBtn").onclick = async () => {
 };
 function closeCam(){ $("#camera").hidden = true; $("#count").hidden = true; state.stream?.getTracks().forEach(t => t.stop()); state.stream = null; clearInterval(closeCam.t); }
 $("#camClose").onclick = closeCam;
+document.addEventListener("visibilitychange", () => { if (document.hidden && state.stream) closeCam(); });
 $("#camShot").onclick = () => {
   let n = +$("#timer").value;
   const shoot = () => {
