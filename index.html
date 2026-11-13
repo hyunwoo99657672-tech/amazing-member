@@ -28,8 +28,9 @@
 <style>
 /* Layout: 한 손 엄지로 쓰는 단일 컬럼. 화면마다 큰 버튼 하나가 주인공, 나머지는 조용하게. */
 :root{
-  --bg:#f3f2ec; --surface:#ffffff; --sunk:#ebeae2; --ink:#1c2620; --muted:#5a665e; --line:#dcdfd5;
-  --accent:#245b38; --accent-ink:#ffffff; --accent-soft:#e2ecdc; --warm:#93561a; --warm-soft:#f6ead9;
+  --bg:#f4f1ea; --surface:#ffffff; --sunk:#ece7dc; --ink:#1d1912; --muted:#6b6455; --line:#e1d9c8;
+  --accent:#17130c; --accent-ink:#f2d27a; --accent-soft:#f3ead3; --warm:#a07422; --warm-soft:#f6eedc;
+  --gold:#c99a3b;
   --danger:#a9392a; --danger-soft:#f8e3de;
   --m-p:#de4f39; --m-s:#eeb030; --m-a:#3f86d4; --m-off:#d5cfc8; --m-body:#ebe7e2; --m-edge:#aaa198;
   --display:'Jua','Noto Sans KR',system-ui,sans-serif;
@@ -37,12 +38,12 @@
   --r-lg:22px; --r-md:16px; --r-sm:12px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#111713; --surface:#1a221d; --sunk:#151c17; --ink:#ecf1ea; --muted:#a2aea5; --line:#2b3730;
-  --accent:#74c48d; --accent-ink:#0b1a10; --accent-soft:#1d3224; --warm:#e3a55c; --warm-soft:#33281b;
+  --bg:#12100b; --surface:#1c1913; --sunk:#16130e; --ink:#f1ece0; --muted:#b2a993; --line:#332d22;
+  --accent:#e8be55; --accent-ink:#17130c; --accent-soft:#2c2416; --gold:#e8be55; --warm:#e3a55c; --warm-soft:#33281b;
   --danger:#ff8b78; --danger-soft:#3a201b; --m-p:#ff6a52; --m-s:#f5c04f; --m-a:#5ea2ee; --m-off:#3c4741; --m-body:#29312c; --m-edge:#5c6862; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#111713; --surface:#1a221d; --sunk:#151c17; --ink:#ecf1ea; --muted:#a2aea5; --line:#2b3730;
-  --accent:#74c48d; --accent-ink:#0b1a10; --accent-soft:#1d3224; --warm:#e3a55c; --warm-soft:#33281b;
+  --bg:#12100b; --surface:#1c1913; --sunk:#16130e; --ink:#f1ece0; --muted:#b2a993; --line:#332d22;
+  --accent:#e8be55; --accent-ink:#17130c; --accent-soft:#2c2416; --gold:#e8be55; --warm:#e3a55c; --warm-soft:#33281b;
   --danger:#ff8b78; --danger-soft:#3a201b; --m-p:#ff6a52; --m-s:#f5c04f; --m-a:#5ea2ee; --m-off:#3c4741; --m-body:#29312c; --m-edge:#5c6862; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font:500 18px/1.65 var(--body);-webkit-text-size-adjust:100%;word-break:keep-all;overflow-wrap:anywhere}
@@ -365,6 +366,9 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 @media (prefers-reduced-motion:reduce){.proof-badge{animation:none}}
 .fit-link{justify-self:center;margin-top:-6px}.fit-card{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 16px;border-radius:16px;background:var(--warm-soft);border:1.5px solid var(--warm)}.fit-card>div{flex:1 1 200px;display:grid;gap:3px}.fit-card b{font-size:1rem}.fit-card span{font-size:.9rem;line-height:1.45;color:var(--muted)}.fit-card .btn{flex:none;width:auto;padding:0 18px}
 .btn-gold{background:linear-gradient(90deg,#FFE38A,#E3AE3A);color:#120E07;font-weight:900;border:0}
+.btn-main.hero-btn{color:#f2d27a;padding-right:88px;background:radial-gradient(120% 140% at 85% 0%,#4a3a17 0%,#17130c 55%);border:1.5px solid #6b5520;box-shadow:0 10px 28px rgba(23,19,12,.28)}.btn-main.hero-btn .arrow{background:#e8be55;color:#17130c}
+.lic{width:26px;height:26px;display:block}.grid2 .tile .ic{width:44px;height:44px;border-radius:13px;background:#17130c;color:#e8be55;display:grid;place-items:center}.grid2 .tile .ic .lic{width:24px;height:24px}
+.goal-ic{color:#e8be55}.goal-ic .lic{width:26px;height:26px}.inst-bar .lic{width:20px;height:20px;color:var(--gold)}
 .more-sec{display:grid;gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid2 .tile{min-height:112px}
 .inst-bar{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;border:1.5px dashed var(--line);border-radius:var(--r-md);padding:12px 14px;color:var(--muted)}.inst-bar b{flex:1;font-size:14px;font-weight:700}.inst-bar i{font-style:normal}
 .trc{display:grid;gap:10px;margin:4px 0}.trc-h{display:flex;justify-content:space-between;align-items:baseline;padding:0 2px}.trc-h b{font-size:1.15rem}.trc-h span{font-size:.82rem;color:#8a7a55}
@@ -703,18 +707,18 @@ home(){
   <div class="hello"><p class="kicker">${p?(n?`지금까지 ${n}번 운동했어요`:'첫 운동을 기다리고 있어요'):'어메이징휘트니스 석계점 운동파트너'}</p><h1>${greet}</h1></div>
   ${s&&Date.now()-s.started>8*3600000?`<div class="note"><b>${fmtDay(new Date(s.started).toISOString())}에 하던 운동이 남아 있어요</b>이어서 하거나, 한 만큼 저장하고 오늘 운동을 새로 시작할 수 있어요.<div class="duo" style="margin-top:10px"><button class="btn btn-soft" data-act="resume">이어하기</button><button class="btn btn-soft" data-act="abandon">저장하고 새로</button></div></div>`:''}
   <button class="btn btn-main hero-btn" data-act="${s?'resume':p?'start':'quick'}">${s?'하던 운동 이어하기':p?'오늘 운동 시작':'바로 운동 시작'}<small>${s?'멈춘 곳부터 다시 안내해요':p?'오늘 할 운동을 바로 짜드려요':'질문 없이 35분 기본 루틴이 바로 나와요'}</small><span class="arrow" aria-hidden="true">→</span></button>
-  ${!p&&!s?`<button class="goal-btn" data-act="start"><span class="goal-ic" aria-hidden="true">🎯</span><span class="goal-tx"><em>추천 · 질문 6개 · 1분</em><b>내 목표에 맞춰 시작하기</b><small>다이어트·근육·애플힙, 나한테 맞는 루틴</small></span><span class="goal-ar" aria-hidden="true">→</span></button>`:''}
+  ${!p&&!s?`<button class="goal-btn" data-act="start"><span class="goal-ic">${ic('target')}</span><span class="goal-tx"><em>추천 · 질문 6개 · 1분</em><b>내 목표에 맞춰 시작하기</b><small>다이어트·근육·애플힙, 나한테 맞는 루틴</small></span><span class="goal-ar" aria-hidden="true">→</span></button>`:''}
   ${p?`<div class="confidence"><span class="num tnum">${week}주</span><div><p><b>${pr.cycle>1?pr.cycle+'번째 ':''}4주 계획 ${week}주차 · ${WEEKS[week].t}</b></p><p class="small">이번 주 ${Math.min(weekDone,days)}/${days}회${weekDone>days?` (+${weekDone-days})`:''} · 계획 ${pr.inCycle}/${total}회 완료${pr.inCycle&&pr.elapsed>1?` · 시작한 지 ${pr.elapsed}주째`:''}${streakWeeks()>1?` · ${streakWeeks()}주 연속 운동 중`:''}</p><div class="weekdots" aria-label="4주 계획 진행 ${pr.inCycle} / ${total}회">${Array.from({length:total},(_,i)=>`<i class="${i<pr.inCycle?'on':''}"></i>`).join('')}</div></div></div>`
   :''}
   ${p?growCard()+challengeCard():''}${SYNC_URL?(setTimeout(loadRank,0),'<div id="rank-box"></div>'):''}
   ${trainerCard()}
   <section class="more-sec"><div class="trc-h"><b>더 둘러보기</b></div><div class="grid2">
-    <button class="tile" data-go="programs"><span class="ic" aria-hidden="true">🍑</span><b>부위별 루틴</b><span>애플힙·등·어깨·가슴·허벅지</span></button>
-    <button class="tile" data-go="stretch"><span class="ic" aria-hidden="true">🧘</span><b>스트레칭</b><span>운동 전후 ${ST.length}가지 영상</span></button>
-    <button class="tile" data-go="guides"><span class="ic" aria-hidden="true">📖</span><b>기구 사용법</b><span>사진·영상으로 3단계만</span></button>
-    <button class="tile" data-go="records"><span class="ic" aria-hidden="true">📅</span><b>내 기록</b><span>${data.logs.length?`최근 ${fmtDay(data.logs[data.logs.length-1].date)}`:'운동하면 자동 저장'}</span></button>
+    <button class="tile" data-go="programs"><span class="ic">${ic('peach')}</span><b>부위별 루틴</b><span>애플힙·등·어깨·가슴·허벅지</span></button>
+    <button class="tile" data-go="stretch"><span class="ic">${ic('stretch')}</span><b>스트레칭</b><span>운동 전후 ${ST.length}가지 영상</span></button>
+    <button class="tile" data-go="guides"><span class="ic">${ic('book')}</span><b>기구 사용법</b><span>사진·영상으로 3단계만</span></button>
+    <button class="tile" data-go="records"><span class="ic">${ic('cal')}</span><b>내 기록</b><span>${data.logs.length?`최근 ${fmtDay(data.logs[data.logs.length-1].date)}`:'운동하면 자동 저장'}</span></button>
   </div></section>
-  ${data.installed||STANDALONE?'':`<button class="inst-bar" data-go="install"><span aria-hidden="true">📲</span><b>홈 화면에 추가하면 앱처럼 바로 열려요</b><i aria-hidden="true">→</i></button>`}
+  ${data.installed||STANDALONE?'':`<button class="inst-bar" data-go="install">${ic('phone')}<b>홈 화면에 추가하면 앱처럼 바로 열려요</b><i aria-hidden="true">→</i></button>`}
   <div class="foot-links">${p?'<button class="btn-quiet" data-go="settings">내 정보 바꾸기</button>':''}<button class="btn-quiet" data-go="faq">자주 묻는 질문</button>${data.installed?'<button class="btn-quiet" data-go="install">홈 화면 추가 방법</button>':''}</div>
   </div>`;
 },
@@ -1315,6 +1319,14 @@ function trVideo(st){return `<div class="tr-v"><video id="trv" src="${st.vid}" p
 function trAsk(tid,i){const t=TRAINERS[tid],st=t.steps[i],n=data.profile?.name||'회원';const msg=`[석계점 회원앱] ${n} 회원이에요. ${nm(t)} ${t.cls} ${i+1}단계 ${st.ex} 하다가 여쭤보고 싶은 게 있어요.`;
   return `<div class="ask-card"><b>💬 ${nm(t)}에게 물어보기</b><p>자세가 헷갈리거나 아픈 곳이 있으면 혼자 참지 마세요. 문자를 보내면 ${nm(t)}에게 전달해 드려요.</p><div class="duo"><a class="btn btn-main" href="${smsHref(msg)}" data-track="ask_trainer">문자 보내기</a><a class="btn btn-soft" href="tel:${GYM_TEL}" data-track="call_trainer">전화하기</a></div></div>`}
 function trOutro(t){if(!t.outro)return '';return view.outro?`<div class="tr-hello-v"><video src="${t.outro}" poster="${t.outroPoster||''}" controls autoplay playsinline></video></div>`:`<button class="tr-hello" data-act="tr-outro"><span class="th-img" style="background-image:url('${t.outroPoster}')"><i aria-hidden="true">▶</i></span><span class="th-tx"><b>${esc(nm(t))} 마무리 한마디</b><small>동작을 다 봤다면 ${esc(nm(t))}이 정리해 드려요 · ${esc(t.outroLen||'')}</small></span></button>`}
+const LICON={
+ peach:'<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>',
+ stretch:'<circle cx="12" cy="4.5" r="2"/><path d="M12 7v6M6 9.5l6 1.5 6-1.5M8.5 20l3.5-7 3.5 7"/>',
+ book:'<path d="M4 5.5C6.5 4.5 9.5 4.6 12 6c2.5-1.4 5.5-1.5 8-.5v13c-2.5-1-5.5-.9-8 .5-2.5-1.4-5.5-1.5-8-.5Z"/><path d="M12 6v13"/>',
+ cal:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/>',
+ target:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>',
+ phone:'<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>'};
+function ic(n,c){return `<svg class="lic${c?' '+c:''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LICON[n]}</svg>`}
 function trainerCard(){const ks=['romi','chan','jay','eunbin','doyoung'].filter(k=>TRAINERS[k]);return `<section class="trc"><div class="trc-h"><b>트레이너 클래스</b><span>옆으로 넘겨보세요 →</span></div><div class="trc-row">${ks.map(k=>{const t=TRAINERS[k];return `<button class="trc-c" data-go="trainer" data-tid="${k}"><span class="trc-ph">${t.photo?`<img src="${t.card||t.photo}" alt="" loading="lazy">`:''}${k===ks[0]&&t.isNew?'<i>NEW</i>':''}</span><span class="trc-t"><small>${esc(nm(t))}</small><b>${esc(t.cls)}</b><em>${t.steps.length}단계</em></span></button>`}).join('')}</div></section>`}
 const NEW_URL='https://hyunwoo99657672-tech.github.io/amazing-member/';
 function moveBanner(){if(!ON_CLAUDE)return '';return `<div class="move-card"><b>🏠 새 주소로 이사했어요</b><p>이제 새 주소에서 더 빠르고 앱처럼 쓸 수 있어요. 홈 화면에 <b>금색 아이콘</b>으로 추가돼요.</p><a class="btn btn-main" href="${NEW_URL}" target="_blank" rel="noopener">새 주소로 가기 →</a><div class="duo"><button class="btn btn-soft" data-act="copy-new">주소 복사</button><button class="btn btn-soft" data-act="move-help">기록 옮기는 법</button></div><p class="small muted">여기서 쌓은 기록은 새 주소로 자동으로 넘어가지 않아요. <b>기록 옮기는 법</b>을 눌러 파일로 저장한 뒤, 새 주소의 <b>내 기록 → 기록 옮기기 → 저장한 파일 가져오기</b>를 눌러요.</p></div>`}
