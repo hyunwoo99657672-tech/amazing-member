@@ -369,6 +369,7 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 .btn-main.hero-btn{color:#1d1606;padding-right:88px;background:linear-gradient(135deg,#f6d77e 0%,#e3b448 60%,#d29f35 100%);border:0;box-shadow:0 8px 22px rgba(196,148,44,.32)}.btn-main.hero-btn small{color:#4a3a14}.btn-main.hero-btn .arrow{background:#1d1606;color:#f2d27a}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn-main.hero-btn{color:#f2d27a;background:radial-gradient(120% 140% at 85% 0%,#4a3a17 0%,#17130c 55%);border:1.5px solid #6b5520}:root:not([data-theme="light"]) .btn-main.hero-btn small{color:#d9c58c}:root:not([data-theme="light"]) .btn-main.hero-btn .arrow{background:#e8be55;color:#17130c}}
 .start-card .lic-box,.lic-box{flex:none;width:48px;height:48px;border-radius:14px;background:#17130c;color:#e8be55;display:grid;place-items:center}.lic-box .lic{width:24px;height:24px}.start-card .lic-box{color:#e8be55}.start-card b{color:var(--ink)}
+.stepper{padding:10px 6px}.stepper .ctrl{gap:2px}.stepper button{width:36px;height:44px}.stepper input{letter-spacing:-.02em}@media (max-width:340px){.stepper button{width:30px}}
 .lic{width:26px;height:26px;display:block}.grid2 .tile .ic{width:44px;height:44px;border-radius:13px;background:#17130c;color:#e8be55;display:grid;place-items:center}.grid2 .tile .ic .lic{width:24px;height:24px}
 .goal-ic{color:#e8be55}.goal-ic .lic{width:26px;height:26px}.inst-bar .lic{width:20px;height:20px;color:var(--gold)}
 .more-sec{display:grid;gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid2 .tile{min-height:112px}
@@ -681,8 +682,12 @@ function render(){
   if(view.name==='workout'&&data.active?.phase==='rest') startRest();
   if(view.name==='stretch') startStretch();
   if(view.name==='done') startCheer();
-  
+  fitSteps();
 }
+/* 무게·횟수 숫자가 길면(52.5, 100) 글씨를 줄여서 잘리지 않게 */
+function fitSteps(){document.querySelectorAll('.stepper input').forEach(i=>{const n=String(i.value||'').length;i.style.fontSize=n>=5?'18px':n===4?'21px':n===3?'24px':''})}
+document.addEventListener('input',e=>{if(e.target.closest&&e.target.closest('.stepper'))fitSteps()});
+document.addEventListener('click',()=>setTimeout(fitSteps,0));
 function startCheer(){const v=$('#cheer-v'),b=$('#cheer-b');if(!v)return;v.volume=.9;v.muted=false;
   const p=v.play();if(p&&p.catch)p.catch(()=>{v.muted=true;v.play().catch(()=>{});if(b){b.hidden=false}});
   v.onended=()=>{if(b){b.hidden=false;b.textContent='↻ 응원 다시 보기'}};}
@@ -1346,8 +1351,8 @@ function installSheet(){if(ON_CLAUDE||STANDALONE||data.installed||!(IS_CHROME||I
    :`<ol class="inst-steps"><li>화면 아래 <b>공유 버튼</b> <span class="ico">⬆︎</span> 누르기 <small>(안 보이면 <b>⋯</b> → 공유)</small></li><li><b>홈 화면에 추가</b> 누르기</li><li>오른쪽 위 <b>추가</b> 누르기</li></ol><div class="inst-arrow" aria-hidden="true">⬇︎</div>`;
   return `<div class="inst-sheet" role="dialog" aria-label="앱 설치 안내">${head}${body}<button class="btn-quiet" data-act="inst-later">나중에 할게요</button></div>`}
 function inappBanner(){if(!INAPP||inappHidden||wrongBrowser())return '';return `<div class="note warn small"><b>지금 ${APPNAME} 안에서 열었어요</b>여기서 쓴 기록은 크롬·사파리와 따로 저장돼요. 화면 구석 <strong>⋮</strong> 또는 <strong>⋯</strong> 메뉴에서 <strong>다른 브라우저로 열기</strong>를 눌러 계속 같은 곳에서 써주세요.<div class="duo" style="margin-top:10px"><button class="btn btn-soft" data-go="install" style="min-height:48px;font-size:16px">방법 보기</button><button class="btn btn-soft" data-act="inapp-hide" style="min-height:48px;font-size:16px">그냥 쓸게요</button></div></div>`}
-function chalProof(){const m=new Date();const key=m.getFullYear()+'-'+(m.getMonth()+1);const red=(data.redeemed||{})[key];const n=data.profile?.name||'회원';
-  return top('home')+`<div class="stack-lg"><div class="proof"><div class="proof-badge" aria-hidden="true">🏅</div><p class="proof-k">${m.getMonth()+1}월 챌린지 달성</p><h1>${esc(n)} 회원님</h1><p class="proof-s">이번 달 <b>${monthCount()}번</b> 운동했어요<br>목표 ${monthGoal()}번 달성!</p><p class="proof-t tnum" id="proof-clock">${new Date().toLocaleString('ko-KR',{month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'})}</p>${red?`<p class="proof-ok">✔ 데스크 확인 완료 (${esc(red)})</p>`:''}</div>
+function chalProof(){const m=new Date();const key=m.getFullYear()+'-'+(m.getMonth()+1);const red=(data.redeemed||{})[key];const n=data.profile?.name||'';
+  return top('home')+`<div class="stack-lg"><div class="proof"><div class="proof-badge" aria-hidden="true">🏅</div><p class="proof-k">${m.getMonth()+1}월 챌린지 달성</p><h1>${n?esc(n)+' 회원님':'석계점 회원님'}</h1><p class="proof-s">이번 달 <b>${monthCount()}번</b> 운동했어요<br>목표 ${monthGoal()}번 달성!</p><p class="proof-t tnum" id="proof-clock">${new Date().toLocaleString('ko-KR',{month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'})}</p>${red?`<p class="proof-ok">✔ 데스크 확인 완료 (${esc(red)})</p>`:''}</div>
   <p class="note small"><b>6층 데스크에 이 화면을 보여주세요</b>시간이 실시간으로 움직이는 화면이에요. 직원이 확인하면 아래 버튼을 눌러 드려요.</p>
   ${red?'':`<button class="btn btn-soft" data-act="redeem">직원 확인 완료 (직원이 눌러요)</button>`}
   <button class="btn btn-main" data-go="home">홈으로</button></div>`}
