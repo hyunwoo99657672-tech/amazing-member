@@ -1133,7 +1133,7 @@ function askCard(kind,exName){const n=data.profile?.name||'회원';
   return `<div class="ask-card"><b>🙋 ${title}</b><p>${sub}</p><div class="duo"><a class="btn btn-main" href="${smsHref(msg)}" data-track="ask_${kind}">문자 보내기</a><a class="btn btn-soft" href="tel:${GYM_TEL}" data-track="call_${kind}">전화하기</a></div><p class="small muted">석계점 ${GYM_TEL_SHOW} · 평일 06~24시, 주말·공휴일 10~18시, 1·3주 일요일 휴관</p></div>`}
 function nm(t){return t.name+' '+(t.hon||'쌤')}
 const TRAINERS={
-  romi:{name:'로미',hon:'팀장',role:'체형교정 담당',cls:'무릎 케어 & 강화 클래스',tag:'무거운 무게만 운동이 아니에요',photo:'assets/rm-profile.jpg',thumb:'assets/rm-face.jpg',hello:'assets/rm-hello.mp4',helloPoster:'assets/rm-hello.jpg',helloLen:'14초',outro:'assets/rm-outro.mp4',outroPoster:'assets/rm-outro.jpg',outroLen:'14초',isNew:true,mb:70,flow:'풀기 세 가지 → 강화 세 가지',
+  romi:{name:'로미',hon:'팀장',role:'체형교정 담당',cls:'무릎 케어 & 강화 클래스',tag:'무거운 무게만 운동이 아니에요',photo:'assets/rm-profile2.jpg',thumb:'assets/rm-face2.jpg',hello:'assets/rm-hello.mp4',helloPoster:'assets/rm-hello.jpg',helloLen:'14초',outro:'assets/rm-outro.mp4',outroPoster:'assets/rm-outro.jpg',outroLen:'14초',isNew:true,mb:70,flow:'풀기 세 가지 → 강화 세 가지',
     steps:[
       {k:'무릎 위 긴장 풀기',eid:'rinner',sets:'덜 아플 때까지 천천히 · 양쪽 모두',mus:{p:['adductors'],s:['quads'],a:[]},feel:'무릎 바로 위가 시원하게 눌리면 정답이에요. 유난히 아프면 무릎 주변이 굳어 있다는 신호예요.',pt:'옆으로 누워 고관절은 90도, 무릎 바로 위를 천천히 왔다 갔다 해요',ex:'안쪽 허벅지 폼롤러',id:null,
        vid:'assets/rm-inner.mp4',poster:'assets/rm-inner.jpg',ch:[['왜 풀까',0],['자세·동작',36],['더 잘 푸는 법',65],['아플 때',75]],
@@ -1172,7 +1172,7 @@ const TRAINERS={
        care:'뒷발 뒤꿈치와 앞발 발가락이 떨어지지 않게 하세요. 몸통은 고정하고 다리만 움직여요.',
        tip:'양쪽을 비교해 보세요. 잘 안 되는 쪽도 계속 반복하면 맞춰져요.'},
     ]},
-  chan:{name:'찬',role:'스트렝스운동 담당',cls:'팔 라인 클래스',tag:'무게보다 팔꿈치 고정이 먼저예요',photo:'assets/jc-profile.jpg',thumb:'assets/jc-face.jpg',hello:'assets/jc-hello.mp4',helloPoster:'assets/jc-hello.jpg',helloLen:'9초',outro:'assets/jc-outro.mp4',outroPoster:'assets/jc-outro.jpg',outroLen:'12초',isNew:true,mb:20,flow:'앞팔(이두) 세 가지 → 뒷팔(삼두) 두 가지',
+  chan:{name:'찬',role:'스트렝스운동 담당',cls:'팔 라인 클래스',tag:'무게보다 팔꿈치 고정이 먼저예요',photo:'assets/jc-profile2.jpg',thumb:'assets/jc-face2.jpg',hello:'assets/jc-hello.mp4',helloPoster:'assets/jc-hello.jpg',helloLen:'9초',outro:'assets/jc-outro.mp4',outroPoster:'assets/jc-outro.jpg',outroLen:'12초',isNew:true,mb:20,flow:'앞팔(이두) 세 가지 → 뒷팔(삼두) 두 가지',
     steps:[
       {k:'앞팔 기본',eid:'bbcurl',mus:{p:['biceps'],s:['forearms'],a:['triceps']},feel:'팔 앞쪽이 뻐근하면 정답이에요. 허리나 어깨가 먼저 힘들면 반동을 쓰고 있는 거예요.',pt:'팔꿈치를 옆구리에 고정한 채, 숨을 뱉으면서 말아 올려요',ex:'바벨컬',id:null,
        vid:'assets/jc-bbcurl.mp4',poster:'assets/jc-bbcurl.jpg',ch:[['소개',0],['세팅·동작',6],['꿀팁',30],['주의',40]],
