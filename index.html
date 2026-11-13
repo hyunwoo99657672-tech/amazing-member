@@ -366,7 +366,7 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 .fit-link{justify-self:center;margin-top:-6px}.fit-card{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 16px;border-radius:16px;background:var(--warm-soft);border:1.5px solid var(--warm)}.fit-card>div{flex:1 1 200px;display:grid;gap:3px}.fit-card b{font-size:1rem}.fit-card span{font-size:.9rem;line-height:1.45;color:var(--muted)}.fit-card .btn{flex:none;width:auto;padding:0 18px}
 .btn-gold{background:linear-gradient(90deg,#FFE38A,#E3AE3A);color:#120E07;font-weight:900;border:0}
 .trc{display:grid;gap:10px;margin:4px 0}.trc-h{display:flex;justify-content:space-between;align-items:baseline;padding:0 2px}.trc-h b{font-size:1.15rem}.trc-h span{font-size:.82rem;color:#8a7a55}
-.trc-row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:16px;margin:0 -16px;padding:2px 16px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.trc-row::-webkit-scrollbar{display:none}
+.trc-row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:16px;margin:0 -16px;padding:2px 16px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.trc-row::-webkit-scrollbar{display:none}.trc-row::after{content:'';flex:0 0 6px}
 .trc-c{flex:0 0 46%;max-width:200px;scroll-snap-align:start;position:relative;border:0;padding:0;border-radius:18px;overflow:hidden;background:#17130c;aspect-ratio:3/4;text-align:left;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.16)}
 .trc-ph,.trc-ph img{position:absolute;inset:0;width:100%;height:100%}.trc-ph img{object-fit:cover;object-position:center 12%}
 .trc-ph i{position:absolute;top:10px;left:10px;font-style:normal;font-size:.7rem;font-weight:800;letter-spacing:.06em;background:#E8BE55;color:#17130c;padding:3px 8px;border-radius:99px}
@@ -1140,7 +1140,7 @@ function askCard(kind,exName){const n=data.profile?.name||'회원';
   return `<div class="ask-card"><b>🙋 ${title}</b><p>${sub}</p><div class="duo"><a class="btn btn-main" href="${smsHref(msg)}" data-track="ask_${kind}">문자 보내기</a><a class="btn btn-soft" href="tel:${GYM_TEL}" data-track="call_${kind}">전화하기</a></div><p class="small muted">석계점 ${GYM_TEL_SHOW} · 평일 06~24시, 주말·공휴일 10~18시, 1·3주 일요일 휴관</p></div>`}
 function nm(t){return t.name+' '+(t.hon||'쌤')}
 const TRAINERS={
-  romi:{name:'로미',hon:'팀장',role:'체형교정 담당',cls:'무릎 케어 & 강화 클래스',tag:'무거운 무게만 운동이 아니에요',photo:'assets/rm-profile2.jpg',thumb:'assets/rm-face2.jpg',hello:'assets/rm-hello.mp4',helloPoster:'assets/rm-hello.jpg',helloLen:'14초',outro:'assets/rm-outro.mp4',outroPoster:'assets/rm-outro.jpg',outroLen:'14초',isNew:true,mb:70,flow:'풀기 세 가지 → 강화 세 가지',
+  romi:{name:'로미',hon:'팀장',role:'체형교정 담당',cls:'무릎 케어 & 강화 클래스',tag:'무거운 무게만 운동이 아니에요',card:'assets/rm-card.jpg',photo:'assets/rm-profile2.jpg',thumb:'assets/rm-face2.jpg',hello:'assets/rm-hello.mp4',helloPoster:'assets/rm-hello.jpg',helloLen:'14초',outro:'assets/rm-outro.mp4',outroPoster:'assets/rm-outro.jpg',outroLen:'14초',isNew:true,mb:70,flow:'풀기 세 가지 → 강화 세 가지',
     steps:[
       {k:'무릎 위 긴장 풀기',eid:'rinner',sets:'덜 아플 때까지 천천히 · 양쪽 모두',mus:{p:['adductors'],s:['quads'],a:[]},feel:'무릎 바로 위가 시원하게 눌리면 정답이에요. 유난히 아프면 무릎 주변이 굳어 있다는 신호예요.',pt:'옆으로 누워 고관절은 90도, 무릎 바로 위를 천천히 왔다 갔다 해요',ex:'안쪽 허벅지 폼롤러',id:null,
        vid:'assets/rm-inner.mp4',poster:'assets/rm-inner.jpg',ch:[['왜 풀까',0],['자세·동작',36],['더 잘 푸는 법',65],['아플 때',75]],
@@ -1179,7 +1179,7 @@ const TRAINERS={
        care:'뒷발 뒤꿈치와 앞발 발가락이 떨어지지 않게 하세요. 몸통은 고정하고 다리만 움직여요.',
        tip:'양쪽을 비교해 보세요. 잘 안 되는 쪽도 계속 반복하면 맞춰져요.'},
     ]},
-  chan:{name:'찬',role:'스트렝스운동 담당',cls:'팔 라인 클래스',tag:'무게보다 팔꿈치 고정이 먼저예요',photo:'assets/jc-profile2.jpg',thumb:'assets/jc-face2.jpg',hello:'assets/jc-hello.mp4',helloPoster:'assets/jc-hello.jpg',helloLen:'9초',outro:'assets/jc-outro.mp4',outroPoster:'assets/jc-outro.jpg',outroLen:'12초',isNew:true,mb:20,flow:'앞팔(이두) 세 가지 → 뒷팔(삼두) 두 가지',
+  chan:{name:'찬',role:'스트렝스운동 담당',cls:'팔 라인 클래스',tag:'무게보다 팔꿈치 고정이 먼저예요',card:'assets/jc-card.jpg',photo:'assets/jc-profile2.jpg',thumb:'assets/jc-face2.jpg',hello:'assets/jc-hello.mp4',helloPoster:'assets/jc-hello.jpg',helloLen:'9초',outro:'assets/jc-outro.mp4',outroPoster:'assets/jc-outro.jpg',outroLen:'12초',isNew:true,mb:20,flow:'앞팔(이두) 세 가지 → 뒷팔(삼두) 두 가지',
     steps:[
       {k:'앞팔 기본',eid:'bbcurl',mus:{p:['biceps'],s:['forearms'],a:['triceps']},feel:'팔 앞쪽이 뻐근하면 정답이에요. 허리나 어깨가 먼저 힘들면 반동을 쓰고 있는 거예요.',pt:'팔꿈치를 옆구리에 고정한 채, 숨을 뱉으면서 말아 올려요',ex:'바벨컬',id:null,
        vid:'assets/jc-bbcurl.mp4',poster:'assets/jc-bbcurl.jpg',ch:[['소개',0],['세팅·동작',6],['꿀팁',30],['주의',40]],
@@ -1212,7 +1212,7 @@ const TRAINERS={
        care:'무겁다고 상체로 같이 누르지 마세요. 팔꿈치가 움직이지 않게 몸통 옆에 고정하세요.',
        tip:'마지막 구간에서 양손을 멀리 벌리면 삼두가 짜이는 게 느껴져요.'}
     ]},
-  jay:{name:'제이',role:'기능성운동 담당',cls:'3대 운동 클래스',tag:'자세가 잡히면 무게는 따라와요',photo:'assets/jy-profile.jpg?v=2',thumb:'assets/jy-face.jpg',hello:'assets/jy-hello.mp4',helloPoster:'assets/jy-hello.jpg',helloLen:'6초',outro:'assets/jy-outro.mp4',outroPoster:'assets/jy-outro.jpg',outroLen:'15초',isNew:true,mb:22,flow:'하체로 앉았다 일어나고 → 상체로 밀고 → 몸 뒤쪽으로 들어 올리기',
+  jay:{name:'제이',role:'기능성운동 담당',cls:'3대 운동 클래스',tag:'자세가 잡히면 무게는 따라와요',card:'assets/jy-card.jpg',photo:'assets/jy-profile.jpg?v=2',thumb:'assets/jy-face.jpg',hello:'assets/jy-hello.mp4',helloPoster:'assets/jy-hello.jpg',helloLen:'6초',outro:'assets/jy-outro.mp4',outroPoster:'assets/jy-outro.jpg',outroLen:'15초',isNew:true,mb:22,flow:'하체로 앉았다 일어나고 → 상체로 밀고 → 몸 뒤쪽으로 들어 올리기',
     steps:[
       {k:'하체 기본기',eid:'bsq',mus:{p:['quads','glutes'],s:['adductors','lowerBack','abs'],a:['hamstrings']},feel:'허벅지 앞과 엉덩이가 같이 뻐근하면 정답이에요. 허리가 먼저 아프면 상체가 너무 숙여졌거나 너무 깊이 앉은 거예요.',pt:'코로 크게 마시고, 숨을 잠깐 참은 채 앉았다 일어나요',ex:'바벨 스쿼트',id:null,
        vid:'assets/jy-squat.mp4?v=2',poster:'assets/jy-squat.jpg?v=2',ch:[['세팅',0],['호흡',34],['꿀팁',50],['주의',73]],
@@ -1233,7 +1233,7 @@ const TRAINERS={
        care:'올라올 때 무게중심이 너무 앞이나 뒤로 쏠리면 허리에 부담이 커요. 내려갈 때 무릎부터 굽혀도 마찬가지예요. 고개를 뒤로 젖히거나 어깨를 으쓱하지 마세요. 허리가 아프면 바로 멈추고 제이 쌤을 찾아주세요.',
        tip:'올라가기 전에 코로 천천히 크게 마시고, 올라갔다 내려오는 동안은 잠깐 참았다가, 내려와서 짧게 뱉어요.'}
     ]},
-  eunbin:{name:'은빈',role:'힙운동 담당',cls:'힙 밸런스 클래스',tag:'탄탄한 엉덩이, 균형 잡힌 하체 라인',photo:'assets/eb-profile.jpg',thumb:'assets/eb-face.jpg',hello:'assets/eb-hello.mp4',helloPoster:'assets/eb-hello.jpg',helloLen:'15초',isNew:true,mb:58,flow:'엉덩이를 깨우고 → 하체 전체를 쓰고 → 뒷벅지를 채우고 → 좌우 균형 맞추기',
+  eunbin:{name:'은빈',role:'힙운동 담당',cls:'힙 밸런스 클래스',tag:'탄탄한 엉덩이, 균형 잡힌 하체 라인',card:'assets/eb-card.jpg',photo:'assets/eb-profile.jpg',thumb:'assets/eb-face.jpg',hello:'assets/eb-hello.mp4',helloPoster:'assets/eb-hello.jpg',helloLen:'15초',isNew:true,mb:58,flow:'엉덩이를 깨우고 → 하체 전체를 쓰고 → 뒷벅지를 채우고 → 좌우 균형 맞추기',
     steps:[
       {k:'엉덩이 깨우기',eid:'5',mus:{p:['glutes'],s:['hamstrings','sideGlutes'],a:['quads']},feel:'엉덩이가 단단하게 조여들면 정답이에요. 허벅지 앞만 뻐근하면 발바닥으로 밀고 있는 거예요.',pt:'골반을 앞으로 내민다는 느낌으로 허벅지로 패드를 밀어요',ex:'몬스터 글루트',id:null,
        vid:'assets/eb-glute.mp4',poster:'assets/eb-glute.jpg',ch:[['세팅',4],['동작',40],['패드 각도',54],['꿀팁',75],['주의',109]],
@@ -1260,7 +1260,7 @@ const TRAINERS={
        care:'뒷발에 힘을 과하게 주면 올라오면서 허리에 무리가 가요. 뒷다리는 걸쳐만 두고 앞다리로 올라와요. 무릎이나 허리가 아프면 은빈 쌤을 찾아주세요.',
        tip:'무릎이 발목보다 앞으로 나가면 앞벅지, 무릎과 발목을 일자로 맞추면 뒷벅지와 엉덩이에 자극이 와요.'}
     ]},
-  doyoung:{name:'도영',role:'근육 담당',cls:'프레임 클래스',tag:'당당한 어깨, 바르고 탄탄한 등 라인',photo:'assets/dy-profile.jpg',thumb:'assets/dy-face.jpg',hello:'assets/dy-hello.mp4',helloPoster:'assets/dy-hello.jpg',helloLen:'9초',mb:53,flow:'흉곽을 열고 → 등을 넓고 두껍게 → 어깨를 넓고 둥글게',
+  doyoung:{name:'도영',role:'근육 담당',cls:'프레임 클래스',tag:'당당한 어깨, 바르고 탄탄한 등 라인',card:'assets/dy-card.jpg',photo:'assets/dy-profile.jpg',thumb:'assets/dy-face.jpg',hello:'assets/dy-hello.mp4',helloPoster:'assets/dy-hello.jpg',helloLen:'9초',mb:53,flow:'흉곽을 열고 → 등을 넓고 두껍게 → 어깨를 넓고 둥글게',
     steps:[
       {k:'흉곽 열기',eid:'dpo',mus:{p:['lats','chest'],s:['triceps','abs'],a:['frontDelts']},feel:'겨드랑이 아래(광배)와 가슴 아래쪽이 쭉 늘어나는 느낌이 나면 정답이에요.',pt:'숨을 마시며 덤벨을 정수리 위로 늘리고, 올라오며 "후-" 뱉어요',ex:'덤벨 풀오버',id:null,
        vid:'assets/dy-pullover.mp4',poster:'assets/dy-pullover.jpg',ch:[['세팅',7],['동작',15],['주의',31],['호흡',66],['이럴 땐',80]],
@@ -1313,7 +1313,7 @@ function trVideo(st){return `<div class="tr-v"><video id="trv" src="${st.vid}" p
 function trAsk(tid,i){const t=TRAINERS[tid],st=t.steps[i],n=data.profile?.name||'회원';const msg=`[석계점 회원앱] ${n} 회원이에요. ${nm(t)} ${t.cls} ${i+1}단계 ${st.ex} 하다가 여쭤보고 싶은 게 있어요.`;
   return `<div class="ask-card"><b>💬 ${nm(t)}에게 물어보기</b><p>자세가 헷갈리거나 아픈 곳이 있으면 혼자 참지 마세요. 문자를 보내면 ${nm(t)}에게 전달해 드려요.</p><div class="duo"><a class="btn btn-main" href="${smsHref(msg)}" data-track="ask_trainer">문자 보내기</a><a class="btn btn-soft" href="tel:${GYM_TEL}" data-track="call_trainer">전화하기</a></div></div>`}
 function trOutro(t){if(!t.outro)return '';return view.outro?`<div class="tr-hello-v"><video src="${t.outro}" poster="${t.outroPoster||''}" controls autoplay playsinline></video></div>`:`<button class="tr-hello" data-act="tr-outro"><span class="th-img" style="background-image:url('${t.outroPoster}')"><i aria-hidden="true">▶</i></span><span class="th-tx"><b>${esc(nm(t))} 마무리 한마디</b><small>동작을 다 봤다면 ${esc(nm(t))}이 정리해 드려요 · ${esc(t.outroLen||'')}</small></span></button>`}
-function trainerCard(){const ks=['romi','chan','jay','eunbin','doyoung'].filter(k=>TRAINERS[k]);return `<section class="trc"><div class="trc-h"><b>트레이너 클래스</b><span>옆으로 넘겨보세요 →</span></div><div class="trc-row">${ks.map(k=>{const t=TRAINERS[k];return `<button class="trc-c" data-go="trainer" data-tid="${k}"><span class="trc-ph">${t.photo?`<img src="${t.photo}" alt="" loading="lazy">`:''}${k===ks[0]&&t.isNew?'<i>NEW</i>':''}</span><span class="trc-t"><small>${esc(nm(t))}</small><b>${esc(t.cls)}</b><em>${t.steps.length}단계</em></span></button>`}).join('')}</div></section>`}
+function trainerCard(){const ks=['romi','chan','jay','eunbin','doyoung'].filter(k=>TRAINERS[k]);return `<section class="trc"><div class="trc-h"><b>트레이너 클래스</b><span>옆으로 넘겨보세요 →</span></div><div class="trc-row">${ks.map(k=>{const t=TRAINERS[k];return `<button class="trc-c" data-go="trainer" data-tid="${k}"><span class="trc-ph">${t.photo?`<img src="${t.card||t.photo}" alt="" loading="lazy">`:''}${k===ks[0]&&t.isNew?'<i>NEW</i>':''}</span><span class="trc-t"><small>${esc(nm(t))}</small><b>${esc(t.cls)}</b><em>${t.steps.length}단계</em></span></button>`}).join('')}</div></section>`}
 const NEW_URL='https://hyunwoo99657672-tech.github.io/amazing-member/';
 function moveBanner(){if(!ON_CLAUDE)return '';return `<div class="move-card"><b>🏠 새 주소로 이사했어요</b><p>이제 새 주소에서 더 빠르고 앱처럼 쓸 수 있어요. 홈 화면에 <b>금색 아이콘</b>으로 추가돼요.</p><a class="btn btn-main" href="${NEW_URL}" target="_blank" rel="noopener">새 주소로 가기 →</a><div class="duo"><button class="btn btn-soft" data-act="copy-new">주소 복사</button><button class="btn btn-soft" data-act="move-help">기록 옮기는 법</button></div><p class="small muted">여기서 쌓은 기록은 새 주소로 자동으로 넘어가지 않아요. <b>기록 옮기는 법</b>을 눌러 파일로 저장한 뒤, 새 주소의 <b>내 기록 → 기록 옮기기 → 저장한 파일 가져오기</b>를 눌러요.</p></div>`}
 function wrongBrowser(){return !ON_CLAUDE&&!STANDALONE&&((IS_AND&&!IS_CHROME)||(IS_IOS&&!IS_SAFARI))}
