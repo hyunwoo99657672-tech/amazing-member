@@ -29,7 +29,7 @@
 /* Layout: 한 손 엄지로 쓰는 단일 컬럼. 화면마다 큰 버튼 하나가 주인공, 나머지는 조용하게. */
 :root{
   --bg:#f4f1ea; --surface:#ffffff; --sunk:#ece7dc; --ink:#1d1912; --muted:#6b6455; --line:#e1d9c8;
-  --accent:#17130c; --accent-ink:#f2d27a; --accent-soft:#f3ead3; --warm:#a07422; --warm-soft:#f6eedc;
+  --accent:#e3b448; --accent-ink:#1d1606; --accent-soft:#f7edd2; --warm:#a07422; --warm-soft:#f6eedc;
   --gold:#c99a3b;
   --danger:#a9392a; --danger-soft:#f8e3de;
   --m-p:#de4f39; --m-s:#eeb030; --m-a:#3f86d4; --m-off:#d5cfc8; --m-body:#ebe7e2; --m-edge:#aaa198;
@@ -366,7 +366,8 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 @media (prefers-reduced-motion:reduce){.proof-badge{animation:none}}
 .fit-link{justify-self:center;margin-top:-6px}.fit-card{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 16px;border-radius:16px;background:var(--warm-soft);border:1.5px solid var(--warm)}.fit-card>div{flex:1 1 200px;display:grid;gap:3px}.fit-card b{font-size:1rem}.fit-card span{font-size:.9rem;line-height:1.45;color:var(--muted)}.fit-card .btn{flex:none;width:auto;padding:0 18px}
 .btn-gold{background:linear-gradient(90deg,#FFE38A,#E3AE3A);color:#120E07;font-weight:900;border:0}
-.btn-main.hero-btn{color:#f2d27a;padding-right:88px;background:radial-gradient(120% 140% at 85% 0%,#4a3a17 0%,#17130c 55%);border:1.5px solid #6b5520;box-shadow:0 10px 28px rgba(23,19,12,.28)}.btn-main.hero-btn .arrow{background:#e8be55;color:#17130c}
+.btn-main.hero-btn{color:#1d1606;padding-right:88px;background:linear-gradient(135deg,#f6d77e 0%,#e3b448 60%,#d29f35 100%);border:0;box-shadow:0 8px 22px rgba(196,148,44,.32)}.btn-main.hero-btn small{color:#4a3a14}.btn-main.hero-btn .arrow{background:#1d1606;color:#f2d27a}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn-main.hero-btn{color:#f2d27a;background:radial-gradient(120% 140% at 85% 0%,#4a3a17 0%,#17130c 55%);border:1.5px solid #6b5520}:root:not([data-theme="light"]) .btn-main.hero-btn small{color:#d9c58c}:root:not([data-theme="light"]) .btn-main.hero-btn .arrow{background:#e8be55;color:#17130c}}
 .start-card .lic-box,.lic-box{flex:none;width:48px;height:48px;border-radius:14px;background:#17130c;color:#e8be55;display:grid;place-items:center}.lic-box .lic{width:24px;height:24px}.start-card .lic-box{color:#e8be55}.start-card b{color:var(--ink)}
 .lic{width:26px;height:26px;display:block}.grid2 .tile .ic{width:44px;height:44px;border-radius:13px;background:#17130c;color:#e8be55;display:grid;place-items:center}.grid2 .tile .ic .lic{width:24px;height:24px}
 .goal-ic{color:#e8be55}.goal-ic .lic{width:26px;height:26px}.inst-bar .lic{width:20px;height:20px;color:var(--gold)}
