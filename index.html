@@ -365,6 +365,8 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 @media (prefers-reduced-motion:reduce){.proof-badge{animation:none}}
 .fit-link{justify-self:center;margin-top:-6px}.fit-card{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 16px;border-radius:16px;background:var(--warm-soft);border:1.5px solid var(--warm)}.fit-card>div{flex:1 1 200px;display:grid;gap:3px}.fit-card b{font-size:1rem}.fit-card span{font-size:.9rem;line-height:1.45;color:var(--muted)}.fit-card .btn{flex:none;width:auto;padding:0 18px}
 .btn-gold{background:linear-gradient(90deg,#FFE38A,#E3AE3A);color:#120E07;font-weight:900;border:0}
+.more-sec{display:grid;gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid2 .tile{min-height:112px}
+.inst-bar{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;border:1.5px dashed var(--line);border-radius:var(--r-md);padding:12px 14px;color:var(--muted)}.inst-bar b{flex:1;font-size:14px;font-weight:700}.inst-bar i{font-style:normal}
 .trc{display:grid;gap:10px;margin:4px 0}.trc-h{display:flex;justify-content:space-between;align-items:baseline;padding:0 2px}.trc-h b{font-size:1.15rem}.trc-h span{font-size:.82rem;color:#8a7a55}
 .trc-row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:16px;margin:0 -16px;padding:2px 16px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.trc-row::-webkit-scrollbar{display:none}.trc-row::after{content:'';flex:0 0 6px}
 .trc-c{flex:0 0 46%;max-width:200px;scroll-snap-align:start;position:relative;border:0;padding:0;border-radius:18px;overflow:hidden;background:#17130c;aspect-ratio:3/4;text-align:left;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.16)}
@@ -706,13 +708,13 @@ home(){
   :''}
   ${p?growCard()+challengeCard():''}${SYNC_URL?(setTimeout(loadRank,0),'<div id="rank-box"></div>'):''}
   ${trainerCard()}
-  <button class="start-card" data-go="programs"><span class="num" aria-hidden="true">🍑</span><span><b>부위별 집중 루틴</b><span>애플힙 · 넓은 등 · 어깨 · 가슴 · 허벅지</span></span></button>
-  <button class="start-card" data-go="stretch"><span class="num" aria-hidden="true">🧘</span><span><b>스트레칭 영상 따라하기</b><span>운동 전후 따라하는 ${ST.length}가지 동작</span></span></button>
-  <div class="duo">
+  <section class="more-sec"><div class="trc-h"><b>더 둘러보기</b></div><div class="grid2">
+    <button class="tile" data-go="programs"><span class="ic" aria-hidden="true">🍑</span><b>부위별 루틴</b><span>애플힙·등·어깨·가슴·허벅지</span></button>
+    <button class="tile" data-go="stretch"><span class="ic" aria-hidden="true">🧘</span><b>스트레칭</b><span>운동 전후 ${ST.length}가지 영상</span></button>
     <button class="tile" data-go="guides"><span class="ic" aria-hidden="true">📖</span><b>기구 사용법</b><span>사진·영상으로 3단계만</span></button>
     <button class="tile" data-go="records"><span class="ic" aria-hidden="true">📅</span><b>내 기록</b><span>${data.logs.length?`최근 ${fmtDay(data.logs[data.logs.length-1].date)}`:'운동하면 자동 저장'}</span></button>
-  </div>
-  ${data.installed?'':`<button class="start-card" data-go="install"><span class="num" aria-hidden="true">📲</span><span><b>앱처럼 쓰기 · 홈 화면에 추가</b><span>다음부터 아이콘 한 번에 바로 열려요</span></span></button>`}
+  </div></section>
+  ${data.installed||STANDALONE?'':`<button class="inst-bar" data-go="install"><span aria-hidden="true">📲</span><b>홈 화면에 추가하면 앱처럼 바로 열려요</b><i aria-hidden="true">→</i></button>`}
   <div class="foot-links">${p?'<button class="btn-quiet" data-go="settings">내 정보 바꾸기</button>':''}<button class="btn-quiet" data-go="faq">자주 묻는 질문</button>${data.installed?'<button class="btn-quiet" data-go="install">홈 화면 추가 방법</button>':''}</div>
   </div>`;
 },
