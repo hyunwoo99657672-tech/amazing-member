@@ -367,6 +367,7 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 .fit-link{justify-self:center;margin-top:-6px}.fit-card{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 16px;border-radius:16px;background:var(--warm-soft);border:1.5px solid var(--warm)}.fit-card>div{flex:1 1 200px;display:grid;gap:3px}.fit-card b{font-size:1rem}.fit-card span{font-size:.9rem;line-height:1.45;color:var(--muted)}.fit-card .btn{flex:none;width:auto;padding:0 18px}
 .btn-gold{background:linear-gradient(90deg,#FFE38A,#E3AE3A);color:#120E07;font-weight:900;border:0}
 .btn-main.hero-btn{color:#f2d27a;padding-right:88px;background:radial-gradient(120% 140% at 85% 0%,#4a3a17 0%,#17130c 55%);border:1.5px solid #6b5520;box-shadow:0 10px 28px rgba(23,19,12,.28)}.btn-main.hero-btn .arrow{background:#e8be55;color:#17130c}
+.start-card .lic-box,.lic-box{flex:none;width:48px;height:48px;border-radius:14px;background:#17130c;color:#e8be55;display:grid;place-items:center}.lic-box .lic{width:24px;height:24px}.start-card .lic-box{color:#e8be55}.start-card b{color:var(--ink)}
 .lic{width:26px;height:26px;display:block}.grid2 .tile .ic{width:44px;height:44px;border-radius:13px;background:#17130c;color:#e8be55;display:grid;place-items:center}.grid2 .tile .ic .lic{width:24px;height:24px}
 .goal-ic{color:#e8be55}.goal-ic .lic{width:26px;height:26px}.inst-bar .lic{width:20px;height:20px;color:var(--gold)}
 .more-sec{display:grid;gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid2 .tile{min-height:112px}
@@ -756,9 +757,9 @@ today(){
   <div class="field"><label>오늘 컨디션</label><div class="choices two"><button class="choice" data-today="condition" data-val="normal" aria-pressed="${today.condition==='normal'}">평소처럼</button><button class="choice" data-today="condition" data-val="light" aria-pressed="${today.condition==='light'}">가볍게<small>피곤하거나 오랜만이면</small></button></div></div>
   <div class="plan-meta"><div><b class="tnum">${s.queue.length}개</b><span>기구</span></div><div><b class="tnum">${strength}세트</b><span>총 세트</span></div><div><b class="tnum">${Math.ceil(minutes(s))}분</b><span>쉬는 시간 포함</span></div></div>
   <ol class="plan-list">
-    <li class="plan-item cardio"><div class="thumb" aria-hidden="true">🚶</div><div><b>걷기로 몸 풀기 ${s.warm}분</b><span>6층 트레드밀 · 대화할 수 있는 속도</span></div></li>
+    <li class="plan-item cardio"><div class="thumb lic-box">${ic('walk')}</div><div><b>걷기로 몸 풀기 ${s.warm}분</b><span>6층 트레드밀 · 대화할 수 있는 속도</span></div></li>
     ${s.queue.map((e,i)=>{const x=EX[e.id];return `<li class="plan-item">${thumb(x)}<div><b>${i+1}. ${esc(x.name)}</b><span>${esc(x.part.split('·')[0].trim())} · ${e.target}세트 × ${e.repMin}~${e.repMax}회</span></div><button class="how" data-guide="${e.id}" data-from="today">사용법</button></li>`}).join('')}
-    <li class="plan-item cardio"><div class="thumb" aria-hidden="true">🏃</div><div><b>마무리 걷기 ${s.walk}분</b><span>${s.goal==='fitness'?'1분 빠르게 · 2분 보통 반복':(s.goal==='weight'||(s.goals||[]).includes('weight'))?'경사 5~10% 빠르게 걷기 · 숨이 조금 찰 정도':'조금 빠르게, 마지막 2분은 천천히'}</span></div></li>
+    <li class="plan-item cardio"><div class="thumb lic-box">${ic('walk')}</div><div><b>마무리 걷기 ${s.walk}분</b><span>${s.goal==='fitness'?'1분 빠르게 · 2분 보통 반복':(s.goal==='weight'||(s.goals||[]).includes('weight'))?'경사 5~10% 빠르게 걷기 · 숨이 조금 찰 정도':'조금 빠르게, 마지막 2분은 천천히'}</span></div></li>
   </ol>
   ${s.note?`<p class="note small">${esc(s.note)}</p>`:''}
   ${p?.care?`<p class="note warn small"><b>통증·부상이 있다고 알려주셨어요</b>직원과 운동 범위를 확인한 뒤 시작해주세요. 아픈 동작은 건너뛰어도 괜찮아요.</p>`:''}
@@ -857,8 +858,8 @@ guides(){
   const list=Object.entries(EX).filter(([k,x])=>!x.cls&&(guideFilter==='all'||x.group===guideFilter));
   return top('home')+`<div class="stack-lg">
   <div class="stack"><h1>기구 사용법</h1><p class="muted">사진과 같은 기구를 눌러보세요.</p></div>
-  <button class="start-card" data-go="basics"><span class="num" aria-hidden="true">6</span><span><b>헬스장이 처음이라면 · 기본 6가지</b><span>무게 고르는 법, 숨 쉬는 법, 기구 같이 쓰는 법</span></span></button>
-  <button class="start-card" data-go="grow"><span class="num" aria-hidden="true">📈</span><span><b>성장 가이드 · 무게는 언제 올리나요?</b><span>올릴 때, 내릴 때, 정체기 넘는 법</span></span></button>
+  <button class="start-card" data-go="basics"><span class="lic-box">${ic('steps')}</span><span><b>헬스장이 처음이라면 · 기본 6가지</b><span>무게 고르는 법, 숨 쉬는 법, 기구 같이 쓰는 법</span></span></button>
+  <button class="start-card" data-go="grow"><span class="lic-box">${ic('trend')}</span><span><b>성장 가이드 · 무게는 언제 올리나요?</b><span>올릴 때, 내릴 때, 정체기 넘는 법</span></span></button>
   <div class="filters" role="group" aria-label="운동 부위">${Object.entries(GROUPS).map(([k,v])=>`<button data-filter="${k}" aria-pressed="${guideFilter===k}">${v}</button>`).join('')}</div>
   <div class="grid">${list.map(([k,x])=>`<button class="gcard" data-guide="${k}" data-from="guides"><div class="ph" aria-hidden="true">${ICON[x.group]}${x.thumb?`<img src="${x.thumb}" alt="" loading="lazy" data-fallback="">`:''}</div><div class="tx"><b>${esc(x.name)}</b><span>${esc(x.part.split('·')[0].trim())}${x.aiText&&!x.video?' · 영상 준비 중':''}</span></div></button>`).join('')}</div>
   </div>`;
@@ -981,7 +982,7 @@ programs(){
   return top('home')+`<div class="stack-lg">
   <div class="stack"><p class="step-label">부위별 집중 루틴</p><h1>오늘은 어디를<br>키워볼까요?</h1></div>
   ${Object.entries(FOCUS).map(([k,f])=>{const ids=f.order(data.profile?.level||'new').filter(i=>EX[i]&&!(data.profile?.level!=='advanced'&&i==='13')&&!((data.profile?.level||'new')==='new'&&(FREE(i)||HARD(i)))).slice(0,4);
-    return `<div class="card stack prog"><div class="prog-h"><span class="prog-ic" aria-hidden="true">${f.ic}</span><div><h2>${f.t}</h2><p class="muted small">${f.d}</p></div></div>
+    return `<div class="card stack prog"><div class="prog-h"><div><h2>${f.t}</h2><p class="muted small">${f.d}</p></div></div>
     <div class="prog-row">${ids.map(i=>`<div class="prog-m">${thumb(EX[i])}<span>${esc(EX[i].name)}</span></div>`).join('')}</div>
     <button class="btn btn-main" data-focus="${k}">이 루틴으로 시작</button></div>`}).join('')}
   <p class="note small"><b>이렇게 쓰면 좋아요</b>집중 루틴은 일주일에 1~2번, 나머지 날은 추천 전신 루틴으로 해요. 같은 부위는 이틀 정도 쉬어야 근육이 자라요.</p>
@@ -1325,6 +1326,9 @@ const LICON={
  book:'<path d="M4 5.5C6.5 4.5 9.5 4.6 12 6c2.5-1.4 5.5-1.5 8-.5v13c-2.5-1-5.5-.9-8 .5-2.5-1.4-5.5-1.5-8-.5Z"/><path d="M12 6v13"/>',
  cal:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/>',
  target:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>',
+ trend:'<path d="M3.5 17.5 9 12l4 4 7.5-8"/><path d="M15 8h5.5v5.5"/>',
+ walk:'<circle cx="13" cy="4.5" r="1.8"/><path d="M10.5 21l2-6-3-2.5 1.5-4.5 3 2.5 3 1M12.5 15l3 2.5V21M9 9l-2.5 3"/>',
+ steps:'<path d="M4 18h4v-4h4v-4h4V6h4"/>',
  phone:'<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>'};
 function ic(n,c){return `<svg class="lic${c?' '+c:''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LICON[n]}</svg>`}
 function trainerCard(){const ks=['romi','chan','jay','eunbin','doyoung'].filter(k=>TRAINERS[k]);return `<section class="trc"><div class="trc-h"><b>트레이너 클래스</b><span>옆으로 넘겨보세요 →</span></div><div class="trc-row">${ks.map(k=>{const t=TRAINERS[k];return `<button class="trc-c" data-go="trainer" data-tid="${k}"><span class="trc-ph">${t.photo?`<img src="${t.card||t.photo}" alt="" loading="lazy">`:''}${k===ks[0]&&t.isNew?'<i>NEW</i>':''}</span><span class="trc-t"><small>${esc(nm(t))}</small><b>${esc(t.cls)}</b><em>${t.steps.length}단계</em></span></button>`}).join('')}</div></section>`}
