@@ -368,8 +368,8 @@ details.more .in.imgs{display:grid;grid-template-columns:1fr;gap:14px;justify-it
 .more-sec{display:grid;gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid2 .tile{min-height:112px}
 .inst-bar{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;border:1.5px dashed var(--line);border-radius:var(--r-md);padding:12px 14px;color:var(--muted)}.inst-bar b{flex:1;font-size:14px;font-weight:700}.inst-bar i{font-style:normal}
 .trc{display:grid;gap:10px;margin:4px 0}.trc-h{display:flex;justify-content:space-between;align-items:baseline;padding:0 2px}.trc-h b{font-size:1.15rem}.trc-h span{font-size:.82rem;color:#8a7a55}
-.trc-row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:16px;margin:0 -16px;padding:2px 16px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.trc-row::-webkit-scrollbar{display:none}.trc-row::after{content:'';flex:0 0 6px}
-.trc-c{flex:0 0 46%;max-width:200px;scroll-snap-align:start;position:relative;border:0;padding:0;border-radius:18px;overflow:hidden;background:#17130c;aspect-ratio:3/4;text-align:left;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.16)}
+.trc-row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:16px;margin:0 -16px;padding:2px 16px 20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.trc-row::-webkit-scrollbar{display:none}.trc-row::after{content:'';flex:0 0 6px}
+.trc-c{flex:0 0 46%;max-width:200px;scroll-snap-align:start;position:relative;border:0;padding:0;border-radius:18px;overflow:hidden;background:#17130c;aspect-ratio:3/4;text-align:left;color:#fff;box-shadow:0 4px 10px rgba(0,0,0,.12)}
 .trc-ph,.trc-ph img{position:absolute;inset:0;width:100%;height:100%}.trc-ph img{object-fit:cover;object-position:center 12%}
 .trc-ph i{position:absolute;top:10px;left:10px;font-style:normal;font-size:.7rem;font-weight:800;letter-spacing:.06em;background:#E8BE55;color:#17130c;padding:3px 8px;border-radius:99px}
 .trc-t{position:absolute;left:0;right:0;bottom:0;padding:40px 12px 12px;display:grid;gap:1px;background:linear-gradient(180deg,transparent,rgba(10,8,4,.92) 55%)}
@@ -618,8 +618,8 @@ function growCard(){const g=gainsAll();if(!g.length)return '';const t=g[0];
 let view={name:'home'}, today={time:35,condition:'normal'}, guideFilter='all', restTimer=null, wake=null, pending=null;
 let onboard=null, draft={};
 
-function go(name,extra,pop){if(name!=='settings')draft={};stopMedia();clearInterval(restTimer);const prev=view.name;view={name,...(extra||{})};
-  if(!pop){if(name==='home'&&navDepth>0&&navRootHome){const d=navDepth;navDepth=0;navSkip=true;try{history.go(-d)}catch(e){}}else navPush(prev!==name)}
+function go(name,extra,pop){if(name!=='settings')draft={};stopMedia();clearInterval(restTimer);const pv=view,prev=view.name;view={name,...(extra||{})};
+  if(!pop){if(name==='home'&&navDepth>0&&navRootHome){const d=navDepth;navDepth=0;navSkip=true;try{history.go(-d)}catch(e){}}else navPush(prev!==name||(name==='trainer'&&(pv.tid!==view.tid||pv.step!==view.step))||(name==='guide'&&pv.id!==view.id))}
   render();window.scrollTo(0,0)}
 /* 기기 뒤로가기: 화면이 바뀔 때마다 기록을 쌓고, 휴대폰 뒤로가기(제스처)로 이전 화면으로 돌아가요 */
 let navDepth=0,navSkip=false,navRootHome=true;
@@ -1695,7 +1695,7 @@ document.addEventListener('change',ev=>{const t=ev.target;if(t.dataset&&t.datase
 document.addEventListener('click',async ev=>{
   {const t=ev.target.closest('a[data-track]');if(t){track(t.dataset.track);return}}
   const b=ev.target.closest('button,[data-go]');if(!b||b.disabled)return;
-  const d=b.dataset;if(d.trs!=null){view={name:'trainer',tid:view.tid||'doyoung',step:+d.trs};window.scrollTo(0,0);return render()}if(d.go==='trainer'){view={name:'trainer',tid:d.tid||view.tid||'doyoung'};window.scrollTo(0,0);return render()}
+  const d=b.dataset;if(d.trs!=null){return go('trainer',{tid:view.tid||'doyoung',step:+d.trs})}if(d.go==='trainer'){return go('trainer',{tid:d.tid||view.tid||'doyoung'})}
   if(d.go==='records'&&d.tab){return go('records',{tab:d.tab})}
   if(d.go==='grow'){return go('grow',{from:d.from||(view.name==='guides'?'guides':'guides')})}
   if(d.go==='guide'&&view.name==='pose'&&view.pg){return go('guide',view.pg)}
@@ -1773,7 +1773,7 @@ document.addEventListener('click',async ev=>{
       try{localStorage.setItem(KEY+'-prev',localStorage.getItem(KEY)||'');localStorage.removeItem(KEY)}catch(e){} data={logs:[],equip:{}}; toast('모두 지웠어요.'); return go('home');}
     case 'export': return exportLogs();
     case 'copy-new':{try{await navigator.clipboard.writeText(NEW_URL);toast('새 주소를 복사했어요. 카톡 나와의 채팅에 붙여넣어 보관하세요.')}catch(e){toast(NEW_URL)}return}
-    case 'move-help':{view={name:'records'};render();setTimeout(()=>{const d=document.getElementById('backup');if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})}},50);return}
+    case 'move-help':{go('records');setTimeout(()=>{const d=document.getElementById('backup');if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})}},50);return}
     case 'cheer':{const v=$('#cheer-v');if(v){v.muted=false;v.currentTime=0;v.play().catch(()=>{});b.hidden=true}return}
     case 'beep-test':{try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}beep();try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}toast('삐! 이 소리로 알려드려요. 안 들리면 무음 모드를 확인해 주세요.');return}
     case 'lock':{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));const c=b.closest('.lock-card');if(c&&[...c.querySelectorAll('.lock-i')].every(x=>x.getAttribute('aria-pressed')==='true'))toast('준비 끝! 안전하게 시작해요.');return}
