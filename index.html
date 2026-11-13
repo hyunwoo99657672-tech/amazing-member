@@ -660,7 +660,7 @@ function render(){
   if(view.name==='onboard'&&!onboard)view={name:'home'};
   const fn=SCREENS[view.name]||SCREENS.home;
   document.documentElement.classList.toggle('big',!!data.big);
-  {const k=view.name==='guide'?'guide_'+(SLUG[view.id]||view.id):view.name;if(k!==window.__lastScr){window.__lastScr=k;if(window.__scrT)clearTimeout(window.__scrT);window.__scrT=setTimeout(()=>track('화면_'+k),400)}}
+  {const k=scrLabel();if(k!==window.__lastScr){window.__lastScr=k;if(window.__scrT)clearTimeout(window.__scrT);window.__scrT=setTimeout(()=>track(k),400)}}
   clearInterval(window.__pc);if(view.name==='proof')window.__pc=setInterval(()=>{const c=$('#proof-clock');if(c)c.textContent=new Date().toLocaleString('ko-KR',{month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'})},1000);
   r.innerHTML=fn();
   if(view.name==='workout'&&data.active?.phase==='rest') startRest();
@@ -1560,6 +1560,17 @@ async function loadRank(){const box=$('#rank-box');if(!box||!SYNC_URL)return;
   b.innerHTML=`<div class="rank-card"><div class="rk-h"><b>🏅 ${m}월 석계점 운동 랭킹</b><span>${r.people}명 참여</span></div>
   ${r.top.length?`<ol class="rk-l">${r.top.slice(0,5).map(x=>`<li><i>${x.place}</i><span>${esc(x.name)}</span><b class="tnum">${x.n}회</b></li>`).join('')}</ol>`:'<p class="small">이번 달 첫 기록의 주인공이 되어보세요!</p>'}
   ${r.mine?`<p class="rk-me">내 순위 <b>${r.mine.place}위</b> · ${r.mine.n}회</p>`:syncOn()?'<p class="rk-me">이번 달 운동하면 순위에 올라가요</p>':`<button class="btn btn-soft" data-go="records" data-tab="days">기록 보관하고 랭킹 참여하기</button>`}</div>`}
+// 실장님 통계용 이름: Umami '이벤트'에 한글로 보여요 (개인정보 없음)
+const SCR_KO={home:'홈',onboard:'목표 질문',today:'오늘 루틴',workout:'운동 중',done:'운동 완료',guides:'기구 목록',stretch:'스트레칭',records:'내 기록',programs:'프로그램',faq:'자주 묻는 질문',install:'홈화면 추가 안내',card:'공유 카드',pose:'자세 확인',grow:'성장 기록',basics:'기초 안내',proof:'후기',settings:'내 정보'};
+function scrLabel(){const n=view.name;if(n==='guide')return '기구설명_'+(EX[view.id]?.name||view.id);if(n==='trainer'){const t=TRAINERS[view.tid||'doyoung'];return '클래스_'+(t?t.name+' 쌤':view.tid)+(view.step!=null&&t?'_'+(t.steps[view.step]?.ex||(+view.step+1)+'단계'):'')}return '화면_'+(SCR_KO[n]||n)}
+function vidLabel(src){try{src=decodeURIComponent(src.replace(/^.*?\/assets\//,'assets/').split('?')[0])}catch(e){}
+  for(const k in TRAINERS){const t=TRAINERS[k];if(t.hello&&src===t.hello)return '영상_인사_'+t.name+' 쌤';if(t.outro&&src===t.outro)return '영상_마무리_'+t.name+' 쌤';const st=(t.steps||[]).find(x=>x.vid&&src===x.vid.split('?')[0]);if(st)return '영상_클래스_'+t.name+' 쌤_'+st.ex}
+  for(const id in SETUPV)if(src===SETUPV[id][0])return '영상_세팅_'+(EX[id]?.name||id);
+  for(const id in EX)if(EX[id].video&&src===EX[id].video.split('?')[0])return '영상_기구_'+EX[id].name;return null}
+const __played=new Set();
+document.addEventListener('play',e=>{const v=e.target;if(!v||v.tagName!=='VIDEO')return;const lb=vidLabel(v.currentSrc||v.src||'');if(!lb)return;
+  // 소리 없이 자동 반복되는 세팅 영상은 화면에 보인 것만 세고, 같은 영상은 앱을 열 때마다 한 번만 셉니다
+  if(__played.has(lb))return;__played.add(lb);track(lb)},true);
 function track(ev){try{if(!ANALYTICS_ID||ON_CLAUDE||!window.umami)return;window.umami.track(ev)}catch(e){}}
 function koVoices(){try{return speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang))}catch(e){return []}}
 function mkUtt(t,base){const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';const vs=koVoices();const pick=vs.find(v=>v.voiceURI===data.voiceName)||null;if(pick)u.voice=pick;u.rate=base*(data.voiceRate||1);u.pitch=data.voicePitch||1;return u}
@@ -1589,6 +1600,7 @@ function finishWorkout(withWalk){
   if(withWalk) items.push({cardio:true,name:'마무리 걷기',minutes:s.walk});
   const minutes=Math.min(Math.max(1,Math.round((Date.now()-s.started)/60000)),s.time+60);
   const log={date:new Date().toISOString(),goal:s.goal,focus:s.focus||null,minutes,items};if(s.cls)log.cls=s.cls;
+  track(s.cls&&TRAINERS[s.cls]?'운동완료_클래스_'+TRAINERS[s.cls].name+' 쌤':'운동완료_'+(s.focus&&FOCUS[s.focus]?'부위 루틴':'추천 루틴'));items.filter(i=>!i.cardio).forEach(i=>track('운동한 기구_'+i.name));
   data.active=null;
   if(items.some(i=>!i.cardio)){const before=new Set(earned());data.logs.push(log);const nb=earned().filter(id=>!before.has(id));save();keepAwake(false);say('오늘 운동 끝! 정말 수고하셨어요.','finish');cloudSave(true);go('done',{log,newBadges:nb})}
   else{save();keepAwake(false);toast('다음에 다시 시작해요. 괜찮아요!');go('home')}
