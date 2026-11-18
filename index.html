@@ -712,6 +712,7 @@ home(){
   ${!p&&!s?`<button class="goal-btn" data-act="start"><span class="goal-ic">${ic('target')}</span><span class="goal-tx"><em>추천 · 질문 6개 · 1분</em><b>내 목표에 맞춰 시작하기</b><small>다이어트·근육·애플힙, 나한테 맞는 루틴</small></span><span class="goal-ar" aria-hidden="true">→</span></button>`:''}
   ${p?`<div class="confidence"><span class="num tnum">${week}주</span><div><p><b>${pr.cycle>1?pr.cycle+'번째 ':''}4주 계획 ${week}주차 · ${WEEKS[week].t}</b></p><p class="small">이번 주 ${Math.min(weekDone,days)}/${days}회${weekDone>days?` (+${weekDone-days})`:''} · 계획 ${pr.inCycle}/${total}회 완료${pr.inCycle&&pr.elapsed>1?` · 시작한 지 ${pr.elapsed}주째`:''}${streakWeeks()>1?` · ${streakWeeks()}주 연속 운동 중`:''}</p><div class="weekdots" aria-label="4주 계획 진행 ${pr.inCycle} / ${total}회">${Array.from({length:total},(_,i)=>`<i class="${i<pr.inCycle?'on':''}"></i>`).join('')}</div></div></div>`
   :''}
+  ${syncOn()&&!data.sync.v&&!data.sync.vAsked?`<div class="fit-card"><div><b>석계점이 운동 현황을 볼 수 있게 할까요?</b><span>언제 와서 어떤 운동을 했는지 석계점에서 확인하고 더 잘 챙겨드려요. 이름·뒷자리는 다른 곳에 쓰지 않아요.</span></div><div style="display:grid;gap:8px;margin-top:12px"><button class="btn btn-main" data-act="visit-ok">좋아요</button><button class="btn btn-soft" data-act="visit-no">괜찮아요</button></div></div>`:''}
   ${p?growCard()+challengeCard():''}${SYNC_URL?(setTimeout(loadRank,0),'<div id="rank-box"></div>'):''}
   ${trainerCard()}
   <section class="more-sec"><div class="trc-h"><b>더 둘러보기</b></div><div class="grid2">
@@ -1633,6 +1634,8 @@ const ANALYTICS_ID='0be13412-799f-4037-af5f-5daf552ff738';
 /* ---------- cloud backup + ranking (Google Sheet) ---------- */
 const SYNC_URL='https://script.google.com/macros/s/AKfycbwUDKI4Jfuoc1mkcwHlpf6i7vlUBVggV5g8KDxHLdxZXlrazp2CIAX6SKdELp-qB-KM/exec';
 function syncOn(){return !!(SYNC_URL&&data.sync&&data.sync.name&&data.sync.pin)}
+function devCode(){if(!data.dev){data.dev=Math.random().toString(36).slice(2,6).toUpperCase();save()}return data.dev}
+function visit(kind,detail){try{if(!SYNC_URL||ON_CLAUDE)return;const me=syncOn()&&data.sync.v>=2;fetch(SYNC_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'visit',name:me?data.sync.name:'',pin:me?data.sync.pin:'',dev:devCode(),kind,detail:String(detail||'').slice(0,120)})}).catch(()=>{})}catch(e){}}
 async function cloud(action,extra){const r=await fetch(SYNC_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...extra})});return r.json()}
 function ym(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
 let cloudBusy=false;
@@ -1648,7 +1651,7 @@ function setupVid(id){const v=SETUPV[id];if(!v)return '';return `<div class="set
 function syncForm(){const p=data.profile;return `<div class="sync-form stack">
   <label class="sy-f"><b><i>1</i>이름</b><input id="sy-name" class="inp inp-big" maxlength="12" autocomplete="name" value="${esc(data.sync?.name||p?.name||'')}" placeholder="예: 김지수"></label>
   <label class="sy-f"><b><i>2</i>전화번호 뒷자리 4개</b><input id="sy-pin" class="inp inp-big inp-pin" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="예: 1234"></label>
-  <label class="chk small"><input type="checkbox" id="sy-ok"><span>이름과 전화번호 뒷자리는 <b>기록 보관과 석계점 운동 랭킹(이름 가림)</b>에만 써요. 동의해요.</span></label>
+  <label class="chk small"><input type="checkbox" id="sy-ok"><span>이름과 전화번호 뒷자리는 <b>기록 보관, 석계점 운동 랭킹(이름 가림), 석계점의 회원 운동 현황 확인</b>에만 써요. 동의해요.</span></label>
   <div class="sync-btns"><button class="btn btn-main" data-act="sync-start">기록 보관 시작</button><button class="btn btn-soft" data-act="sync-load">다른 폰 기록 불러오기</button></div></div>`}
 function syncBox(){if(!SYNC_URL)return '';
   if(syncOn())return `<div class="sync-on"><div><b>☁️ 기록 보관 중</b><span>${esc(data.sync.name)} · 뒷자리 ${esc(data.sync.pin)}${data.sync.at?` · 마지막 보관 ${fmtDay(data.sync.at)}`:''}</span></div><button class="btn btn-soft" data-act="sync-now">지금 보관</button></div>
@@ -1703,7 +1706,7 @@ function finishWorkout(withWalk){
   const log={date:new Date().toISOString(),goal:s.goal,focus:s.focus||null,minutes,items};if(s.cls)log.cls=s.cls;
   track(s.cls&&TRAINERS[s.cls]?'운동완료_클래스_'+nm(TRAINERS[s.cls]):'운동완료_'+(s.focus&&FOCUS[s.focus]?'부위 루틴':'추천 루틴'));items.filter(i=>!i.cardio).forEach(i=>track('운동한 기구_'+i.name));
   data.active=null;
-  if(items.some(i=>!i.cardio)){const before=new Set(earned());data.logs.push(log);const nb=earned().filter(id=>!before.has(id));save();keepAwake(false);say('오늘 운동 끝! 정말 수고하셨어요.','finish');cloudSave(true);go('done',{log,newBadges:nb})}
+  if(items.some(i=>!i.cardio)){visit('운동 완료',(s.cls&&TRAINERS[s.cls]?nm(TRAINERS[s.cls])+' 클래스':s.focus&&FOCUS[s.focus]?'부위 루틴':'추천 루틴')+' · 기구 '+items.filter(i=>!i.cardio).length+'개 · '+minutes+'분 · '+items.filter(i=>!i.cardio).map(i=>i.name).join(', '));const before=new Set(earned());data.logs.push(log);const nb=earned().filter(id=>!before.has(id));save();keepAwake(false);say('오늘 운동 끝! 정말 수고하셨어요.','finish');cloudSave(true);go('done',{log,newBadges:nb})}
   else{save();keepAwake(false);toast('다음에 다시 시작해요. 괜찮아요!');go('home')}
 }
 
@@ -1817,12 +1820,14 @@ document.addEventListener('click',async ev=>{
     case 'sync-start':case 'sync-load':{const name=($('#sy-name')?.value||'').replace(/\s/g,'').slice(0,12),pin=($('#sy-pin')?.value||'').replace(/\D/g,'');
       if(!name){toast('이름을 넣어주세요.');return}if(pin.length!==4){toast('전화번호 뒷자리 4개를 넣어주세요.');return}if(!$('#sy-ok')?.checked){toast('안내 문구에 동의해 주세요.');return}
       if(d.act==='sync-load')return cloudLoad(name,pin);
-      data.sync={name,pin,rank:true,merged:false};save();track('sync-start');return cloudSave(false)}
+      data.sync={name,pin,rank:true,merged:false,v:2};save();track('sync-start');visit('기록 보관 시작','');return cloudSave(false)}
     case 'sync-now':return cloudSave(false);
     case 'sync-del':{if(!syncOn())return;if(!view.delAsk){view={...view,delAsk:true};b.textContent='한 번 더 누르면 클라우드 기록이 지워져요';toast('이 폰의 기록은 그대로 두고, 클라우드 보관본만 지워요.');return}
       try{const r=await cloud('delete',{name:data.sync.name,pin:data.sync.pin});if(r&&r.ok){data.sync=null;save();toast('클라우드에 보관된 기록을 지웠어요.');return render()}toast(r&&r.err==='action'?'아직 지원하지 않아요. 6층 데스크에 요청해 주세요.':'지우지 못했어요. 잠시 후 다시 해주세요.')}catch(e){toast('인터넷 연결을 확인해 주세요.')}return}
     case 'sync-off':{data.sync=null;save();toast('이 폰에서 보관을 껐어요. 보관된 기록은 그대로 있어요.');return render()}
-    case 'tr-start':{const tid=view.tid||'doyoung';if(data.active&&data.active.queue&&data.active.queue.some(e=>e.done.length)){toast('진행 중인 운동이 있어요. 이어서 하거나 정리한 뒤 시작해요.');return go('workout')}data.active=classPlan(tid);save();keepAwake(true);track('class_start');return go('workout')}
+    case 'tr-start':{const tid=view.tid||'doyoung';if(TRAINERS[tid])visit('클래스 시작',nm(TRAINERS[tid])+' · '+TRAINERS[tid].cls);if(data.active&&data.active.queue&&data.active.queue.some(e=>e.done.length)){toast('진행 중인 운동이 있어요. 이어서 하거나 정리한 뒤 시작해요.');return go('workout')}data.active=classPlan(tid);save();keepAwake(true);track('class_start');return go('workout')}
+    case 'visit-ok':{data.sync.v=2;data.sync.vAsked=1;save();visit('현황 확인 동의','');toast('고마워요! 더 잘 챙겨드릴게요.');return render()}
+    case 'visit-no':{data.sync.vAsked=1;save();toast('알겠어요. 기록 보관은 그대로 돼요.');return render()}
     case 'tr-hello':{view={...view,hello:true};track('trainer_hello');return render()}
     case 'tr-outro':{view={...view,outro:true};track('trainer_outro');return render()}
     case 'tr-lv':{data.trLv=d.lv;save();return render()}
@@ -1903,7 +1908,7 @@ function importText(txt,quiet){{try{
   }catch(e){if(!quiet)toast('이 프로그램에서 저장한 기록 파일인지 확인해주세요.')}}
 }
 
-if(/selftest/.test(location.search))window.__t={plan,minutes,suggestion,progress,setData:d=>{data=d},getData:()=>data,EX,SLUG,SWAP,FOCUS,POSE_KIND,ST,GROUPS,D,go:(n,o={})=>{view={name:n,...o};render()},screens:()=>Object.keys(SCREENS),shareImage};
+if(/selftest/.test(location.search))window.__t={save,render,finishWorkout,plan,minutes,suggestion,progress,setData:d=>{data=d},getData:()=>data,EX,SLUG,SWAP,FOCUS,POSE_KIND,ST,GROUPS,D,go:(n,o={})=>{view={name:n,...o};render()},screens:()=>Object.keys(SCREENS),shareImage};
 function fromHash(){if(location.hash==='#posetest'){view={name:'pose',id:'12',from:'guides'};setTimeout(()=>document.querySelector('[data-act="pose-sample"]')?.click(),800);return true}const m=/^#m-([a-z]+)$/.exec(location.hash||'');if(!m)return false;const id=Object.keys(SLUG).find(k=>SLUG[k]===m[1]);if(!id||!EX[id])return false;view={name:'guide',id,from:'guides',qr:true};return true}
 window.addEventListener('hashchange',()=>{if(fromHash()){render();navInit();window.scrollTo(0,0)}});
 function helloText(){const n=data.profile?.name;return `${n?n+' ':''}회원님, 오늘도 득근입니다. 득근득근.`}
@@ -1913,7 +1918,7 @@ function playHello(force){if(!force&&(data.hello===false||!data.profile))return;
   if(!force){data.lastHello=t;save()}}
 function armHello(){const go=()=>{document.removeEventListener('pointerdown',go,true);document.removeEventListener('keydown',go,true);setTimeout(()=>playHello(false),60)};document.addEventListener('pointerdown',go,true);document.addEventListener('keydown',go,true)}
 function boot(h){if(openRightBrowser(false)){setTimeout(()=>boot2(h),1500);return}boot2(h)}
-function boot2(h){try{const td=new Date().toLocaleDateString('en-CA');data.visitDays=data.visitDays||[];if(data.visitDays[data.visitDays.length-1]!==td){data.visitDays.push(td);data.visitDays=data.visitDays.slice(-30);save()}}catch(e){}try{if(h&&h.view){view=h.view;onboard=h.onboard||null;today=h.today||today}}catch(e){}fromHash();render();navInit();armHello();try{if(!ON_CLAUDE&&navigator.storage&&navigator.storage.persist)navigator.storage.persisted().then(p=>{if(!p)navigator.storage.persist()}).catch(()=>{})}catch(e){}try{if(ANALYTICS_ID&&!ON_CLAUDE){const sc=document.createElement('script');sc.defer=true;sc.src='https://cloud.umami.is/script.js';sc.dataset.websiteId=ANALYTICS_ID;sc.dataset.domains='hyunwoo99657672-tech.github.io';sc.dataset.autoTrack='false';sc.onload=()=>{try{window.umami.track(p=>({...p,url:'/amazing-member/'+(view.name||'home'),title:view.name||'home'}))}catch(e){}};document.head.appendChild(sc)}}catch(e){}try{if(!ON_CLAUDE&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
+function boot2(h){try{const td=new Date().toLocaleDateString('en-CA');data.visitDays=data.visitDays||[];if(data.visitDays[data.visitDays.length-1]!==td){data.visitDays.push(td);data.visitDays=data.visitDays.slice(-30);save();setTimeout(()=>visit('앱 열기',data.logs.length?'운동 기록 '+data.logs.length+'번':'첫 방문'),1500)}}catch(e){}try{if(h&&h.view){view=h.view;onboard=h.onboard||null;today=h.today||today}}catch(e){}fromHash();render();navInit();armHello();try{if(!ON_CLAUDE&&navigator.storage&&navigator.storage.persist)navigator.storage.persisted().then(p=>{if(!p)navigator.storage.persist()}).catch(()=>{})}catch(e){}try{if(ANALYTICS_ID&&!ON_CLAUDE){const sc=document.createElement('script');sc.defer=true;sc.src='https://cloud.umami.is/script.js';sc.dataset.websiteId=ANALYTICS_ID;sc.dataset.domains='hyunwoo99657672-tech.github.io';sc.dataset.autoTrack='false';sc.onload=()=>{try{window.umami.track(p=>({...p,url:'/amazing-member/'+(view.name||'home'),title:view.name||'home'}))}catch(e){}};document.head.appendChild(sc)}}catch(e){}try{if(!ON_CLAUDE&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
 try{window.claude?.hot?.snapshot?.(()=>({view,onboard,today}))}catch(e){}
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
 })();
