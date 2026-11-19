@@ -1637,7 +1637,7 @@ function remICS(){const days=(data.remDays||[]).slice().sort();const BY=['MO','T
 const ANALYTICS_ID='0be13412-799f-4037-af5f-5daf552ff738';
 
 /* ---------- cloud backup + ranking (Google Sheet) ---------- */
-const SYNC_URL='https://script.google.com/macros/s/AKfycbwUDKI4Jfuoc1mkcwHlpf6i7vlUBVggV5g8KDxHLdxZXlrazp2CIAX6SKdELp-qB-KM/exec';
+const SYNC_URL='https://script.google.com/macros/s/AKfycbxyuB5y44u2mK_0RgSBqw40oU0HoS1XMpAv2Onw3c13qbKSkxSyhf7K7iR5Hdn_GYEK/exec';
 function syncOn(){return !!(SYNC_URL&&data.sync&&data.sync.name&&data.sync.pin)}
 function devCode(){if(!data.dev){data.dev=Math.random().toString(36).slice(2,6).toUpperCase();save()}return data.dev}
 function visit(kind,detail){try{if(!SYNC_URL||ON_CLAUDE)return;const me=syncOn()&&data.sync.v>=2;fetch(SYNC_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'visit',name:me?data.sync.name:'',pin:me?data.sync.pin:'',dev:devCode(),kind,detail:String(detail||'').slice(0,120)})}).catch(()=>{})}catch(e){}}
