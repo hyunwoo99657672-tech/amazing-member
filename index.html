@@ -484,7 +484,7 @@ const SWAP={'0':['slp','9','12','8'],'9':['0','slp','12'],'12':['0','slp','9'],'
 const stepOf=id=>kind(id)==='body'?0:kind(id)==='db'?2:5;
 const UNIT=id=>({stack:'핀을 한 칸',plate:'원판을 한 단계',bar:'원판을 한 단계',db:'덤벨을 한 단계'})[kind(id)]||'한 칸';
 const KG_HINT={plate:'원판 기구는 끼운 원판 무게를 매번 같은 방식(예: 한쪽 기준)으로 적으면 돼요.',bar:'바(보통 20kg)와 양쪽 원판을 합친 무게를 적어요.',db:'덤벨 한 개의 무게를 적어요.'};
-const WEEKS={1:{t:'기구와 친해지기',s:'가벼운 무게로 자세부터 익혀요. 무게 욕심은 아직 내려놓아요.'},2:{t:'자세 굳히기',s:'세트가 조금 늘어요. 처음과 같은 자세로 끝까지 해봐요.'},3:{t:'조금씩 무겁게',s:'목표 횟수를 다 채운 기구는 한 칸씩 올려봐요.'},4:{t:'혼자서도 척척',s:'이제 무게와 횟수를 스스로 정할 수 있어요.'}};
+const WEEKS={1:{t:'기구와 친해지기',s:'가벼운 무게로 자세부터 익혀요. 무게 욕심은 아직 내려놓아요.'},2:{t:'자세 굳히기',s:'기구 하나가 3세트로 늘어요. 처음과 같은 자세로 끝까지 해봐요.'},3:{t:'조금씩 무겁게',s:'목표 횟수를 다 채운 기구는 한 칸씩 올려봐요.'},4:{t:'혼자서도 척척',s:'이제 무게와 횟수를 스스로 정할 수 있어요.'}};
 function progress(){const p=data.profile||{},days=p.days===3?3:2,sl=strengthLogs(),n=sl.length,total=days*4,inCycle=n%total;
   const wk0=startOfWeek(new Date()).getTime(),thisWeek=sl.filter(l=>new Date(l.date).getTime()>=wk0).length;
   const first=sl[n-inCycle];const elapsed=first&&inCycle?Math.floor((wk0-startOfWeek(new Date(first.date)).getTime())/(7*864e5))+1:1;
@@ -528,9 +528,9 @@ const FOCUS={
  back:{t:'넓고 두꺼운 등',ic:'🦅',d:'옆으로 넓어지는 광배근과 두께를 만드는 등 가운데를 함께 키워요.',reps:[8,12],
   order:l=>l==='advanced'?['13','2','drow','lrow','wpd','3']:l==='some'?['2','lrow','drow','wpd','3','7']:['2','lrow','wpd','3','11','7'],
   tip:{'drow':'날개뼈 → 팔꿈치 → 손 순서로, 팔꿈치를 골반 쪽으로 당겨요.','wpd':'넓은 쪽 손잡이로, 팔꿈치를 옆구리 아래로 → 등이 넓어져요.','lrow':'세로 손잡이로 팔꿈치를 몸에 붙여 당겨요 → 등이 두꺼워져요.','2':'팔꿈치를 옆구리 주머니에 넣는 느낌으로 → 등이 넓어져요.','3':'가슴을 펴고 날개뼈를 모아 1초 멈춰요 → 등이 두꺼워져요.','11':'팔은 고정하고 겨드랑이 아래로만 당겨요.','7':'등 위쪽 두께를 채워요. 반동 없이 천천히.','13':'발 보조는 최소로, 내려올 땐 천천히.'}},
- shoulder:{t:'넓은 어깨',ic:'🎯',d:'어깨 앞·뒤를 채워 옆에서 봐도 넓고 단단한 어깨를 만들어요.',reps:[10,15],
-  order:l=>l==='new'?['6','lsp','7','fp','lip']:['6','dsp','fp','7','lsp','lip'],
-  tip:{'dsp':'손바닥이 앞을 보고 팔꿈치를 옆으로 → 어깨 옆이 채워져요.','fp':'엄지선이 귀 뒤로 넘어가게 → 어깨 뒤가 채워져요.','6':'팔꿈치를 손목 아래에 두고, 귀 높이까지만 내려요.','lsp':'양손을 같은 속도로, 허리를 젖히지 않아요.','7':'어깨 뒤쪽이 채워져야 옆에서 봐도 넓어 보여요.','lip':'윗가슴과 어깨 앞쪽을 함께 채워요.'}},
+ shoulder:{t:'넓은 어깨',ic:'🎯',d:'어깨 앞·옆·뒤를 고르게 채워 정면에서도 옆에서도 넓은 어깨를 만들어요.',reps:[10,15],
+  order:l=>l==='new'?['6','dlr','7','lsp','fp']:['6','dlr','dsp','fp','7','lsp'],
+  tip:{'dlr':'덤벨을 위로 드는 게 아니라 양옆으로 밀어내듯, 손이 어깨 높이까지만 와요. 가벼운 무게로 시작해요.','dsp':'손바닥이 앞을 보고 팔꿈치를 옆으로 → 어깨 옆이 채워져요.','fp':'엄지선이 귀 뒤로 넘어가게 → 어깨 뒤가 채워져요.','6':'팔꿈치를 손목 아래에 두고, 귀 높이까지만 내려요.','lsp':'양손을 같은 속도로, 허리를 젖히지 않아요.','7':'어깨 뒤쪽이 채워져야 옆에서 봐도 넓어 보여요.','lip':'윗가슴과 어깨 앞쪽을 함께 채워요.'}},
  chest:{t:'탄탄한 가슴',ic:'💪',d:'윗가슴부터 가슴 안쪽까지 채워 볼륨 있는 가슴을 만들어요.',reps:[8,12],
   order:l=>l==='advanced'?['bb','idb','1','10']:l==='some'?['1','lip','db','10']:['1','10','lfp','lip'],
   tip:{'1':'가슴을 펴고 날개뼈를 모은 채 밀어요.','10':'가슴 앞에서 1초 꽉 모아요.','lfp':'등을 붙이고 가슴으로 밀어내요.','lip':'윗가슴 라인을 채워요.','db':'내릴 때 가슴이 늘어나는 느낌을 찾아요.','idb':'윗가슴이 늘어나는 곳까지만 내려요.','bb':'무거운 무게는 꼭 보조자와 함께.'}},
@@ -559,7 +559,7 @@ function plan(time,condition,focus){
   else if(goal==='fitness') ids=[at(lower),at(pull),at(push),at(access),'5'];
   else ids=[at(lower),at(push),at(pull),at(access),'7'];
   const F=FOCUS[focus];
-  if(F) ids=F.order(level).filter(i=>EX[i]&&!(novice&&(FREE(i)||HARD(i)))&&!(i==='13'&&level!=='advanced'));
+  if(F) ids=F.order(level).filter(i=>EX[i]&&!(novice&&((FREE(i)&&i!=='dlr')||HARD(i)))&&!(i==='13'&&level!=='advanced'));
   if(!F&&goals.includes('hips')&&goal!=='hips'&&!ids.slice(0,time===20?2:3).some(i=>['0','9','12','slp','5','abd','4'].includes(i)))ids.splice(1,0,'5');
   if(senior) ids=ids.map(i=>i==='9'||i==='12'?'0':i);
   // 사진·영상이 아직 없는 기구는 같은 부위 다른 기구로 바꿔서 추천해요 (기구 사용법 목록에는 그대로 있어요)
@@ -585,6 +585,9 @@ function plan(time,condition,focus){
   const s={queue,warm,walk,time,condition,goal,goals,focus:F?focus:null,level,days,week,cycle,slot,index:-1,phase:'warm',started:Date.now(),note:''};
   const maxT=light||senior||earlyMiddle||firstWeek?2:novice?3:(goal==='muscle'||F)?4:3;
   for(let r=0;r<3;r++)for(const e of queue){if(e.target>=maxT||e.lastHard||(days===3&&e.target>=3))continue;e.target++;if(minutes(s)>time)e.target--}
+  // 2주차부터는 세트를 조금씩 늘려요: 2주차 1개 기구, 3주차부터 2개 기구를 3세트로 (걷기 시간을 조금 줄여서 자리 만들어요)
+  if(time>20&&!light&&!senior&&!earlyMiddle&&!firstWeek&&week>=2){const need=week>=3&&!goals.includes('weight')?2:1;let have=queue.filter(e=>e.target>=3).length;
+    for(const e of queue){if(have>=need)break;if(e.target<3&&!e.lastHard&&!(days===3&&e.target>=3)){e.target=3;have++}}}
   if(minutes(s)>time) s.walk=Math.max(2,s.walk-(minutes(s)-time));
   s.walk=Math.floor(s.walk);
   const gap=F?lastFocusGap(focus):null;
